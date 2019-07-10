@@ -93,7 +93,7 @@ public extension ThemeWapper where Base: CALayer {
 //MARK: - ThemeCustomizable
 extension UIView: ThemeCustomizable {
     struct CustomizationAssociatedKey {
-        static var customization = "kDynamicCustomization"
+        static var customization = "com.jiaxin.theme.dynamicCustomization"
     }
     var themeCustomization: ThemeCustomizationClosure? {
         set(new) {
@@ -111,7 +111,7 @@ extension UIView: ThemeCustomizable {
 
 extension CALayer: ThemeCustomizable {
     struct CustomizationAssociatedKey {
-        static var customization = "kDynamicCustomization"
+        static var customization = "com.jiaxin.theme.dynamicCustomization"
     }
     var themeCustomization: ThemeCustomizationClosure? {
         set(new) {
@@ -130,7 +130,7 @@ extension CALayer: ThemeCustomizable {
 //MARK: - Extentsion Property
 internal extension UIView {
     struct AssociatedKey {
-        static var backgroundColor = "kDynamicBackgroundColor"
+        static var backgroundColor = "com.jiaxin.theme.dynamicBackgroundColor"
     }
     var dynamicBackgroundColor: ThemeColorDynamicProvider? {
         set(new) {
@@ -148,7 +148,7 @@ internal extension UIView {
 
 internal extension UILabel {
     struct AssociatedKey {
-        static var textColor = "kDynamicTextColor"
+        static var textColor = "com.jiaxin.theme.dynamicTextColor"
     }
     var dynamicTextColor: ThemeColorDynamicProvider? {
         set(new) {
@@ -166,7 +166,7 @@ internal extension UILabel {
 
 internal extension UITextField {
     struct AssociatedKey {
-        static var textColor = "kDynamicTextColor"
+        static var textColor = "com.jiaxin.theme.dynamicTextColor"
     }
     var dynamicTextColor: ThemeColorDynamicProvider? {
         set(new) {
@@ -184,7 +184,7 @@ internal extension UITextField {
 
 internal extension UITextView {
     struct AssociatedKey {
-        static var textColor = "kDynamicTextColor"
+        static var textColor = "com.jiaxin.theme.dynamicTextColor"
     }
     var dynamicTextColor: ThemeColorDynamicProvider? {
         set(new) {
@@ -202,7 +202,7 @@ internal extension UITextView {
 
 internal extension UIImageView {
     struct AssociatedKey {
-        static var image = "kDynamicImage"
+        static var image = "com.jiaxin.theme.dynamicImage"
     }
     var dynamicImage: ThemeImageDynamicProvider? {
         set(new) {
@@ -220,7 +220,7 @@ internal extension UIImageView {
 
 internal extension CALayer {
     struct AssociatedKey {
-        static var backgroundColor = "kDynamicBackgroundColor"
+        static var backgroundColor = "com.jiaxin.theme.dynamicBackgroundColor"
     }
     var dynamicBackgroundColor: ThemeColorDynamicProvider? {
         set(new) {
