@@ -31,15 +31,15 @@ public struct ThemeWapper<Base> {
 //MARK: - Defines
 /// 为了便于外部自定义style，使用了struct类型。如果使用枚举类型，外部就无法自定义扩展了。
 public struct ThemeStyle: RawRepresentable, Equatable, Hashable, Comparable {
-    public typealias RawValue = Int
-    public var rawValue: Int
+    public typealias RawValue = String
+    public var rawValue: String
     public var hashValue: Int { return rawValue.hashValue }
 
-    public static let unspecified = ThemeStyle(rawValue: 0)
-    public static let light = ThemeStyle(rawValue: 1)
-    public static let dark = ThemeStyle(rawValue: 2)
+    public static let unspecified = ThemeStyle(rawValue: "unspecified")
+    public static let light = ThemeStyle(rawValue: "light")
+    public static let dark = ThemeStyle(rawValue: "dark")
 
-    public init(rawValue: Int) {
+    public init(rawValue: String) {
         self.rawValue = rawValue
     }
 

@@ -17,12 +17,12 @@ class ViewController: UITableViewController {
     @IBOutlet weak var themeImageView: UIImageView!
     @IBOutlet weak var themeLayerContainerView: UIView!
     lazy var themeLayer: CALayer = { CALayer() }()
-
+    @IBOutlet weak var customThemeStyleLabel: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         refreshToggleButton()
-//        navigationController?.navigationItem
 
         themeView.theme.backgroundColor = { (style) -> UIColor in
             if style == .dark {
@@ -31,6 +31,7 @@ class ViewController: UITableViewController {
                 return .blue
             }
         }
+        //UIView customization自定义
         themeView.theme.customization = {[weak self] style in
             if style == .dark {
                 self?.themeView.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
@@ -38,7 +39,6 @@ class ViewController: UITableViewController {
                 self?.themeView.bounds = CGRect(x: 0, y: 0, width: 80, height: 80)
             }
         }
-
 
         themeLabel.theme.backgroundColor = { (style) -> UIColor in
             if style == .dark {
@@ -108,6 +108,7 @@ class ViewController: UITableViewController {
                 return .blue
             }
         }
+        //CALayer customization自定义
         themeLayer.theme.customization = { [weak self] style in
             if style == .dark {
                 self?.themeLayer.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
@@ -115,7 +116,26 @@ class ViewController: UITableViewController {
                 self?.themeLayer.bounds = CGRect(x: 0, y: 0, width: 80, height: 80)
             }
         }
-        //TODO:自定义style
+
+        //自定义ThemeStyle示例
+        customThemeStyleLabel.theme.backgroundColor = { (style) -> UIColor in
+            if style == .dark {
+                return .black
+            }else if style == .pink {
+                return UIColor(red: 255.0/255, green: 192.0/255, blue: 203.0/255, alpha: 1)
+            }else {
+                return .white
+            }
+        }
+        customThemeStyleLabel.theme.textColor = { (style) -> UIColor in
+            if style == .dark {
+                return .white
+            }else if style == .pink {
+                return .white
+            }else {
+                return .black
+            }
+        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -125,11 +145,7 @@ class ViewController: UITableViewController {
     }
 
     func refreshToggleButton() {
-        var styleTitle = "light"
-        if ThemeManager.shared.currentThemeStyle == .dark {
-            styleTitle = "dark"
-        }
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: styleTitle, style: .plain, target: self, action: #selector(toggleThemeStyle))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: ThemeManager.shared.currentThemeStyle.rawValue, style: .plain, target: self, action: #selector(toggleThemeStyle))
     }
 
     @objc func toggleThemeStyle() {
@@ -138,7 +154,18 @@ class ViewController: UITableViewController {
         }else {
             ThemeManager.shared.themeStyleDidChange(.dark)
         }
+        refreshToggleButton()
     }
+
+    @IBAction func togglePinkButtonClicked(_ sender: UIButton) {
+        ThemeManager.shared.themeStyleDidChange(.pink)
+        refreshToggleButton()
+    }
+}
+
+//自定义ThemeStyle示例
+extension ThemeStyle {
+    static let pink = ThemeStyle(rawValue: "pink")
 }
 
 
