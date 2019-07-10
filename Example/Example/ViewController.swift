@@ -147,6 +147,7 @@ class ViewController: UITableViewController {
         }
 
         //自定义ThemeStyle示例
+        //TODO：切换到系统方案示例。
         customThemeStyleLabel.theme.backgroundColor = { (style) -> UIColor in
             if style == .dark {
                 return .black
@@ -179,15 +180,15 @@ class ViewController: UITableViewController {
 
     @objc func toggleThemeStyle() {
         if ThemeManager.shared.currentThemeStyle == .dark {
-            ThemeManager.shared.themeStyleDidChange(.light)
+            ThemeManager.shared.changeTheme(to: .light)
         }else {
-            ThemeManager.shared.themeStyleDidChange(.dark)
+            ThemeManager.shared.changeTheme(to: .dark)
         }
         refreshToggleButton()
     }
 
     @IBAction func togglePinkButtonClicked(_ sender: UIButton) {
-        ThemeManager.shared.themeStyleDidChange(.pink)
+        ThemeManager.shared.changeTheme(to: .pink)
         refreshToggleButton()
     }
 }

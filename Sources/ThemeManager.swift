@@ -24,7 +24,7 @@ public class ThemeManager {
         return NSHashTable<AnyObject>.init(options: .weakMemory)
     }()
     //TODO:userdefaults存储themestyle
-    public func themeStyleDidChange(_ style: ThemeStyle) {
+    public func changeTheme(to style: ThemeStyle) {
         currentThemeStyle = style
         NotificationCenter.default.post(name: NSNotification.Name.JXThemeDidChange, object: nil, userInfo: ["style" : style])
         DispatchQueue.main.async {
