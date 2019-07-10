@@ -17,10 +17,10 @@ public class ThemeManager {
     public private(set) var currentThemeStyle: ThemeStyle = .light
     public var isFollowSystem: Bool = false {
         didSet {
-            
+                //TODO：isFollowSystem
         }
     }
-    lazy var viewsHashTable: NSHashTable<AnyObject> = {
+    lazy var trackedHashTable: NSHashTable<AnyObject> = {
         return NSHashTable<AnyObject>.init(options: .weakMemory)
     }()
     //TODO:userdefaults存储themestyle
@@ -28,14 +28,19 @@ public class ThemeManager {
         currentThemeStyle = style
         NotificationCenter.default.post(name: NSNotification.Name.JXThemeDidChange, object: nil, userInfo: ["style" : style])
         DispatchQueue.main.async {
-            self.viewsHashTable.allObjects.forEach { (object) in
+            self.trackedHashTable.allObjects.forEach { (object) in
                 //让object根据最新的style刷新
                 //告知内部和外部最新的style
                 if let view = object as? UIView, view.dynamicBackgroundColor != nil {
                     view.backgroundColor = view.dynamicBackgroundColor?(self.currentThemeStyle)
                 }
-                if let label = object as? UILabel, label.dynamicTextColor != nil {
-                    label.textColor = label.dynamicTextColor?(self.currentThemeStyle)
+                if let label = object as? UILabel {
+                    if label.dynamicTextColor != nil {
+                        label.textColor = label.dynamicTextColor?(self.currentThemeStyle)
+                    }
+                    if label.dynamicAttributedText != nil {
+                        label.attributedText = label.dynamicAttributedText?(self.currentThemeStyle)
+                    }
                 }
                 if let textField = object as? UITextField, textField.dynamicTextColor != nil {
                     textField.textColor = textField.dynamicTextColor?(self.currentThemeStyle)

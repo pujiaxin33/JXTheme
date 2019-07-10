@@ -18,6 +18,8 @@ class ViewController: UITableViewController {
     @IBOutlet weak var themeLayerContainerView: UIView!
     lazy var themeLayer: CALayer = { CALayer() }()
     @IBOutlet weak var customThemeStyleLabel: UILabel!
+    @IBOutlet weak var attributedLabel: UILabel!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,6 +54,25 @@ class ViewController: UITableViewController {
                 return .white
             }else {
                 return .black
+            }
+        }
+
+        attributedLabel.theme.backgroundColor = { (style) -> UIColor in
+            if style == .dark {
+                return .black
+            }else {
+                return .white
+            }
+        }
+        attributedLabel.theme.attributedText = { (style) -> NSAttributedString in
+            if style == .dark {
+                let attributedText = NSMutableAttributedString(string: "这是attributedText主题测试文本", attributes: [.foregroundColor : UIColor.white, .font : UIFont.systemFont(ofSize: 15)])
+                attributedText.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: 2, length: 14))
+                return attributedText
+            }else {
+                let attributedText = NSMutableAttributedString(string: "这是attributedText主题测试文本", attributes: [.foregroundColor : UIColor.black, .font : UIFont.systemFont(ofSize: 15)])
+                attributedText.addAttribute(.foregroundColor, value: UIColor.blue, range: NSRange(location: 2, length: 14))
+                return attributedText
             }
         }
 
@@ -92,6 +113,7 @@ class ViewController: UITableViewController {
                 return .white
             }
         }
+        //图片本地静态配置
         themeImageView.theme.image = { (style) -> UIImage in
             if style == .dark {
                 return UIImage(named: "catWhite")!
@@ -99,6 +121,13 @@ class ViewController: UITableViewController {
                 return UIImage(named: "catBlack")!
             }
         }
+        //图片动态下载配置
+        /*
+        themeImageView.theme.customization = {[weak self] style in
+//            let url = switch sytle choose image url
+//            self?.themeImageView.image = download image with url by other third library like Kingfisher
+        }
+        */
 
         themeLayerContainerView.layer.addSublayer(themeLayer)
         themeLayer.theme.backgroundColor = { (style) -> UIColor in
@@ -170,6 +199,8 @@ extension ThemeStyle {
 
 
 //TODO:添加业务示例封装
+//TODO:添加plist配置示例
+//TODO:添加json服务器动态配置示例
 //enum DQDynamicBackgoundColorLevel {
 //    case normal
 //    case main

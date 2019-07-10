@@ -54,6 +54,7 @@ public struct ThemeStyle: RawRepresentable, Equatable, Hashable, Comparable {
 public typealias ThemePropertyDynamicProvider<T> = (ThemeStyle) -> T
 public typealias ThemeImageDynamicProvider = ThemePropertyDynamicProvider<UIImage>
 public typealias ThemeColorDynamicProvider = ThemePropertyDynamicProvider<UIColor>
+public typealias ThemeAttributedTextDynamicProvider = ThemePropertyDynamicProvider<NSAttributedString>
 public typealias ThemeCustomizationClosure = (ThemeStyle) -> Void
 
 //MARK: - ThemeCustomizable

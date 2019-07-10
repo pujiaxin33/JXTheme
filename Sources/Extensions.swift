@@ -36,10 +36,19 @@ public extension ThemeWapper where Base: UILabel {
             return self.base.dynamicTextColor
         }
     }
-    //    var attributedText: NSAttributedString? {
-    //
-    //    }
+    var attributedText: ThemeAttributedTextDynamicProvider? {
+        set(new) {
+            self.base.dynamicAttributedText = new
+        }
+        get {
+            return self.base.dynamicAttributedText
+        }
+    }
 }
+//TODO:navigationBar
+//TODO:tabbar
+//TODO:UISwitch
+//TODO:UIButton titleColor
 //TODO:attributeString
 public extension ThemeWapper where Base: UITextField {
     var textColor: ThemeColorDynamicProvider? {
@@ -50,6 +59,14 @@ public extension ThemeWapper where Base: UITextField {
             return self.base.dynamicTextColor
         }
     }
+    var attributedText: ThemeAttributedTextDynamicProvider? {
+        set(new) {
+            self.base.dynamicAttributedText = new
+        }
+        get {
+            return self.base.dynamicAttributedText
+        }
+    }
 }
 public extension ThemeWapper where Base: UITextView {
     var textColor: ThemeColorDynamicProvider? {
@@ -58,6 +75,14 @@ public extension ThemeWapper where Base: UITextView {
         }
         get {
             return self.base.dynamicTextColor
+        }
+    }
+    var attributedText: ThemeAttributedTextDynamicProvider? {
+        set(new) {
+            self.base.dynamicAttributedText = new
+        }
+        get {
+            return self.base.dynamicAttributedText
         }
     }
 }
@@ -100,7 +125,7 @@ extension UIView: ThemeCustomizable {
             objc_setAssociatedObject(self, &CustomizationAssociatedKey.customization, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             if new != nil {
                 new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.viewsHashTable.add(self)
+                ThemeManager.shared.trackedHashTable.add(self)
             }
         }
         get {
@@ -118,7 +143,7 @@ extension CALayer: ThemeCustomizable {
             objc_setAssociatedObject(self, &CustomizationAssociatedKey.customization, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             if new != nil {
                 new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.viewsHashTable.add(self)
+                ThemeManager.shared.trackedHashTable.add(self)
             }
         }
         get {
@@ -137,7 +162,7 @@ internal extension UIView {
             objc_setAssociatedObject(self, &AssociatedKey.backgroundColor, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             if new != nil {
                 backgroundColor = new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.viewsHashTable.add(self)
+                ThemeManager.shared.trackedHashTable.add(self)
             }
         }
         get {
@@ -149,17 +174,30 @@ internal extension UIView {
 internal extension UILabel {
     struct AssociatedKey {
         static var textColor: Void?
+        static var attributedText: Void?
     }
     var dynamicTextColor: ThemeColorDynamicProvider? {
         set(new) {
             objc_setAssociatedObject(self, &AssociatedKey.textColor, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             if new != nil {
                 textColor = new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.viewsHashTable.add(self)
+                ThemeManager.shared.trackedHashTable.add(self)
             }
         }
         get {
             return objc_getAssociatedObject(self, &AssociatedKey.textColor) as? ThemeColorDynamicProvider
+        }
+    }
+    var dynamicAttributedText: ThemeAttributedTextDynamicProvider? {
+        set(new) {
+            objc_setAssociatedObject(self, &AssociatedKey.attributedText, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            if new != nil {
+                attributedText = new?(ThemeManager.shared.currentThemeStyle)
+                ThemeManager.shared.trackedHashTable.add(self)
+            }
+        }
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKey.attributedText) as? ThemeAttributedTextDynamicProvider
         }
     }
 }
@@ -167,17 +205,30 @@ internal extension UILabel {
 internal extension UITextField {
     struct AssociatedKey {
         static var textColor: Void?
+        static var attributedText: Void?
     }
     var dynamicTextColor: ThemeColorDynamicProvider? {
         set(new) {
             objc_setAssociatedObject(self, &AssociatedKey.textColor, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             if new != nil {
                 textColor = new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.viewsHashTable.add(self)
+                ThemeManager.shared.trackedHashTable.add(self)
             }
         }
         get {
             return objc_getAssociatedObject(self, &AssociatedKey.textColor) as? ThemeColorDynamicProvider
+        }
+    }
+    var dynamicAttributedText: ThemeAttributedTextDynamicProvider? {
+        set(new) {
+            objc_setAssociatedObject(self, &AssociatedKey.attributedText, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            if new != nil {
+                attributedText = new?(ThemeManager.shared.currentThemeStyle)
+                ThemeManager.shared.trackedHashTable.add(self)
+            }
+        }
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKey.attributedText) as? ThemeAttributedTextDynamicProvider
         }
     }
 }
@@ -185,17 +236,30 @@ internal extension UITextField {
 internal extension UITextView {
     struct AssociatedKey {
         static var textColor: Void?
+        static var attributedText: Void?
     }
     var dynamicTextColor: ThemeColorDynamicProvider? {
         set(new) {
             objc_setAssociatedObject(self, &AssociatedKey.textColor, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             if new != nil {
                 textColor = new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.viewsHashTable.add(self)
+                ThemeManager.shared.trackedHashTable.add(self)
             }
         }
         get {
             return objc_getAssociatedObject(self, &AssociatedKey.textColor) as? ThemeColorDynamicProvider
+        }
+    }
+    var dynamicAttributedText: ThemeAttributedTextDynamicProvider? {
+        set(new) {
+            objc_setAssociatedObject(self, &AssociatedKey.attributedText, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            if new != nil {
+                attributedText = new?(ThemeManager.shared.currentThemeStyle)
+                ThemeManager.shared.trackedHashTable.add(self)
+            }
+        }
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKey.attributedText) as? ThemeAttributedTextDynamicProvider
         }
     }
 }
@@ -209,7 +273,7 @@ internal extension UIImageView {
             objc_setAssociatedObject(self, &AssociatedKey.image, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             if new != nil {
                 image = new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.viewsHashTable.add(self)
+                ThemeManager.shared.trackedHashTable.add(self)
             }
         }
         get {
@@ -227,7 +291,7 @@ internal extension CALayer {
             objc_setAssociatedObject(self, &AssociatedKey.backgroundColor, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             if new != nil {
                 backgroundColor = new?(ThemeManager.shared.currentThemeStyle).cgColor
-                ThemeManager.shared.viewsHashTable.add(self)
+                ThemeManager.shared.trackedHashTable.add(self)
             }
         }
         get {
