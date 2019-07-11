@@ -9,25 +9,6 @@
 import Foundation
 import UIKit
 
-//MARK: - ThemeCompatible
-public protocol ThemeCompatible: AnyObject { }
-public extension ThemeCompatible {
-    var theme: ThemeWapper<Self> {
-        get { return ThemeWapper<Self>(self) }
-        set { }
-    }
-}
-extension UIView: ThemeCompatible { }
-extension CALayer: ThemeCompatible { }
-
-//MARK: - ThemeWapper
-public struct ThemeWapper<Base> {
-    internal let base: Base
-    init(_ base: Base) {
-        self.base = base
-    }
-}
-
 //MARK: - Defines
 /// 为了便于外部自定义style，使用了struct类型。如果使用枚举类型，外部就无法自定义扩展了。
 public struct ThemeStyle: RawRepresentable, Equatable, Hashable, Comparable {
@@ -51,15 +32,10 @@ public struct ThemeStyle: RawRepresentable, Equatable, Hashable, Comparable {
     }
 }
 
+public typealias ThemeConfigClosure = (ThemeStyle)->()
+
 public typealias ThemePropertyDynamicProvider<T> = (ThemeStyle) -> T
 public typealias ThemeImageDynamicProvider = ThemePropertyDynamicProvider<UIImage>
 public typealias ThemeColorDynamicProvider = ThemePropertyDynamicProvider<UIColor>
-public typealias ThemeAttributedTextDynamicProvider = ThemePropertyDynamicProvider<NSAttributedString>
-public typealias ThemeCustomizationClosure = (ThemeStyle) -> Void
-
-//MARK: - ThemeCustomizable
-internal protocol ThemeCustomizable {
-    var themeCustomization: ThemeCustomizationClosure? { get }
-}
 
 

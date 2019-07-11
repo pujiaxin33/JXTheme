@@ -276,7 +276,6 @@
                     <navigationItem key="navigationItem" title="Example" id="egm-J2-2tv"/>
                     <connections>
                         <outlet property="attributedLabel" destination="3ld-gf-Blh" id="DBd-0n-XUh"/>
-                        <outlet property="customThemeStyleLabel" destination="mjM-ze-PoF" id="itD-pt-j0z"/>
                         <outlet property="themeImageView" destination="vVK-Q2-PdK" id="eTN-kA-5ly"/>
                         <outlet property="themeLabel" destination="T2S-y6-xff" id="9se-Fa-ew6"/>
                         <outlet property="themeLayerContainerView" destination="xpd-P0-bKp" id="1er-Gq-9wa"/>

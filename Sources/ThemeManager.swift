@@ -31,34 +31,10 @@ public class ThemeManager {
             self.trackedHashTable.allObjects.forEach { (object) in
                 //让object根据最新的style刷新
                 //告知内部和外部最新的style
-                if let view = object as? UIView, view.dynamicBackgroundColor != nil {
-                    view.backgroundColor = view.dynamicBackgroundColor?(self.currentThemeStyle)
-                }
-                if let label = object as? UILabel {
-                    if label.dynamicTextColor != nil {
-                        label.textColor = label.dynamicTextColor?(self.currentThemeStyle)
-                    }
-                    if label.dynamicAttributedText != nil {
-                        label.attributedText = label.dynamicAttributedText?(self.currentThemeStyle)
-                    }
-                }
-                if let textField = object as? UITextField, textField.dynamicTextColor != nil {
-                    textField.textColor = textField.dynamicTextColor?(self.currentThemeStyle)
-                }
-                if let textView = object as? UITextView, textView.dynamicTextColor != nil {
-                    textView.textColor = textView.dynamicTextColor?(self.currentThemeStyle)
-                }
-                if let imageView = object as? UIImageView, imageView.dynamicImage != nil {
-                    imageView.image = imageView.dynamicImage?(self.currentThemeStyle)
-                }
-                if let layer = object as? CALayer, layer.dynamicBackgroundColor != nil {
-                    CATransaction.begin()
-                    CATransaction.setDisableActions(true)
-                    layer.backgroundColor = layer.dynamicBackgroundColor?(self.currentThemeStyle).cgColor
-                    CATransaction.commit()
-                }
-                if let customizable = object as? ThemeCustomizable {
-                    customizable.themeCustomization?(self.currentThemeStyle)
+                if let view = object as? UIView, !view.themeConfigs.isEmpty  {
+                    view.themeConfigs.forEach({ (closure) in
+                        closure(self.currentThemeStyle)
+                    })
                 }
             }
         }

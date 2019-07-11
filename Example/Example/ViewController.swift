@@ -9,6 +9,8 @@
 import UIKit
 import JXTheme
 
+
+
 class ViewController: UITableViewController {
     @IBOutlet weak var themeView: UIView!
     @IBOutlet weak var themeLabel: UILabel!
@@ -17,22 +19,66 @@ class ViewController: UITableViewController {
     @IBOutlet weak var themeImageView: UIImageView!
     @IBOutlet weak var themeLayerContainerView: UIView!
     lazy var themeLayer: CALayer = { CALayer() }()
-    @IBOutlet weak var customThemeStyleLabel: UILabel!
     @IBOutlet weak var attributedLabel: UILabel!
-    
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         refreshToggleButton()
+        //swizzle uiview.setbackgroundcolor方法
+        //extension UIColor 添加新的初始化器
+        //extension UIColor 添加存储closure属性
+        //extension uiview 添加存储当前UIColor（因为有些color设置，系统内部会copy，又因为UIColor是类族，我没有办法全部swizzle copywithzon方法赋值新增的属性，即使能行，对于系统入侵也太大了。）
+        //将UIView添加到trackedItems，等到theme改变时，先调用UIColor存储的闭包获取对应theme的颜色值，再更新UIView.backgroundColor
 
-        themeView.theme.backgroundColor = { (style) -> UIColor in
+        //extension UIView 2 新增一个[closure]，里面是先获取最新的backgroundColor，然后设置自己的backgroundColor代码，
+        //2 将UIView添加到trackedItems，等到theme改变时，直接调用UIView存储的更新closure
+        
+
+        //虽然可以模仿系统api完成指定的api适配darkMode。比如设置背景色、文本色。但是必须要swizzle指定的方法，才能完成该方法的适配。且不能把自定义的UIColor赋值给一个不支持darkMode的属性。
+
+        UIView.swizzleBackgoundColor
+        UILabel.swizzleTextColor
+//        themeLabel.backgroundColor = UIColor(dynamicColor: { (style) -> UIColor in
+//            if style == .dark {
+//                return .black
+//            }else {
+//                return .blue
+//            }
+//        })
+//        themeLabel.textColor = UIColor(dynamicColor: { (style) -> UIColor in
+//            if style == .dark {
+//                return .white
+//            }else {
+//                return .red
+//            }
+//        })
+
+        themeLabel.backgroundColor = DynamicColor(dynamicProvider: { (style) -> UIColor in
             if style == .dark {
                 return .black
             }else {
                 return .blue
             }
-        }
+        })
+//        themeLabel.textColor = DynamicColor(dynamicProvider: { (style) -> UIColor in
+//            if style == .dark {
+//                return .white
+//            }else {
+//                return .red
+//            }
+//        })
+        let attributedText = NSMutableAttributedString(string: "这是attributedText主题测试文本", attributes: [.foregroundColor : UIColor.white, .font : UIFont.systemFont(ofSize: 15)])
+        attributedText.addAttribute(.foregroundColor, value: DynamicColor(dynamicProvider: { (style) -> UIColor in
+            if style == .dark {
+                return .purple
+            }else {
+                return .orange
+            }
+        }), range: NSRange(location: 2, length: 14))
+        themeLabel.attributedText = attributedText
+        /*
         //UIView customization自定义
         themeView.theme.customization = {[weak self] style in
             if style == .dark {
@@ -146,32 +192,13 @@ class ViewController: UITableViewController {
             }
         }
 
-        //自定义ThemeStyle示例
-        //TODO：切换到系统方案示例。
-        customThemeStyleLabel.theme.backgroundColor = { (style) -> UIColor in
-            if style == .dark {
-                return .black
-            }else if style == .pink {
-                return UIColor(red: 255.0/255, green: 192.0/255, blue: 203.0/255, alpha: 1)
-            }else {
-                return .white
-            }
-        }
-        customThemeStyleLabel.theme.textColor = { (style) -> UIColor in
-            if style == .dark {
-                return .white
-            }else if style == .pink {
-                return .white
-            }else {
-                return .black
-            }
-        }
+ */
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        themeLayer.frame = themeLayerContainerView.bounds
+//        themeLayer.frame = themeLayerContainerView.bounds
     }
 
     func refreshToggleButton() {
@@ -186,88 +213,5 @@ class ViewController: UITableViewController {
         }
         refreshToggleButton()
     }
-
-    @IBAction func togglePinkButtonClicked(_ sender: UIButton) {
-        ThemeManager.shared.changeTheme(to: .pink)
-        refreshToggleButton()
-    }
 }
 
-//自定义ThemeStyle示例
-extension ThemeStyle {
-    static let pink = ThemeStyle(rawValue: "pink")
-}
-
-
-//TODO:添加业务示例封装
-//TODO:添加plist配置示例
-//TODO:添加json服务器动态配置示例
-//enum DQDynamicBackgoundColorLevel {
-//    case normal
-//    case main
-//    case sub
-//}
-//
-//enum DQDynamicTextColorLevel {
-//    case normal
-//    case mainTitle
-//    case subtitle
-//}
-//
-//func dynamicBackgoundColor(level: DQDynamicBackgoundColorLevel) -> DQColorDynamicProvider {
-//    switch level {
-//    case .normal:
-//        return { (style) -> UIColor in
-//            if style == .light {
-//                return UIColor.black
-//            }else {
-//                return UIColor.red
-//            }
-//        }
-//    case .main:
-//        return { (style) -> UIColor in
-//            if style == .light {
-//                return UIColor.black
-//            }else {
-//                return UIColor.red
-//            }
-//        }
-//    case .sub:
-//        return { (style) -> UIColor in
-//            if style == .light {
-//                return UIColor.black
-//            }else {
-//                return UIColor.red
-//            }
-//        }
-//    }
-//}
-//
-//func dynamicTextColor(level: DQDynamicTextColorLevel) -> DQColorDynamicProvider {
-//    switch level {
-//    case .normal:
-//        return { (style) -> UIColor in
-//            if style == .light {
-//                return UIColor.white
-//            }else {
-//                return UIColor.black
-//            }
-//        }
-//    case .mainTitle:
-//        return { (style) -> UIColor in
-//            if style == .light {
-//                return UIColor.white
-//            }else {
-//                return UIColor.black
-//            }
-//        }
-//    case .subtitle:
-//        return { (style) -> UIColor in
-//            if style == .light {
-//                return UIColor.white
-//            }else {
-//                return UIColor.black
-//            }
-//        }
-//    }
-//}
