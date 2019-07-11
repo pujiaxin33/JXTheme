@@ -18,11 +18,11 @@ public extension ThemeWapper where Base: UIView {
                 let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
                     baseItem?.backgroundColor = new?(style)
                 }
-                self.base.configs["backgroundColor"] = config
+                self.base.configs["view.backgroundColor"] = config
                 self.base.backgroundColor = new?(ThemeManager.shared.currentThemeStyle)
                 ThemeManager.shared.trackedHashTable.add(self.base)
             }else {
-                self.base.configs.removeValue(forKey: "backgroundColor")
+                self.base.configs.removeValue(forKey: "view.backgroundColor")
             }
         }
         get {
@@ -32,11 +32,11 @@ public extension ThemeWapper where Base: UIView {
     var customization: ThemeCustomizationClosure? {
         set(new) {
             if new != nil {
-                self.base.configs["customization"] = new!
+                self.base.configs["view.customization"] = new!
                 new?(ThemeManager.shared.currentThemeStyle)
                 ThemeManager.shared.trackedHashTable.add(self.base)
             }else {
-                self.base.configs.removeValue(forKey: "customization")
+                self.base.configs.removeValue(forKey: "view.customization")
             }
         }
         get {
@@ -52,11 +52,11 @@ public extension ThemeWapper where Base: UILabel {
                 let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
                     baseItem?.textColor = new?(style)
                 }
-                self.base.configs["textColor"] = config
+                self.base.configs["label.textColor"] = config
                 self.base.textColor = new?(ThemeManager.shared.currentThemeStyle)
                 ThemeManager.shared.trackedHashTable.add(self.base)
             }else {
-                self.base.configs.removeValue(forKey: "textColor")
+                self.base.configs.removeValue(forKey: "label.textColor")
             }
         }
         get {
@@ -70,11 +70,11 @@ public extension ThemeWapper where Base: UILabel {
                 let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
                     baseItem?.attributedText = new?(style)
                 }
-                self.base.configs["attributedText"] = config
+                self.base.configs["label.attributedText"] = config
                 self.base.attributedText = new?(ThemeManager.shared.currentThemeStyle)
                 ThemeManager.shared.trackedHashTable.add(self.base)
             }else {
-                self.base.configs.removeValue(forKey: "attributedText")
+                self.base.configs.removeValue(forKey: "label.attributedText")
             }
         }
         get {
@@ -82,11 +82,63 @@ public extension ThemeWapper where Base: UILabel {
         }
     }
 }
+
+public extension ThemeWapper where Base: UIButton {
+    func setTitleColor(_ colorProvider: @escaping ThemeColorDynamicProvider, for state: UIControl.State) {
+        let baseItem = self.base
+        let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+            baseItem?.setTitleColor(colorProvider(style), for: state)
+        }
+        self.base.configs["button.titleColor.\(state.rawValue)"] = config
+        self.base.setTitleColor(colorProvider(ThemeManager.shared.currentThemeStyle), for: state)
+        ThemeManager.shared.trackedHashTable.add(self.base)
+    }
+
+    func setTitleShadowColor(_ colorProvider: @escaping ThemeColorDynamicProvider, for state: UIControl.State) {
+        let baseItem = self.base
+        let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+            baseItem?.setTitleShadowColor(colorProvider(style), for: state)
+        }
+        self.base.configs["button.titleShadowColor.\(state.rawValue)"] = config
+        self.base.setTitleShadowColor(colorProvider(ThemeManager.shared.currentThemeStyle), for: state)
+        ThemeManager.shared.trackedHashTable.add(self.base)
+    }
+
+    func setAttributedTitle(_ textProvider: @escaping ThemeAttributedTextDynamicProvider, for state: UIControl.State) {
+        let baseItem = self.base
+        let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+            UIView.setAnimationsEnabled(false)
+            baseItem?.setAttributedTitle(textProvider(style), for: state)
+            baseItem?.layoutIfNeeded()
+            UIView.setAnimationsEnabled(true)
+        }
+        self.base.configs["button.attributedTitle.\(state.rawValue)"] = config
+        self.base.setAttributedTitle(textProvider(ThemeManager.shared.currentThemeStyle), for: state)
+        ThemeManager.shared.trackedHashTable.add(self.base)
+    }
+
+    func setImage(_ imageProvider: @escaping ThemeImageDynamicProvider,for state: UIControl.State) {
+        let baseItem = self.base
+        let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+            baseItem?.setImage(imageProvider(style), for: state)
+        }
+        self.base.configs["button.image.\(state.rawValue)"] = config
+        self.base.setImage(imageProvider(ThemeManager.shared.currentThemeStyle), for: state)
+        ThemeManager.shared.trackedHashTable.add(self.base)
+    }
+
+    func setBackgroundImage(_ imageProvider: @escaping ThemeImageDynamicProvider, for state: UIControl.State) {
+        let baseItem = self.base
+        let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+            baseItem?.setBackgroundImage(imageProvider(style), for: state)
+        }
+        self.base.configs["button.backgroundImage.\(state.rawValue)"] = config
+        self.base.setBackgroundImage(imageProvider(ThemeManager.shared.currentThemeStyle), for: state)
+        ThemeManager.shared.trackedHashTable.add(self.base)
+    }
+}
 //TODO:navigationBar
 //TODO:tabbar
-//TODO:UISwitch
-//TODO:UIButton titleColor
-//TODO:attributeString
 public extension ThemeWapper where Base: UITextField {
     var textColor: ThemeColorDynamicProvider? {
         set(new) {

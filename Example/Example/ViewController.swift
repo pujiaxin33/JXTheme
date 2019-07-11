@@ -12,6 +12,7 @@ import JXTheme
 class ViewController: UITableViewController {
     @IBOutlet weak var themeView: UIView!
     @IBOutlet weak var themeLabel: UILabel!
+    @IBOutlet weak var themeButton: UIButton!
     @IBOutlet weak var themeTextField: UITextField!
     @IBOutlet weak var themeTextView: UITextView!
     @IBOutlet weak var themeImageView: UIImageView!
@@ -56,6 +57,41 @@ class ViewController: UITableViewController {
                 return .black
             }
         }
+
+        themeButton.theme.backgroundColor = { (style) -> UIColor in
+            if style == .dark {
+                return .black
+            }else {
+                return .white
+            }
+        }
+        themeButton.theme.setTitleColor({ (style) -> UIColor in
+            if style == .dark {
+                return .white
+            }else {
+                return .black
+            }
+        }, for: .normal)
+        themeButton.theme.setTitleColor({ (style) -> UIColor in
+            if style == .dark {
+                return .yellow
+            }else {
+                return .orange
+            }
+        }, for: .selected)
+        /*
+        themeButton.theme.setAttributedTitle({ (style) -> NSAttributedString in
+            if style == .dark {
+                let attributedText = NSMutableAttributedString(string: "这是attributedText主题测试文本", attributes: [.foregroundColor : UIColor.white, .font : UIFont.systemFont(ofSize: 15)])
+                attributedText.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: 2, length: 14))
+                return attributedText
+            }else {
+                let attributedText = NSMutableAttributedString(string: "这是attributedText主题测试文本", attributes: [.foregroundColor : UIColor.black, .font : UIFont.systemFont(ofSize: 15)])
+                attributedText.addAttribute(.foregroundColor, value: UIColor.blue, range: NSRange(location: 2, length: 14))
+                return attributedText
+            }
+        }, for: .normal)
+       */
 
         attributedLabel.theme.backgroundColor = { (style) -> UIColor in
             if style == .dark {
