@@ -7,41 +7,78 @@
 //
 
 import Foundation
+import UIKit
 
 //MARK: - ThemeWapper
 public extension ThemeWapper where Base: UIView {
     var backgroundColor: ThemeColorDynamicProvider? {
         set(new) {
-            self.base.dynamicBackgroundColor = new
+            if new != nil {
+                let baseItem = self.base
+                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.backgroundColor = new?(style)
+                }
+                self.base.configs["backgroundColor"] = config
+                self.base.backgroundColor = new?(ThemeManager.shared.currentThemeStyle)
+                ThemeManager.shared.trackedHashTable.add(self.base)
+            }else {
+                self.base.configs.removeValue(forKey: "backgroundColor")
+            }
         }
         get {
-            return self.base.dynamicBackgroundColor
+            return nil
         }
     }
     var customization: ThemeCustomizationClosure? {
         set(new) {
-            self.base.themeCustomization = new
+            if new != nil {
+                self.base.configs["customization"] = new!
+                new?(ThemeManager.shared.currentThemeStyle)
+                ThemeManager.shared.trackedHashTable.add(self.base)
+            }else {
+                self.base.configs.removeValue(forKey: "customization")
+            }
         }
         get {
-            return self.base.themeCustomization
+            return nil
         }
     }
 }
 public extension ThemeWapper where Base: UILabel {
     var textColor: ThemeColorDynamicProvider? {
         set(new) {
-            self.base.dynamicTextColor = new
+            if new != nil {
+                let baseItem = self.base
+                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.textColor = new?(style)
+                }
+                self.base.configs["textColor"] = config
+                self.base.textColor = new?(ThemeManager.shared.currentThemeStyle)
+                ThemeManager.shared.trackedHashTable.add(self.base)
+            }else {
+                self.base.configs.removeValue(forKey: "textColor")
+            }
         }
         get {
-            return self.base.dynamicTextColor
+            return nil
         }
     }
     var attributedText: ThemeAttributedTextDynamicProvider? {
         set(new) {
-            self.base.dynamicAttributedText = new
+            if new != nil {
+                let baseItem = self.base
+                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.attributedText = new?(style)
+                }
+                self.base.configs["attributedText"] = config
+                self.base.attributedText = new?(ThemeManager.shared.currentThemeStyle)
+                ThemeManager.shared.trackedHashTable.add(self.base)
+            }else {
+                self.base.configs.removeValue(forKey: "attributedText")
+            }
         }
         get {
-            return self.base.dynamicAttributedText
+            return nil
         }
     }
 }
@@ -53,101 +90,130 @@ public extension ThemeWapper where Base: UILabel {
 public extension ThemeWapper where Base: UITextField {
     var textColor: ThemeColorDynamicProvider? {
         set(new) {
-            self.base.dynamicTextColor = new
+            if new != nil {
+                let baseItem = self.base
+                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.textColor = new?(style)
+                }
+                self.base.configs["textColor"] = config
+                self.base.textColor = new?(ThemeManager.shared.currentThemeStyle)
+                ThemeManager.shared.trackedHashTable.add(self.base)
+            }else {
+                self.base.configs.removeValue(forKey: "textColor")
+            }
         }
         get {
-            return self.base.dynamicTextColor
+            return nil
         }
     }
     var attributedText: ThemeAttributedTextDynamicProvider? {
         set(new) {
-            self.base.dynamicAttributedText = new
+            if new != nil {
+                let baseItem = self.base
+                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.attributedText = new?(style)
+                }
+                self.base.configs["attributedText"] = config
+                self.base.attributedText = new?(ThemeManager.shared.currentThemeStyle)
+                ThemeManager.shared.trackedHashTable.add(self.base)
+            }else {
+                self.base.configs.removeValue(forKey: "attributedText")
+            }
         }
         get {
-            return self.base.dynamicAttributedText
+            return nil
         }
     }
 }
 public extension ThemeWapper where Base: UITextView {
     var textColor: ThemeColorDynamicProvider? {
         set(new) {
-            self.base.dynamicTextColor = new
+            if new != nil {
+                let baseItem = self.base
+                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.textColor = new?(style)
+                }
+                self.base.configs["textColor"] = config
+                self.base.textColor = new?(ThemeManager.shared.currentThemeStyle)
+                ThemeManager.shared.trackedHashTable.add(self.base)
+            }else {
+                self.base.configs.removeValue(forKey: "textColor")
+            }
         }
         get {
-            return self.base.dynamicTextColor
+            return nil
         }
     }
     var attributedText: ThemeAttributedTextDynamicProvider? {
         set(new) {
-            self.base.dynamicAttributedText = new
+            if new != nil {
+                let baseItem = self.base
+                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.attributedText = new?(style)
+                }
+                self.base.configs["attributedText"] = config
+                self.base.attributedText = new?(ThemeManager.shared.currentThemeStyle)
+                ThemeManager.shared.trackedHashTable.add(self.base)
+            }else {
+                self.base.configs.removeValue(forKey: "attributedText")
+            }
         }
         get {
-            return self.base.dynamicAttributedText
+            return nil
         }
     }
 }
 public extension ThemeWapper where Base: UIImageView {
     var image: ThemeImageDynamicProvider? {
         set(new) {
-            self.base.dynamicImage = new
+            if new != nil {
+                let baseItem = self.base
+                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.image = new?(style)
+                }
+                self.base.configs["image"] = config
+                self.base.image = new?(ThemeManager.shared.currentThemeStyle)
+                ThemeManager.shared.trackedHashTable.add(self.base)
+            }else {
+                self.base.configs.removeValue(forKey: "textColor")
+            }
         }
         get {
-            return self.base.dynamicImage
+            return nil
         }
     }
 }
 public extension ThemeWapper where Base: CALayer {
     var backgroundColor: ThemeColorDynamicProvider? {
         set(new) {
-            self.base.dynamicBackgroundColor = new
+            if new != nil {
+                let baseItem = self.base
+                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.backgroundColor = new?(style).cgColor
+                }
+                self.base.configs["backgroundColor"] = config
+                self.base.backgroundColor = new?(ThemeManager.shared.currentThemeStyle).cgColor
+                ThemeManager.shared.trackedHashTable.add(self.base)
+            }else {
+                self.base.configs.removeValue(forKey: "backgroundColor")
+            }
         }
         get {
-            return self.base.dynamicBackgroundColor
+            return nil
         }
     }
     var customization: ThemeCustomizationClosure? {
         set(new) {
-            self.base.themeCustomization = new
-        }
-        get {
-            return self.base.themeCustomization
-        }
-    }
-}
-
-//MARK: - ThemeCustomizable
-extension UIView: ThemeCustomizable {
-    struct CustomizationAssociatedKey {
-        static var customization: Void?
-    }
-    var themeCustomization: ThemeCustomizationClosure? {
-        set(new) {
-            objc_setAssociatedObject(self, &CustomizationAssociatedKey.customization, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             if new != nil {
+                self.base.configs["customization"] = new!
                 new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.trackedHashTable.add(self)
+                ThemeManager.shared.trackedHashTable.add(self.base)
+            }else {
+                self.base.configs.removeValue(forKey: "customization")
             }
         }
         get {
-            return objc_getAssociatedObject(self, &CustomizationAssociatedKey.customization) as? ThemeCustomizationClosure
-        }
-    }
-}
-
-extension CALayer: ThemeCustomizable {
-    struct CustomizationAssociatedKey {
-        static var customization: Void?
-    }
-    var themeCustomization: ThemeCustomizationClosure? {
-        set(new) {
-            objc_setAssociatedObject(self, &CustomizationAssociatedKey.customization, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            if new != nil {
-                new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.trackedHashTable.add(self)
-            }
-        }
-        get {
-            return objc_getAssociatedObject(self, &CustomizationAssociatedKey.customization) as? ThemeCustomizationClosure
+            return nil
         }
     }
 }
@@ -155,147 +221,34 @@ extension CALayer: ThemeCustomizable {
 //MARK: - Extentsion Property
 internal extension UIView {
     struct AssociatedKey {
-        static var backgroundColor: Void?
+        static var configs: Void?
     }
-    var dynamicBackgroundColor: ThemeColorDynamicProvider? {
+    var configs: [String: ThemeCustomizationClosure] {
         set(new) {
-            objc_setAssociatedObject(self, &AssociatedKey.backgroundColor, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            if new != nil {
-                backgroundColor = new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.trackedHashTable.add(self)
-            }
+            objc_setAssociatedObject(self, &AssociatedKey.configs, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         get {
-            return objc_getAssociatedObject(self, &AssociatedKey.backgroundColor) as? ThemeColorDynamicProvider
-        }
-    }
-}
-
-internal extension UILabel {
-    struct AssociatedKey {
-        static var textColor: Void?
-        static var attributedText: Void?
-    }
-    var dynamicTextColor: ThemeColorDynamicProvider? {
-        set(new) {
-            objc_setAssociatedObject(self, &AssociatedKey.textColor, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            if new != nil {
-                textColor = new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.trackedHashTable.add(self)
+            if objc_getAssociatedObject(self, &AssociatedKey.configs) as? [String: ThemeCustomizationClosure] == nil {
+                self.configs = [String: ThemeCustomizationClosure]()
             }
-        }
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKey.textColor) as? ThemeColorDynamicProvider
-        }
-    }
-    var dynamicAttributedText: ThemeAttributedTextDynamicProvider? {
-        set(new) {
-            objc_setAssociatedObject(self, &AssociatedKey.attributedText, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            if new != nil {
-                attributedText = new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.trackedHashTable.add(self)
-            }
-        }
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKey.attributedText) as? ThemeAttributedTextDynamicProvider
-        }
-    }
-}
-
-internal extension UITextField {
-    struct AssociatedKey {
-        static var textColor: Void?
-        static var attributedText: Void?
-    }
-    var dynamicTextColor: ThemeColorDynamicProvider? {
-        set(new) {
-            objc_setAssociatedObject(self, &AssociatedKey.textColor, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            if new != nil {
-                textColor = new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.trackedHashTable.add(self)
-            }
-        }
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKey.textColor) as? ThemeColorDynamicProvider
-        }
-    }
-    var dynamicAttributedText: ThemeAttributedTextDynamicProvider? {
-        set(new) {
-            objc_setAssociatedObject(self, &AssociatedKey.attributedText, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            if new != nil {
-                attributedText = new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.trackedHashTable.add(self)
-            }
-        }
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKey.attributedText) as? ThemeAttributedTextDynamicProvider
-        }
-    }
-}
-
-internal extension UITextView {
-    struct AssociatedKey {
-        static var textColor: Void?
-        static var attributedText: Void?
-    }
-    var dynamicTextColor: ThemeColorDynamicProvider? {
-        set(new) {
-            objc_setAssociatedObject(self, &AssociatedKey.textColor, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            if new != nil {
-                textColor = new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.trackedHashTable.add(self)
-            }
-        }
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKey.textColor) as? ThemeColorDynamicProvider
-        }
-    }
-    var dynamicAttributedText: ThemeAttributedTextDynamicProvider? {
-        set(new) {
-            objc_setAssociatedObject(self, &AssociatedKey.attributedText, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            if new != nil {
-                attributedText = new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.trackedHashTable.add(self)
-            }
-        }
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKey.attributedText) as? ThemeAttributedTextDynamicProvider
-        }
-    }
-}
-
-internal extension UIImageView {
-    struct AssociatedKey {
-        static var image: Void?
-    }
-    var dynamicImage: ThemeImageDynamicProvider? {
-        set(new) {
-            objc_setAssociatedObject(self, &AssociatedKey.image, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            if new != nil {
-                image = new?(ThemeManager.shared.currentThemeStyle)
-                ThemeManager.shared.trackedHashTable.add(self)
-            }
-        }
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKey.image) as? ThemeImageDynamicProvider
+            return objc_getAssociatedObject(self, &AssociatedKey.configs) as! [String: ThemeCustomizationClosure]
         }
     }
 }
 
 internal extension CALayer {
     struct AssociatedKey {
-        static var backgroundColor: Void?
+        static var configs: Void?
     }
-    var dynamicBackgroundColor: ThemeColorDynamicProvider? {
+    var configs: [String: ThemeCustomizationClosure] {
         set(new) {
-            objc_setAssociatedObject(self, &AssociatedKey.backgroundColor, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            if new != nil {
-                backgroundColor = new?(ThemeManager.shared.currentThemeStyle).cgColor
-                ThemeManager.shared.trackedHashTable.add(self)
-            }
+            objc_setAssociatedObject(self, &AssociatedKey.configs, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         get {
-            return objc_getAssociatedObject(self, &AssociatedKey.backgroundColor) as? ThemeColorDynamicProvider
+            if objc_getAssociatedObject(self, &AssociatedKey.configs) as? [String: ThemeCustomizationClosure] == nil {
+                self.configs = [String: ThemeCustomizationClosure]()
+            }
+            return objc_getAssociatedObject(self, &AssociatedKey.configs) as! [String: ThemeCustomizationClosure]
         }
     }
 }

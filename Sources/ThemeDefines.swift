@@ -22,7 +22,7 @@ extension CALayer: ThemeCompatible { }
 
 //MARK: - ThemeWapper
 public struct ThemeWapper<Base> {
-    internal let base: Base
+    let base: Base
     init(_ base: Base) {
         self.base = base
     }
@@ -52,14 +52,10 @@ public struct ThemeStyle: RawRepresentable, Equatable, Hashable, Comparable {
 }
 
 public typealias ThemePropertyDynamicProvider<T> = (ThemeStyle) -> T
-public typealias ThemeImageDynamicProvider = ThemePropertyDynamicProvider<UIImage>
 public typealias ThemeColorDynamicProvider = ThemePropertyDynamicProvider<UIColor>
+public typealias ThemeImageDynamicProvider = ThemePropertyDynamicProvider<UIImage>
 public typealias ThemeAttributedTextDynamicProvider = ThemePropertyDynamicProvider<NSAttributedString>
-public typealias ThemeCustomizationClosure = (ThemeStyle) -> Void
+public typealias ThemeCustomizationClosure = (ThemeStyle) -> ()
 
-//MARK: - ThemeCustomizable
-internal protocol ThemeCustomizable {
-    var themeCustomization: ThemeCustomizationClosure? { get }
-}
 
 
