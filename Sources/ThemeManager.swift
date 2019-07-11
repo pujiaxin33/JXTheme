@@ -14,16 +14,49 @@ extension Notification.Name {
 
 public class ThemeManager {
     public static let shared = ThemeManager()
-    public private(set) var currentThemeStyle: ThemeStyle = .light
-    public var isFollowSystem: Bool = false {
+    public private(set) var currentThemeStyle: ThemeStyle = .light {
         didSet {
-                //TODO：isFollowSystem
+            if shouldStoreConfigs {
+                UserDefaults.standard.setValue(currentThemeStyle.rawValue, forKey: currentThemeStyleUserDefaultsKey)
+            }
         }
     }
-    lazy var trackedHashTable: NSHashTable<AnyObject> = {
+    /// 是否存储`currentThemeStyle`、`isFollowSystem`的配置值
+    public var shouldStoreConfigs: Bool = true {
+        didSet {
+            UserDefaults.standard.setValue(NSNumber(value: shouldStoreConfigs), forKey: shouldStoreConfigsUserDefaultsKey)
+        }
+    }
+    /// 属性存储的标志key。可以设置为用户的ID，这样在同一个手机，可以分别记录不同用户的配置。需要优化设置该属性再设置其他值。
+    public var storeConfigsIdentifierKey: String = "jiaxin.theme.default" {
+        didSet {
+            refreshStoreConfigs()
+        }
+    }
+    public var isFollowSystem: Bool = false {
+        didSet {
+            if shouldStoreConfigs {
+                UserDefaults.standard.setValue(NSNumber(value: isFollowSystem), forKey: isFollowSystemUserDefaultsKey)
+            }
+        }
+    }
+    internal lazy var trackedHashTable: NSHashTable<AnyObject> = {
         return NSHashTable<AnyObject>.init(options: .weakMemory)
     }()
-    //TODO:userdefaults存储themestyle
+    private var shouldStoreConfigsUserDefaultsKey: String {
+        return storeConfigsIdentifierKey + "com.jiaxin.theme.shouldStoreConfigsUserDefaultsKey"
+    }
+    private var isFollowSystemUserDefaultsKey: String {
+        return storeConfigsIdentifierKey + "com.jiaxin.theme.isFollowSystemUserDefaultsKey"
+    }
+    private var currentThemeStyleUserDefaultsKey: String {
+        return storeConfigsIdentifierKey + "com.jiaxin.theme.currentThemeStyleUserDefaultsKey"
+    }
+
+    init() {
+        refreshStoreConfigs()
+    }
+
     public func changeTheme(to style: ThemeStyle) {
         currentThemeStyle = style
         NotificationCenter.default.post(name: NSNotification.Name.JXThemeDidChange, object: nil, userInfo: ["style" : style])
@@ -34,6 +67,32 @@ public class ThemeManager {
                 }else if let layer = object as? CALayer {
                     layer.configs.values.forEach { $0(ThemeManager.shared.currentThemeStyle) }
                 }
+            }
+        }
+    }
+
+    private func refreshStoreConfigs() {
+        let shouldStoreConfigsValue = UserDefaults.standard.object(forKey: shouldStoreConfigsUserDefaultsKey) as? NSNumber
+        if shouldStoreConfigsValue == nil {
+            shouldStoreConfigs = true
+            UserDefaults.standard.setValue(NSNumber(value: true), forKey: shouldStoreConfigsUserDefaultsKey)
+        }else {
+            shouldStoreConfigs =  shouldStoreConfigsValue!.boolValue
+        }
+        if shouldStoreConfigs {
+            let isFollowSystemValue = UserDefaults.standard.object(forKey: isFollowSystemUserDefaultsKey) as? NSNumber
+            if isFollowSystemValue == nil {
+                isFollowSystem = false
+                UserDefaults.standard.setValue(NSNumber(value: false), forKey: isFollowSystemUserDefaultsKey)
+            }else {
+                isFollowSystem =  isFollowSystemValue!.boolValue
+            }
+            let currentThemeStyleValue = UserDefaults.standard.string(forKey: currentThemeStyleUserDefaultsKey)
+            if currentThemeStyleValue == nil {
+                currentThemeStyle = .light
+                UserDefaults.standard.setValue(ThemeStyle.light.rawValue, forKey: currentThemeStyleUserDefaultsKey)
+            }else {
+                currentThemeStyle =  ThemeStyle(rawValue: currentThemeStyleValue!)
             }
         }
     }
