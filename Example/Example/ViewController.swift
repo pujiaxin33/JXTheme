@@ -57,6 +57,10 @@ class ViewController: UITableViewController {
                 return .black
             }
         }
+        //配置逻辑封装示例
+//        themeLabel.theme.textColor = dynamicTextColor(.mainTitle)
+//        themeLabel.theme.textColor = dynamicPlistTextColor(.subTitle)
+//        themeLabel.theme.textColor = dynamicJSONTextColor(.subTitle)
 
         themeButton.theme.backgroundColor = { (style) -> UIColor in
             if style == .dark {
@@ -183,7 +187,6 @@ class ViewController: UITableViewController {
         }
 
         //自定义ThemeStyle示例
-        //TODO：切换到系统方案示例。
         customThemeStyleLabel.theme.backgroundColor = { (style) -> UIColor in
             if style == .dark {
                 return .black
@@ -215,6 +218,15 @@ class ViewController: UITableViewController {
     }
 
     @objc func toggleThemeStyle() {
+        //动态json配置设置
+        /*
+        if let themes = DynamicSourceManager.shared.themes, let newTheme = themes.first {
+            //这里的newTheme完全是透明的，依赖于服务器的数据
+            ThemeManager.shared.changeTheme(to: ThemeStyle(rawValue: newTheme))
+        }else {
+            //当前暂无服务器下发的主题资源，这里是你配置默认主题的地方。当然你也可以整合进DynamicSourceManager里面。
+        }
+ */
         if ThemeManager.shared.currentThemeStyle == .dark {
             ThemeManager.shared.changeTheme(to: .light)
         }else {
@@ -234,77 +246,52 @@ extension ThemeStyle {
     static let pink = ThemeStyle(rawValue: "pink")
 }
 
+//业务自己封装配置逻辑
+enum TextColorLevel: String {
+    case normal
+    case mainTitle
+    case subTitle
+}
 
+func dynamicTextColor(_ level: TextColorLevel) -> ThemeColorDynamicProvider {
+    switch level {
+    case .normal:
+        return { (style) -> UIColor in
+            if style == .dark {
+                return UIColor.white
+            }else {
+                return UIColor.gray
+            }
+        }
+    case .mainTitle:
+        return { (style) -> UIColor in
+            if style == .dark {
+                return UIColor.white
+            }else {
+                return UIColor.black
+            }
+        }
+    case .subTitle:
+        return { (style) -> UIColor in
+            if style == .dark {
+                return UIColor.white
+            }else {
+                return UIColor.lightGray
+            }
+        }
+    }
+}
 
-//TODO:添加业务示例封装
-//TODO:添加plist配置示例
-//TODO:添加json服务器动态配置示例
-//enum DQDynamicBackgoundColorLevel {
-//    case normal
-//    case main
-//    case sub
-//}
-//
-//enum DQDynamicTextColorLevel {
-//    case normal
-//    case mainTitle
-//    case subtitle
-//}
-//
-//func dynamicBackgoundColor(level: DQDynamicBackgoundColorLevel) -> DQColorDynamicProvider {
-//    switch level {
-//    case .normal:
-//        return { (style) -> UIColor in
-//            if style == .light {
-//                return UIColor.black
-//            }else {
-//                return UIColor.red
-//            }
-//        }
-//    case .main:
-//        return { (style) -> UIColor in
-//            if style == .light {
-//                return UIColor.black
-//            }else {
-//                return UIColor.red
-//            }
-//        }
-//    case .sub:
-//        return { (style) -> UIColor in
-//            if style == .light {
-//                return UIColor.black
-//            }else {
-//                return UIColor.red
-//            }
-//        }
-//    }
-//}
-//
-//func dynamicTextColor(level: DQDynamicTextColorLevel) -> DQColorDynamicProvider {
-//    switch level {
-//    case .normal:
-//        return { (style) -> UIColor in
-//            if style == .light {
-//                return UIColor.white
-//            }else {
-//                return UIColor.black
-//            }
-//        }
-//    case .mainTitle:
-//        return { (style) -> UIColor in
-//            if style == .light {
-//                return UIColor.white
-//            }else {
-//                return UIColor.black
-//            }
-//        }
-//    case .subtitle:
-//        return { (style) -> UIColor in
-//            if style == .light {
-//                return UIColor.white
-//            }else {
-//                return UIColor.black
-//            }
-//        }
-//    }
-//}
+//静态plist使用示例
+func dynamicPlistTextColor(_ level: TextColorLevel) -> ThemeColorDynamicProvider {
+    return { (style) -> UIColor in
+        return StaticSourceManager.shared.textColor(style: style, level: level)
+    }
+}
+
+//动态json使用示例
+func dynamicJSONTextColor(_ level: TextColorLevel) -> ThemeColorDynamicProvider {
+    return { (style) -> UIColor in
+        return DynamicSourceManager.shared.textColor(style: style, level: level)
+    }
+}
