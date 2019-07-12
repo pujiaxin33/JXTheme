@@ -19,6 +19,7 @@ public extension ThemeCompatible {
 }
 extension UIView: ThemeCompatible { }
 extension CALayer: ThemeCompatible { }
+extension UIBarItem: ThemeCompatible { }
 
 //MARK: - ThemeWapper
 public struct ThemeWapper<Base> {
@@ -56,6 +57,12 @@ public typealias ThemeColorDynamicProvider = ThemePropertyDynamicProvider<UIColo
 public typealias ThemeImageDynamicProvider = ThemePropertyDynamicProvider<UIImage>
 public typealias ThemeAttributedTextDynamicProvider = ThemePropertyDynamicProvider<NSAttributedString>
 public typealias ThemeKeyboardAppearanceDynamicProvider = ThemePropertyDynamicProvider<UIKeyboardAppearance>
+public typealias ThemeCGFloatDynamicProvider = ThemePropertyDynamicProvider<CGFloat>
+public typealias ThemeAttributesDynamicProvider = ThemePropertyDynamicProvider<[NSAttributedString.Key : Any]>
+public typealias ThemeFontDynamicProvider = ThemePropertyDynamicProvider<UIFont>
+public typealias ThemeBarStyleDynamicProvider = ThemePropertyDynamicProvider<UIBarStyle>
+public typealias ThemeActivityIndicatorViewStyleDynamicProvider = ThemePropertyDynamicProvider<UIActivityIndicatorView.Style>
+public typealias ThemeUIScrollViewIndicatorStyleDynamicProvider = ThemePropertyDynamicProvider<UIScrollView.IndicatorStyle>
 public typealias ThemeCustomizationClosure = (ThemeStyle) -> ()
 
 
