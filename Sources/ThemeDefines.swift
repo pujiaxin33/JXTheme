@@ -55,6 +55,7 @@ public typealias ThemePropertyDynamicProvider<T> = (ThemeStyle) -> T
 public typealias ThemeColorDynamicProvider = ThemePropertyDynamicProvider<UIColor>
 public typealias ThemeImageDynamicProvider = ThemePropertyDynamicProvider<UIImage>
 public typealias ThemeAttributedTextDynamicProvider = ThemePropertyDynamicProvider<NSAttributedString>
+public typealias ThemeKeyboardAppearanceDynamicProvider = ThemePropertyDynamicProvider<UIKeyboardAppearance>
 public typealias ThemeCustomizationClosure = (ThemeStyle) -> ()
 
 

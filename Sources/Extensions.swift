@@ -9,20 +9,45 @@
 import Foundation
 import UIKit
 
+func setupViewThemeProperty<T>(view: UIView, key: String, provider: ThemePropertyDynamicProvider<T>?, customization: @escaping () -> ()) {
+    if provider != nil {
+        let config: ThemeCustomizationClosure = {(style) in
+            customization()
+        }
+        view.configs[key] = config
+        customization()
+        ThemeManager.shared.trackedHashTable.add(view)
+    }else {
+        view.configs.removeValue(forKey: key)
+    }
+}
+
 //MARK: - ThemeWapper
 public extension ThemeWapper where Base: UIView {
     var backgroundColor: ThemeColorDynamicProvider? {
         set(new) {
+            let baseItem = self.base
+            setupViewThemeProperty(view: self.base, key: "UIView.backgroundColor", provider: new) {
+                baseItem.backgroundColor = new?(ThemeManager.shared.currentThemeStyle)
+            }
+        }
+        get {
+            return nil
+        }
+    }
+
+    var tintColor: ThemeColorDynamicProvider? {
+        set(new) {
             if new != nil {
                 let baseItem = self.base
                 let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
-                    baseItem?.backgroundColor = new?(style)
+                    baseItem?.tintColor = new?(style)
                 }
-                self.base.configs["UIView.backgroundColor"] = config
-                self.base.backgroundColor = new?(ThemeManager.shared.currentThemeStyle)
+                self.base.configs["UIView.tintColor"] = config
+                self.base.tintColor = new?(ThemeManager.shared.currentThemeStyle)
                 ThemeManager.shared.trackedHashTable.add(self.base)
             }else {
-                self.base.configs.removeValue(forKey: "UIView.backgroundColor")
+                self.base.configs.removeValue(forKey: "UIView.tintColor")
             }
         }
         get {
@@ -194,6 +219,24 @@ public extension ThemeWapper where Base: UITextField {
             return nil
         }
     }
+    var keyboardAppearance: ThemeKeyboardAppearanceDynamicProvider? {
+        set(new) {
+            if new != nil {
+                let baseItem = self.base
+                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.keyboardAppearance = new?(style) ?? .default
+                }
+                self.base.configs["UITextField.keyboardAppearance"] = config
+                self.base.keyboardAppearance = new?(ThemeManager.shared.currentThemeStyle) ?? .default
+                ThemeManager.shared.trackedHashTable.add(self.base)
+            }else {
+                self.base.configs.removeValue(forKey: "UITextField.keyboardAppearance")
+            }
+        }
+        get {
+            return nil
+        }
+    }
 }
 public extension ThemeWapper where Base: UITextView {
     var textColor: ThemeColorDynamicProvider? {
@@ -226,6 +269,24 @@ public extension ThemeWapper where Base: UITextView {
                 ThemeManager.shared.trackedHashTable.add(self.base)
             }else {
                 self.base.configs.removeValue(forKey: "attributedText")
+            }
+        }
+        get {
+            return nil
+        }
+    }
+    var keyboardAppearance: ThemeKeyboardAppearanceDynamicProvider? {
+        set(new) {
+            if new != nil {
+                let baseItem = self.base
+                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.keyboardAppearance = new?(style) ?? .default
+                }
+                self.base.configs["UITextField.keyboardAppearance"] = config
+                self.base.keyboardAppearance = new?(ThemeManager.shared.currentThemeStyle) ?? .default
+                ThemeManager.shared.trackedHashTable.add(self.base)
+            }else {
+                self.base.configs.removeValue(forKey: "UITextField.keyboardAppearance")
             }
         }
         get {
