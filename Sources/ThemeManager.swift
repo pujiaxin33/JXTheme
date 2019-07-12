@@ -16,15 +16,13 @@ public class ThemeManager {
     public static let shared = ThemeManager()
     public private(set) var currentThemeStyle: ThemeStyle = .light {
         didSet {
-            if shouldStoreConfigs {
-                UserDefaults.standard.setValue(currentThemeStyle.rawValue, forKey: currentThemeStyleUserDefaultsKey)
-            }
+            storeCurrentThemeStyleIfNeeded()
         }
     }
     /// 是否存储`currentThemeStyle`、`isFollowSystem`的配置值
     public var shouldStoreConfigs: Bool = true {
         didSet {
-            UserDefaults.standard.setValue(NSNumber(value: shouldStoreConfigs), forKey: shouldStoreConfigsUserDefaultsKey)
+            storeShouldStoreConfigs()
         }
     }
     /// 属性存储的标志key。可以设置为用户的ID，这样在同一个手机，可以分别记录不同用户的配置。需要优化设置该属性再设置其他值。
@@ -35,23 +33,12 @@ public class ThemeManager {
     }
     public var isFollowSystem: Bool = false {
         didSet {
-            if shouldStoreConfigs {
-                UserDefaults.standard.setValue(NSNumber(value: isFollowSystem), forKey: isFollowSystemUserDefaultsKey)
-            }
+            storeIsFollowSystemIfNeeded()
         }
     }
     internal lazy var trackedHashTable: NSHashTable<AnyObject> = {
         return NSHashTable<AnyObject>.init(options: .weakMemory)
     }()
-    private var shouldStoreConfigsUserDefaultsKey: String {
-        return storeConfigsIdentifierKey + "com.jiaxin.theme.shouldStoreConfigsUserDefaultsKey"
-    }
-    private var isFollowSystemUserDefaultsKey: String {
-        return storeConfigsIdentifierKey + "com.jiaxin.theme.isFollowSystemUserDefaultsKey"
-    }
-    private var currentThemeStyleUserDefaultsKey: String {
-        return storeConfigsIdentifierKey + "com.jiaxin.theme.currentThemeStyleUserDefaultsKey"
-    }
 
     init() {
         refreshStoreConfigs()
@@ -70,8 +57,37 @@ public class ThemeManager {
             }
         }
     }
+}
 
-    private func refreshStoreConfigs() {
+//MARK: - Store
+extension ThemeManager {
+    private var shouldStoreConfigsUserDefaultsKey: String {
+        return storeConfigsIdentifierKey + "com.jiaxin.theme.shouldStoreConfigsUserDefaultsKey"
+    }
+    private var isFollowSystemUserDefaultsKey: String {
+        return storeConfigsIdentifierKey + "com.jiaxin.theme.isFollowSystemUserDefaultsKey"
+    }
+    private var currentThemeStyleUserDefaultsKey: String {
+        return storeConfigsIdentifierKey + "com.jiaxin.theme.currentThemeStyleUserDefaultsKey"
+    }
+
+    fileprivate func storeShouldStoreConfigs() {
+        UserDefaults.standard.setValue(NSNumber(value: shouldStoreConfigs), forKey: shouldStoreConfigsUserDefaultsKey)
+    }
+
+    fileprivate func storeIsFollowSystemIfNeeded() {
+        if shouldStoreConfigs {
+            UserDefaults.standard.setValue(NSNumber(value: isFollowSystem), forKey: isFollowSystemUserDefaultsKey)
+        }
+    }
+
+    fileprivate func storeCurrentThemeStyleIfNeeded() {
+        if shouldStoreConfigs {
+            UserDefaults.standard.setValue(currentThemeStyle.rawValue, forKey: currentThemeStyleUserDefaultsKey)
+        }
+    }
+
+    fileprivate func refreshStoreConfigs() {
         let shouldStoreConfigsValue = UserDefaults.standard.object(forKey: shouldStoreConfigsUserDefaultsKey) as? NSNumber
         if shouldStoreConfigsValue == nil {
             shouldStoreConfigs = true
@@ -79,21 +95,19 @@ public class ThemeManager {
         }else {
             shouldStoreConfigs =  shouldStoreConfigsValue!.boolValue
         }
-        if shouldStoreConfigs {
-            let isFollowSystemValue = UserDefaults.standard.object(forKey: isFollowSystemUserDefaultsKey) as? NSNumber
-            if isFollowSystemValue == nil {
-                isFollowSystem = false
-                UserDefaults.standard.setValue(NSNumber(value: false), forKey: isFollowSystemUserDefaultsKey)
-            }else {
-                isFollowSystem =  isFollowSystemValue!.boolValue
-            }
-            let currentThemeStyleValue = UserDefaults.standard.string(forKey: currentThemeStyleUserDefaultsKey)
-            if currentThemeStyleValue == nil {
-                currentThemeStyle = .light
-                UserDefaults.standard.setValue(ThemeStyle.light.rawValue, forKey: currentThemeStyleUserDefaultsKey)
-            }else {
-                currentThemeStyle =  ThemeStyle(rawValue: currentThemeStyleValue!)
-            }
+        let isFollowSystemValue = UserDefaults.standard.object(forKey: isFollowSystemUserDefaultsKey) as? NSNumber
+        if isFollowSystemValue == nil {
+            isFollowSystem = false
+            UserDefaults.standard.setValue(NSNumber(value: false), forKey: isFollowSystemUserDefaultsKey)
+        }else {
+            isFollowSystem =  isFollowSystemValue!.boolValue
+        }
+        let currentThemeStyleValue = UserDefaults.standard.string(forKey: currentThemeStyleUserDefaultsKey)
+        if currentThemeStyleValue == nil {
+            currentThemeStyle = .light
+            UserDefaults.standard.setValue(ThemeStyle.light.rawValue, forKey: currentThemeStyleUserDefaultsKey)
+        }else {
+            currentThemeStyle =  ThemeStyle(rawValue: currentThemeStyleValue!)
         }
     }
 }
