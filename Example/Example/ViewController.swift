@@ -20,18 +20,20 @@ class ViewController: UITableViewController {
     lazy var themeLayer: CALayer = { CALayer() }()
     @IBOutlet weak var customThemeStyleLabel: UILabel!
     @IBOutlet weak var attributedLabel: UILabel!
-    
-    
+    @IBOutlet var cellTitleLabels: [UILabel]!
+    @IBOutlet var cells: [UITableViewCell]!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        NotificationCenter.default.addObserver(self, selector: #selector(themeDidChange(notification:)), name: Notification.Name.JXThemeDidChange, object: nil)
         refreshToggleButton()
 
         themeView.theme.backgroundColor = { (style) -> UIColor in
             if style == .dark {
-                return .black
+                return .white
             }else {
-                return .blue
+                return .black
             }
         }
         //UIView customization自定义
@@ -172,9 +174,9 @@ class ViewController: UITableViewController {
         themeLayerContainerView.layer.addSublayer(themeLayer)
         themeLayer.theme.backgroundColor = { (style) -> UIColor in
             if style == .dark {
-                return .black
+                return .white
             }else {
-                return .blue
+                return .black
             }
         }
         //CALayer customization自定义
@@ -205,6 +207,22 @@ class ViewController: UITableViewController {
                 return .black
             }
         }
+
+        tableView.theme.separatorColor = { (style) -> UIColor in
+            if style == .dark {
+                return .white
+            }else {
+                return .black
+            }
+        }
+        navigationController?.navigationBar.isTranslucent = false
+        navigationController?.navigationBar.theme.barStyle = { (style) -> UIBarStyle in
+            if style == .dark {
+                return .black
+            }else {
+                return .default
+            }
+        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -213,8 +231,39 @@ class ViewController: UITableViewController {
         themeLayer.frame = themeLayerContainerView.bounds
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if ThemeManager.shared.currentThemeStyle == .dark {
+            cells.forEach { $0.contentView.backgroundColor = .black }
+            cellTitleLabels.forEach { $0.textColor = .white }
+        }else {
+            cells.forEach { $0.contentView.backgroundColor = .white }
+            cellTitleLabels.forEach { $0.textColor = .black }
+        }
+    }
+
+    @objc func themeDidChange(notification: Notification) {
+        let newStyle = notification.userInfo?["style"] as! ThemeStyle
+        if newStyle == .dark {
+            cells.forEach { $0.contentView.backgroundColor = .black }
+            cellTitleLabels.forEach { $0.textColor = .white }
+        }else {
+            cells.forEach { $0.contentView.backgroundColor = .white }
+            cellTitleLabels.forEach { $0.textColor = .black }
+        }
+    }
+
     func refreshToggleButton() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: ThemeManager.shared.currentThemeStyle.rawValue, style: .plain, target: self, action: #selector(toggleThemeStyle))
+        let barButtonItem = UIBarButtonItem(title: ThemeManager.shared.currentThemeStyle.rawValue, style: .plain, target: self, action: #selector(toggleThemeStyle))
+        barButtonItem.theme.tintColor = { (style) -> UIColor in
+            if style == .dark {
+                return .white
+            }else {
+                return .black
+            }
+        }
+        navigationItem.rightBarButtonItem = barButtonItem
     }
 
     @objc func toggleThemeStyle() {
