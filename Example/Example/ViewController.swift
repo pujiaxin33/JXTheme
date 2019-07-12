@@ -239,6 +239,18 @@ class ViewController: UITableViewController {
         ThemeManager.shared.changeTheme(to: .pink)
         refreshToggleButton()
     }
+
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        /*
+        //如果你设置了ThemeManager.shared.isFollowSystem = true，你需要在你rootController里面的traitCollectionDidChange方法里面，监听userInterfaceStyle的改变。并且告知themeManager。
+        if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+            //之前的userInterfaceStyle和当前的userInterfaceStyle不同，才触发themeManager的更新
+            ThemeManager.shared.refreshSystemTheme()
+        }
+ */
+    }
 }
 
 //自定义ThemeStyle示例

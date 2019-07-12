@@ -68,6 +68,19 @@ public class ThemeManager {
         }
     }
 
+    @available(iOS 12.0, *)
+    public func refreshSystemTheme() {
+        DispatchQueue.main.async {
+            self.trackedHashTable.allObjects.forEach { (object) in
+                if let view = object as? UIView {
+                    view.configs.values.forEach { $0(self.realCurrentThemeStyle(view)) }
+                }else if let layer = object as? CALayer {
+                    layer.configs.values.forEach { $0(self.realCurrentThemeStyle(layer)) }
+                }
+            }
+        }
+    }
+
     func addTrackedObject(_ object: AnyObject, addedConfig: ThemeCustomizationClosure) {
         trackedHashTable.add(object)
         addedConfig(realCurrentThemeStyle(object))
