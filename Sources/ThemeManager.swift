@@ -14,31 +14,41 @@ extension Notification.Name {
 
 public class ThemeManager {
     public static let shared = ThemeManager()
+    /// 当isFollowSystem为true时，currentThemeStyle为无效值。而应该依赖于具体UIViewController、UIView的traitCollection.userInterfaceStyle值。
     public private(set) var currentThemeStyle: ThemeStyle = .light {
         didSet {
             storeCurrentThemeStyleIfNeeded()
         }
     }
-    /// 是否存储`currentThemeStyle`、`isFollowSystem`的配置值
+    /// 是否存储`currentThemeStyle`、`_isFollowSystem`的配置值
     public var shouldStoreConfigs: Bool = true {
         didSet {
             storeShouldStoreConfigs()
         }
     }
-    /// 属性存储的标志key。可以设置为用户的ID，这样在同一个手机，可以分别记录不同用户的配置。需要优化设置该属性再设置其他值。
+    /// 属性存储的标志key。可以设置为用户的ID，这样在同一个手机，可以分别记录不同用户的配置。需要优先设置该属性再设置其他值。
     public var storeConfigsIdentifierKey: String = "jiaxin.theme.default" {
         didSet {
             refreshStoreConfigs()
         }
     }
-    public var isFollowSystem: Bool = false {
-        didSet {
-            storeIsFollowSystemIfNeeded()
+    @available(iOS 12.0, *)
+    public var isFollowSystem: Bool {
+        set(new) {
+            _isFollowSystem = new
+        }
+        get {
+            return _isFollowSystem
         }
     }
     internal lazy var trackedHashTable: NSHashTable<AnyObject> = {
         return NSHashTable<AnyObject>.init(options: .weakMemory)
     }()
+    fileprivate var _isFollowSystem: Bool = false {
+        didSet {
+            storeIsFollowSystemIfNeeded()
+        }
+    }
 
     init() {
         refreshStoreConfigs()
@@ -46,15 +56,48 @@ public class ThemeManager {
 
     public func changeTheme(to style: ThemeStyle) {
         currentThemeStyle = style
-        NotificationCenter.default.post(name: NSNotification.Name.JXThemeDidChange, object: nil, userInfo: ["style" : style])
+        NotificationCenter.default.post(name: Notification.Name.JXThemeDidChange, object: nil, userInfo: ["style" : style])
         DispatchQueue.main.async {
             self.trackedHashTable.allObjects.forEach { (object) in
                 if let view = object as? UIView {
-                    view.configs.values.forEach { $0(ThemeManager.shared.currentThemeStyle) }
+                    view.configs.values.forEach { $0(self.realCurrentThemeStyle(view)) }
                 }else if let layer = object as? CALayer {
-                    layer.configs.values.forEach { $0(ThemeManager.shared.currentThemeStyle) }
+                    layer.configs.values.forEach { $0(self.realCurrentThemeStyle(layer)) }
                 }
             }
+        }
+    }
+
+    func addTrackedObject(_ object: AnyObject, addedConfig: ThemeCustomizationClosure) {
+        trackedHashTable.add(object)
+        addedConfig(realCurrentThemeStyle(object))
+    }
+
+    func realCurrentThemeStyle(_ targetObject: AnyObject?) -> ThemeStyle {
+        if #available(iOS 12.0, *) {
+            if _isFollowSystem {
+                if let view = targetObject as? UIView {
+                    return transformUserInterfaceStyleToThemeStyle(view.traitCollection.userInterfaceStyle)
+                }else {
+                    return transformUserInterfaceStyleToThemeStyle(UIApplication.shared.keyWindow?.traitCollection.userInterfaceStyle ?? .unspecified)
+                }
+            }else {
+                return currentThemeStyle
+            }
+        }else {
+            return currentThemeStyle
+        }
+    }
+
+    @available(iOS 12.0, *)
+    func transformUserInterfaceStyleToThemeStyle(_ userInterfaceStyle: UIUserInterfaceStyle) -> ThemeStyle {
+        switch userInterfaceStyle {
+        case .dark:
+            return .dark
+        case .light:
+            return .light
+        default:
+            return .unspecified
         }
     }
 }
@@ -77,7 +120,7 @@ extension ThemeManager {
 
     fileprivate func storeIsFollowSystemIfNeeded() {
         if shouldStoreConfigs {
-            UserDefaults.standard.setValue(NSNumber(value: isFollowSystem), forKey: isFollowSystemUserDefaultsKey)
+            UserDefaults.standard.setValue(NSNumber(value: _isFollowSystem), forKey: isFollowSystemUserDefaultsKey)
         }
     }
 
@@ -97,17 +140,21 @@ extension ThemeManager {
         }
         let isFollowSystemValue = UserDefaults.standard.object(forKey: isFollowSystemUserDefaultsKey) as? NSNumber
         if isFollowSystemValue == nil {
-            isFollowSystem = false
+            _isFollowSystem = false
             UserDefaults.standard.setValue(NSNumber(value: false), forKey: isFollowSystemUserDefaultsKey)
         }else {
-            isFollowSystem =  isFollowSystemValue!.boolValue
+            _isFollowSystem =  isFollowSystemValue!.boolValue
         }
-        let currentThemeStyleValue = UserDefaults.standard.string(forKey: currentThemeStyleUserDefaultsKey)
-        if currentThemeStyleValue == nil {
-            currentThemeStyle = .light
-            UserDefaults.standard.setValue(ThemeStyle.light.rawValue, forKey: currentThemeStyleUserDefaultsKey)
+        if _isFollowSystem {
+            currentThemeStyle = realCurrentThemeStyle(nil)
         }else {
-            currentThemeStyle =  ThemeStyle(rawValue: currentThemeStyleValue!)
+            let currentThemeStyleValue = UserDefaults.standard.string(forKey: currentThemeStyleUserDefaultsKey)
+            if currentThemeStyleValue == nil {
+                currentThemeStyle = .light
+                UserDefaults.standard.setValue(ThemeStyle.light.rawValue, forKey: currentThemeStyleUserDefaultsKey)
+            }else {
+                currentThemeStyle =  ThemeStyle(rawValue: currentThemeStyleValue!)
+            }
         }
     }
 }
