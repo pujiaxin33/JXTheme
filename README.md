@@ -187,24 +187,13 @@ themeLabel.theme.textColor = dynamicTextColor(.mainTitle)
 ### 根据服务器动态添加主题
 与**常规配置封装**一样，只是该方法是从服务器加载配置的具体值，具体代码参加`Example`的`DynamicSourceManager`类
 
-# 扩展`ThemeStyle`
+# 扩展`ThemeStyle`添加自定义style
+`ThemeStyle`内部仅提供了一个默认的`unspecified`style，其他的业务style需要自己添加，比如只支持`light`和`dark`，代码如下：
 ```Swift
-//自定义pink style
 extension ThemeStyle {
-    static let pink = ThemeStyle(rawValue: "pink")
+    static let light = ThemeStyle(rawValue: "light")
+    static let dark = ThemeStyle(rawValue: "dark")
 }
-//更新pink style自定义属性
-customThemeStyleLabel.theme.backgroundColor = { (style) -> UIColor in
-    if style == .dark {
-        return .black
-    }else if style == .pink {
-        return UIColor(red: 255.0/255, green: 192.0/255, blue: 203.0/255, alpha: 1)
-    }else {
-        return .white
-    }
-}
-//切换到pink style
-ThemeManager.shared.changeTheme(to: .pink)
 ```
 
 
