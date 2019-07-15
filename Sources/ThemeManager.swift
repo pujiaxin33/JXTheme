@@ -20,7 +20,7 @@ public class ThemeManager {
             storeCurrentThemeStyle()
         }
     }
-    /// 属性存储的标志key。可以设置为用户的ID，这样在同一个手机，可以分别记录不同用户的配置。需要优先设置该属性再设置其他值。
+    /// 配置存储的标志key。可以设置为用户的ID，这样在同一个手机，可以分别记录不同用户的配置。需要优先设置该属性再设置其他值。
     public var storeConfigsIdentifierKey: String = "default" {
         didSet {
             refreshStoreConfigs()
@@ -68,7 +68,6 @@ extension ThemeManager {
         let currentThemeStyleValue = UserDefaults.standard.string(forKey: currentThemeStyleUserDefaultsKey)
         if currentThemeStyleValue == nil {
             currentThemeStyle = .light
-            UserDefaults.standard.setValue(ThemeStyle.light.rawValue, forKey: currentThemeStyleUserDefaultsKey)
         }else {
             currentThemeStyle =  ThemeStyle(rawValue: currentThemeStyleValue!)
         }
