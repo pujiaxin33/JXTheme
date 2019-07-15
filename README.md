@@ -1,22 +1,44 @@
-# JXTheme
-A powerful and lightweight and customization theme/skin library for iOS 9+ in swift. 主题、换肤、暗黑模式
+# 简介
+实现主题切换，主要解决以下四个问题：
+## 1.如何根据传入的style设置对应的值
+借鉴iOS13系统API`UIColor(dynamicProvider: <UITraitCollection) -> UIColor>)`，自定义`ThemePropertyDynamicProvider`闭包，根据传入的`ThemeStyle`返回对应值。这样就可以针对不同的控件，不同的属性配置，实现最大的自定义。
+核心代码如下：
+```Swift
+let dynamicColorProvider: ThemeColorDynamicProvider = { (style) -> UIColor in
+    if style == .dark {
+        return .white
+    }else {
+        return .black
+    }
+}
+view.theme.backgroundColor = dynamicColorProvider
+```
+
+## 2.如何保存主题属性配置闭包
+对控件添加`Associated object`属性`configs`存储第一步的配置闭包。
+
+## 3.如何记录支持主题属性的控件
+
+
+## 4.如何切换主题并调用主题属性配置闭包
+通过`ThemeManager.changeTheme(to: style)`完成主题切换，方法内部再调用被追踪的控件`configs`里面的主题属性配置闭包
 
 # 特性
 
-- 支持iOS 9+，让你的APP更早的实现`DarkMode`;
-- 使用`theme`命名空间属性，`view.theme.xx = xx`，告别`theme_xx`属性扩展用法；
-- 使用`ThemePropertyDynamicProvider`闭包，根据不同的`ThemeStyle`完成主题配置，借鉴iOS13系统API`UIColor(dynamicProvider: <UITraitCollection) -> UIColor>)`；
-- `ThemeStyle`可通过`extension`自定义style，不再局限于只有`light`和`dark`;
-- 提供`ThemeCustomizationClosure`闭包，可以灵活配置任何属性。不再局限于提供的`backgroundColor`、`textColor`等属性；
-- 提供根据`ThemeStyle`配置属性的常规封装、Plist文件静态加载、服务器JSON动态加载示例；
+- [x] 支持iOS 9+，让你的APP更早的实现`DarkMode`;
+- [x] 使用`theme`命名空间属性，`view.theme.xx = xx`，告别`theme_xx`属性扩展用法；
+- [x] 使用`ThemePropertyDynamicProvider`闭包，根据不同的`ThemeStyle`完成主题配置，借鉴iOS13系统API`UIColor(dynamicProvider: <UITraitCollection) -> UIColor>)`；
+- [x] `ThemeStyle`可通过`extension`自定义style，不再局限于只有`light`和`dark`;
+- [x] 提供`ThemeCustomizationClosure`闭包，可以灵活配置任何属性。不再局限于提供的`backgroundColor`、`textColor`等属性；
+- [x] 提供根据`ThemeStyle`配置属性的常规封装、Plist文件静态加载、服务器JSON动态加载示例；
 
 # 预览
 
 # 要求
 
-iOS 9.0+
-XCode 12.1+
-Swift 5.0+
+- iOS 9.0+
+- XCode 12.1+
+- Swift 5.0+
 
 # 安装
 
