@@ -14,8 +14,7 @@ extension Notification.Name {
 
 public class ThemeManager {
     public static let shared = ThemeManager()
-    /// 当isFollowSystem为true时，currentThemeStyle为无效值。而应该依赖于具体UIViewController、UIView的traitCollection.userInterfaceStyle值。
-    public private(set) var currentThemeStyle: ThemeStyle = .light {
+    public private(set) var currentThemeStyle: ThemeStyle = .unspecified {
         didSet {
             storeCurrentThemeStyle()
         }
@@ -67,7 +66,7 @@ extension ThemeManager {
     fileprivate func refreshStoreConfigs() {
         let currentThemeStyleValue = UserDefaults.standard.string(forKey: currentThemeStyleUserDefaultsKey)
         if currentThemeStyleValue == nil {
-            currentThemeStyle = .light
+            currentThemeStyle = .unspecified
         }else {
             currentThemeStyle =  ThemeStyle(rawValue: currentThemeStyleValue!)
         }

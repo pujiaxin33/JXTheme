@@ -292,6 +292,8 @@ class ViewController: UITableViewController {
 
 //自定义ThemeStyle示例
 extension ThemeStyle {
+    static let light = ThemeStyle(rawValue: "light")
+    static let dark = ThemeStyle(rawValue: "dark")
     static let pink = ThemeStyle(rawValue: "pink")
 }
 
