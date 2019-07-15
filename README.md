@@ -1,5 +1,5 @@
 # 简介
-实现主题切换，主要解决以下五个问题：
+JXTheme是一个提供主题属性配置的轻量级基础库。为了实现主题切换，主要解决以下五个问题：
 ## 1.如何优雅的设置主题属性
 通过给控件扩展命名空间属性`theme`，类似于`SnapKit`的`snp`、`Kingfisher`的`kf`，这样可以将支持主题修改的属性，集中到`theme`属性。这样比直接给控件扩展属性`theme_backgroundColor`更加优雅。
 核心代码如下：
@@ -53,13 +53,13 @@ public extension ThemeWapper where Base: UIView {
 
 ## 4.如何记录支持主题属性的控件
 为了在主题切换的时候，通知到支持主题属性配置的控件。通过在设置主题属性时，就记录目标控件。
-核心代码就是第3步里面的
+核心代码就是第3步里面的这句代码：
 ```Swift 
 ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
 ```
 
 ## 5.如何切换主题并调用主题属性配置闭包
-通过`ThemeManager.changeTheme(to: style)`完成主题切换，方法内部再调用被追踪的控件`configs`里面的主题属性配置闭包。
+通过`ThemeManager.changeTheme(to: style)`完成主题切换，方法内部再调用被追踪的控件的`configs`里面的主题属性配置闭包。
 核心代码如下：
 ```Swift
 public func changeTheme(to style: ThemeStyle) {
@@ -340,7 +340,9 @@ extension Notification.Name {
 public var storeConfigsIdentifierKey: String = "default"
 ```
 
+# Contribution
 
+有任何疑问或建议，欢迎提Issue和Pull Request进行交流🤝
 
 
 
