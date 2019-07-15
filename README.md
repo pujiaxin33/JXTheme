@@ -30,7 +30,7 @@ view.theme.backgroundColor = dynamicColorProvider
 ## 3.如何保存主题属性配置闭包
 对控件添加`Associated object`属性`configs`存储主题属性配置闭包。
 核心代码如下：
-```
+```Swift
 public extension ThemeWapper where Base: UIView {
     var backgroundColor: ThemeColorDynamicProvider? {
         set(new) {
@@ -39,6 +39,7 @@ public extension ThemeWapper where Base: UIView {
                 let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
                     baseItem?.backgroundColor = new?(style)
                 }
+                //存储在扩展属性configs里面
                 self.base.configs["UIView.backgroundColor"] = config
                 ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
             }else {
@@ -52,7 +53,10 @@ public extension ThemeWapper where Base: UIView {
 
 ## 4.如何记录支持主题属性的控件
 为了在主题切换的时候，通知到支持主题属性配置的控件。通过在设置主题属性时，就记录目标控件。
-核心代码就是第3步里面的`ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)`
+核心代码就是第3步里面的
+```Swift 
+ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
+```
 
 ## 5.如何切换主题并调用主题属性配置闭包
 通过`ThemeManager.changeTheme(to: style)`完成主题切换，方法内部再调用被追踪的控件`configs`里面的主题属性配置闭包。
@@ -71,18 +75,18 @@ public func changeTheme(to style: ThemeStyle) {
 # 特性
 
 - [x] 支持iOS 9+，让你的APP更早的实现`DarkMode`;
-- [x] 使用`theme`命名空间属性，`view.theme.xx = xx`，告别`theme_xx`属性扩展用法；
-- [x] 使用`ThemePropertyDynamicProvider`闭包，根据不同的`ThemeStyle`完成主题配置，实现最大化的自定义；
-- [x] `ThemeStyle`可通过`extension`自定义style，不再局限于只有`light`和`dark`;
+- [x] 使用`theme`命名空间属性:`view.theme.xx = xx`。告别`theme_xx`属性扩展用法；
+- [x] 使用`ThemePropertyDynamicProvider`闭包，根据不同的`ThemeStyle`完成主题属性配置，实现最大化的自定义；
+- [x] `ThemeStyle`可通过`extension`自定义style，不再局限于`light`和`dark`;
 - [x] 提供`ThemeCustomizationClosure`闭包，可以灵活配置任何属性。不再局限于提供的`backgroundColor`、`textColor`等属性；
-- [x] 提供根据`ThemeStyle`配置属性的常规封装、Plist文件静态加载、服务器JSON动态加载示例；
+- [x] 提供根据`ThemeStyle`配置属性的常规封装、Plist文件静态加载、服务器动态加载示例；
 
 # 预览
 
 # 要求
 
 - iOS 9.0+
-- XCode 12.1+
+- XCode 10.2.1+
 - Swift 5.0+
 
 # 安装
@@ -185,7 +189,7 @@ ThemeManager.shared.changeTheme(to: .pink)
 
 # 目前支持的类及其属性
 
-这里的属性是有继承关系的，比如`UIView`扩展了`backgroundColor`属性，那么它的子类`UILabel`等也就支持`backgroundColor`。如果有你想要支持的类或属性，欢迎提PullRequest进行扩展。
+这里的属性是有继承关系的，比如`UIView`支持`backgroundColor`属性，那么它的子类`UILabel`等也就支持`backgroundColor`。如果没有你想要支持的类或属性，欢迎提PullRequest进行扩展。
 
 ## UIView
 
@@ -321,4 +325,15 @@ ThemeManager.shared.changeTheme(to: .pink)
 ## 为什么使用`theme`命名空间属性，而不是使用`theme_xx`扩展属性呢？
 - 如果你给系统的类扩展了N个函数，当你在使用该类时，进行函数索引时，就会有N个扩展的方法干扰你的选择。尤其是你在进行其他业务开发，而不是想配置主题属性时。
 - 像`Kingfisher`、`SnapKit`等知名三方库，都使用了命名空间属性实现对系统类的扩展，这是一个更`Swift`的写法，值得学习。
+
+## 主题切换通知
+```Swift
+extension Notification.Name {
+    public static let JXThemeDidChange = Notification.Name("com.jiaxin.theme.themeDidChangeNotification")
+}
+```
+
+
+
+
 
