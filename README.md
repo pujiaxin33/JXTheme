@@ -1,6 +1,19 @@
 # 简介
-实现主题切换，主要解决以下四个问题：
-## 1.如何根据传入的style设置对应的值
+实现主题切换，主要解决以下五个问题：
+## 1.如何优雅的设置主题属性
+通过给控件扩展命名空间属性`theme`，类似于`SnapKit`的`snp`、`Kingfisher`的`kf`，这样可以将支持主题修改的属性，集中到`theme`属性。这样比直接给控件扩展方法`theme_setBackgroundColor`更加优雅。
+核心代码如下：
+```Swift
+view.theme.backgroundColor = { (style) -> UIColor in
+    if style == .dark {
+        return .white
+    }else {
+        return .black
+    }
+}
+```
+
+## 2.如何根据传入的style配置对应的值
 借鉴iOS13系统API`UIColor(dynamicProvider: <UITraitCollection) -> UIColor>)`，自定义`ThemePropertyDynamicProvider`闭包，根据传入的`ThemeStyle`返回对应值。这样就可以针对不同的控件，不同的属性配置，实现最大的自定义。
 核心代码如下：
 ```Swift
@@ -14,20 +27,50 @@ let dynamicColorProvider: ThemeColorDynamicProvider = { (style) -> UIColor in
 view.theme.backgroundColor = dynamicColorProvider
 ```
 
-## 2.如何保存主题属性配置闭包
-对控件添加`Associated object`属性`configs`存储第一步的配置闭包。
+## 3.如何保存主题属性配置闭包
+对控件添加`Associated object`属性`configs`存储主题属性配置闭包。
+核心代码如下：
+```
+var backgroundColor: ThemeColorDynamicProvider? {
+    set(new) {
+        if new != nil {
+            let baseItem = self.base
+            let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                baseItem?.backgroundColor = new?(style)
+            }
+            self.base.configs["UIView.backgroundColor"] = config
+            ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
+        }else {
+            self.base.configs.removeValue(forKey: "UIView.backgroundColor")
+        }
+    }
+    get { return nil }
+}
+```
 
-## 3.如何记录支持主题属性的控件
+## 4.如何记录支持主题属性的控件
+为了在主题切换的时候，通知到支持主题属性配置的控件。通过在设置主题属性时，就记录目标控件。
+核心代码就是第3步里面的`ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)`
 
-
-## 4.如何切换主题并调用主题属性配置闭包
-通过`ThemeManager.changeTheme(to: style)`完成主题切换，方法内部再调用被追踪的控件`configs`里面的主题属性配置闭包
+## 5.如何切换主题并调用主题属性配置闭包
+通过`ThemeManager.changeTheme(to: style)`完成主题切换，方法内部再调用被追踪的控件`configs`里面的主题属性配置闭包。
+核心代码如下：
+```Swift
+public func changeTheme(to style: ThemeStyle) {
+    currentThemeStyle = style
+    self.trackedHashTable.allObjects.forEach { (object) in
+        if let view = object as? UIView {
+            view.configs.values.forEach { $0(style) }
+        }
+    }
+}
+```
 
 # 特性
 
 - [x] 支持iOS 9+，让你的APP更早的实现`DarkMode`;
 - [x] 使用`theme`命名空间属性，`view.theme.xx = xx`，告别`theme_xx`属性扩展用法；
-- [x] 使用`ThemePropertyDynamicProvider`闭包，根据不同的`ThemeStyle`完成主题配置，借鉴iOS13系统API`UIColor(dynamicProvider: <UITraitCollection) -> UIColor>)`；
+- [x] 使用`ThemePropertyDynamicProvider`闭包，根据不同的`ThemeStyle`完成主题配置，实现最大化的自定义；
 - [x] `ThemeStyle`可通过`extension`自定义style，不再局限于只有`light`和`dark`;
 - [x] 提供`ThemeCustomizationClosure`闭包，可以灵活配置任何属性。不再局限于提供的`backgroundColor`、`textColor`等属性；
 - [x] 提供根据`ThemeStyle`配置属性的常规封装、Plist文件静态加载、服务器JSON动态加载示例；

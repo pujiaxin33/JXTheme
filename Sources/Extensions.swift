@@ -253,9 +253,6 @@ public extension ThemeWapper where Base: CALayer {
     var backgroundColor: ThemeColorDynamicProvider? {
         set(new) {
             let baseItem = self.base
-//            self.base.borderColor
-//            self.base.
-//            self.base.shadowColor
             setupLayerThemeProperty(layer: self.base, key: "CALayer.backgroundColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.backgroundColor = new?(style).cgColor
             }
