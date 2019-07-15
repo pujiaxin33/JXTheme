@@ -92,6 +92,26 @@ public func changeTheme(to style: ThemeStyle) {
 
 # 安装
 
+## 手动
+
+Clone代码，把Sources文件夹拖入项目，就可以使用了；
+
+## CocoaPods
+
+```ruby
+target '<Your Target Name>' do
+    pod 'JXTheme'
+end
+```
+先执行`pod repo update`，再执行`pod install`
+
+## Carthage
+在cartfile文件添加：
+```
+github "pujiaxin33/JXTheme"
+```
+然后执行`carthage update --platform iOS` ，其他配置请参考Carthage文档
+
 # 使用示例
 
 ## 基础使用

@@ -28,7 +28,7 @@ class ViewController: UITableViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(themeDidChange(notification:)), name: Notification.Name.JXThemeDidChange, object: nil)
         refreshToggleButton()
-
+        
         themeView.theme.backgroundColor = { (style) -> UIColor in
             if style == .dark {
                 return .white
