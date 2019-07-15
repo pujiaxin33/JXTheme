@@ -343,13 +343,12 @@ public extension ThemeWapper where Base: UINavigationBar {
         }
         get { return nil }
     }
+    @available(iOS 11.0, *)
     var largeTitleTextAttributes: ThemeAttributesDynamicProvider? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UINavigationBar.largeTitleTextAttributes", provider: new) {[weak baseItem] (style) in
-                if #available(iOS 11.0, *) {
-                    baseItem?.largeTitleTextAttributes = new?(style)
-                }
+                baseItem?.largeTitleTextAttributes = new?(style)
             }
         }
         get { return nil }

@@ -1,7 +1,7 @@
 # 简介
 实现主题切换，主要解决以下五个问题：
 ## 1.如何优雅的设置主题属性
-通过给控件扩展命名空间属性`theme`，类似于`SnapKit`的`snp`、`Kingfisher`的`kf`，这样可以将支持主题修改的属性，集中到`theme`属性。这样比直接给控件扩展方法`theme_setBackgroundColor`更加优雅。
+通过给控件扩展命名空间属性`theme`，类似于`SnapKit`的`snp`、`Kingfisher`的`kf`，这样可以将支持主题修改的属性，集中到`theme`属性。这样比直接给控件扩展属性`theme_backgroundColor`更加优雅。
 核心代码如下：
 ```Swift
 view.theme.backgroundColor = { (style) -> UIColor in
@@ -31,20 +31,22 @@ view.theme.backgroundColor = dynamicColorProvider
 对控件添加`Associated object`属性`configs`存储主题属性配置闭包。
 核心代码如下：
 ```
-var backgroundColor: ThemeColorDynamicProvider? {
-    set(new) {
-        if new != nil {
-            let baseItem = self.base
-            let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
-                baseItem?.backgroundColor = new?(style)
+public extension ThemeWapper where Base: UIView {
+    var backgroundColor: ThemeColorDynamicProvider? {
+        set(new) {
+            if new != nil {
+                let baseItem = self.base
+                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.backgroundColor = new?(style)
+                }
+                self.base.configs["UIView.backgroundColor"] = config
+                ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
+            }else {
+                self.base.configs.removeValue(forKey: "UIView.backgroundColor")
             }
-            self.base.configs["UIView.backgroundColor"] = config
-            ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
-        }else {
-            self.base.configs.removeValue(forKey: "UIView.backgroundColor")
         }
+        get { return nil }
     }
-    get { return nil }
 }
 ```
 
@@ -117,7 +119,10 @@ view.theme.customization = {[weak self] style in
 }
 ```
 
-## 常规配置封装示例
+## 配置封装示例
+`JXTheme`是一个提供主题属性配置的轻量级基础库，不限制使用哪种方式加载资源。下面提供的三个示例仅供参考。
+
+### 常规配置封装示例
 
 一般的换肤需求，都会有一个UI标准。比如`UILabel.textColor`定义三个等级，代码如下：
 ```Swift
@@ -151,57 +156,165 @@ func dynamicTextColor(_ level: TextColorLevel) -> ThemeColorDynamicProvider {
 themeLabel.theme.textColor = dynamicTextColor(.mainTitle)
 ```
 
-## 本地Plist文件配置示例
-与**常规配置封装**一样，只是该方法是从本地Plist文件加载配置的具体值，生成配置闭包的代码如下：
-```Swift
-func dynamicPlistTextColor(_ level: TextColorLevel) -> ThemeColorDynamicProvider {
-    return { (style) -> UIColor in
-        //StaticSourceManager具体的加载逻辑，请参看源码示例
-        return StaticSourceManager.shared.textColor(style: style, level: level)
-    }
-}
-```
-主题属性配置时的代码如下：
-```Swift
-themeLabel.theme.textColor = dynamicPlistTextColor(.subTitle)
-```
+### 本地Plist文件配置示例
+与**常规配置封装**一样，只是该方法是从本地Plist文件加载配置的具体值，具体代码参加`Example`的`StaticSourceManager`类
 
-## 根据服务器动态添加主题
+### 根据服务器动态添加主题
+与**常规配置封装**一样，只是该方法是从服务器加载配置的具体值，具体代码参加`Example`的`DynamicSourceManager`类
 
-切换到服务器新增的主题，代码如下：
+# 扩展`ThemeStyle`
 ```Swift
-if let themes = DynamicSourceManager.shared.themes, let newTheme = themes.first {
-    //这里的newTheme完全是透明的String，依赖于服务器的数据
-    ThemeManager.shared.changeTheme(to: ThemeStyle(rawValue: newTheme))
-}else {
-    //当前暂无服务器下发的主题资源，这里是你配置默认主题的地方。当然你也可以整合进DynamicSourceManager里面。
-}
-```
-生成配置闭包的代码如下：
-```Swift
-func dynamicJSONTextColor(_ level: TextColorLevel) -> ThemeColorDynamicProvider {
-    return { (style) -> UIColor in
-        //DynamicSourceManager具体的加载逻辑，请参看源码示例
-        return DynamicSourceManager.shared.textColor(style: style, level: level)
-    }
-}
-```
-主题属性配置时的代码如下：
-```Swift
-themeLabel.theme.textColor = dynamicJSONTextColor(.subTitle)
-```
-
-## 扩展`ThemeStyle`
-```Swift
+//自定义pink style
 extension ThemeStyle {
     static let pink = ThemeStyle(rawValue: "pink")
 }
+//更新pink style自定义属性
+customThemeStyleLabel.theme.backgroundColor = { (style) -> UIColor in
+    if style == .dark {
+        return .black
+    }else if style == .pink {
+        return UIColor(red: 255.0/255, green: 192.0/255, blue: 203.0/255, alpha: 1)
+    }else {
+        return .white
+    }
+}
+//切换到pink style
+ThemeManager.shared.changeTheme(to: .pink)
 ```
-然后就可以根据新的pink style进行适配了。
 
-## 支持设置主题属性的类
 
-请查阅源码`Extensions`类，所有支持主题属性的类，都在这里扩展。如果有你想要支持的类或新的属性，欢迎你提PullRequest。
+# 目前支持的类及其属性
+
+这里的属性是有继承关系的，比如`UIView`扩展了`backgroundColor`属性，那么它的子类`UILabel`等也就支持`backgroundColor`。如果有你想要支持的类或属性，欢迎提PullRequest进行扩展。
+
+## UIView
+
+- `backgroundColor`
+- `tintColor`
+- `alpha`
+- `customization`
+
+## UILabel
+
+- `font`
+- `textColor`
+- `shadowColor`
+- `highlightedTextColor`
+- `attributedText`
+
+## UIButton
+
+- `func setTitleColor(_ colorProvider: ThemeColorDynamicProvider?, for state: UIControl.State)`
+- `func setTitleShadowColor(_ colorProvider: ThemeColorDynamicProvider?, for state: UIControl.State)`
+- `func setAttributedTitle(_ textProvider: ThemeAttributedTextDynamicProvider?, for state: UIControl.State)`
+- `func setImage(_ imageProvider: ThemeImageDynamicProvider?, for state: UIControl.State)`
+- `func setBackgroundImage(_ imageProvider: ThemeImageDynamicProvider?, for state: UIControl.State)`
+
+## UITextField
+
+- `font`
+- `textColor`
+- `attributedText`
+- `attributedPlaceholder`
+- `keyboardAppearance`
+
+## UITextView
+
+- `font`
+- `textColor`
+- `attributedText`
+- `keyboardAppearance`
+
+## UIImageView
+
+- `image`
+
+## CALayer
+
+- `backgroundColor`
+- `borderColor`
+- `borderWidth`
+- `shadowColor`
+- `customization`
+
+## CAShapeLayer
+
+- `fillColor`
+- `strokeColor`
+
+## UINavigationBar
+
+- `barStyle`
+- `barTintColor`
+- `titleTextAttributes`
+- `largeTitleTextAttributes`
+
+## UITabBar
+
+- `barStyle`
+- `barTintColor`
+
+## UISearchBar
+
+- `barStyle`
+- `barTintColor`
+- `keyboardAppearance`
+
+## UIToolbar
+
+- `barStyle`
+- `barTintColor`
+
+## UISwitch
+
+- `onTintColor`
+- `thumbTintColor`
+
+## UISlider
+
+- `thumbTintColor`
+- `minimumTrackTintColor`
+- `maximumTrackTintColor`
+- `minimumValueImage`
+- `maximumValueImage`
+
+## UIRefreshControl
+
+- `attributedTitle`
+
+## UIProgressView
+
+- `progressTintColor`
+- `trackTintColor`
+- `progressImage`
+- `trackImage`
+
+## UIPageControl
+
+- `pageIndicatorTintColor`
+- `currentPageIndicatorTintColor`
+
+## UIBarItem
+
+- `func setTitleTextAttributes(_ attributesProvider: ThemeAttributesDynamicProvider?, for state: UIControl.State)`
+
+## UIBarButtonItem
+
+- `tintColor`
+
+## UIActivityIndicatorView
+
+- `style`
+
+## UIScrollView
+
+- `indicatorStyle`
+
+## UITableView
+
+- `separatorColor`
+- `sectionIndexColor`
+- `sectionIndexBackgroundColor`
 
 # 其他说明
 
