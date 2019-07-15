@@ -82,6 +82,7 @@ public func changeTheme(to style: ThemeStyle) {
 - [x] 提供根据`ThemeStyle`配置属性的常规封装、Plist文件静态加载、服务器动态加载示例；
 
 # 预览
+![preview](https://github.com/pujiaxin33/JXTheme/blob/master/GIF/preview.gif)
 
 # 要求
 
