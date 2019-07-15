@@ -36,7 +36,6 @@ public struct ThemeStyle: RawRepresentable, Equatable, Hashable, Comparable {
     public var rawValue: String
     public var hashValue: Int { return rawValue.hashValue }
 
-    public static let unspecified = ThemeStyle(rawValue: "unspecified")
     public static let light = ThemeStyle(rawValue: "light")
     public static let dark = ThemeStyle(rawValue: "dark")
 
