@@ -39,9 +39,11 @@ public class ThemeManager {
         DispatchQueue.main.async {
             self.trackedHashTable.allObjects.forEach { (object) in
                 if let view = object as? UIView {
-                    view.configs.values.forEach { $0(self.currentThemeStyle) }
+                    view.providers.values.forEach { self.resolveProvider($0) }
                 }else if let layer = object as? CALayer {
-                    layer.configs.values.forEach { $0(self.currentThemeStyle) }
+                    layer.providers.values.forEach { self.resolveProvider($0) }
+                }else if let barItem = object as? UIBarItem {
+                    barItem.providers.values.forEach { self.resolveProvider($0) }
                 }
             }
         }
@@ -50,6 +52,30 @@ public class ThemeManager {
     func addTrackedObject(_ object: AnyObject, addedConfig: ThemeCustomizationClosure) {
         trackedHashTable.add(object)
         addedConfig(currentThemeStyle)
+    }
+
+    private func resolveProvider(_ object: Any) {
+        if let provider = object as? ThemeProvider<UIColor> {
+            provider.config?(currentThemeStyle)
+        }else if let provider = object as? ThemeProvider<UIImage> {
+            provider.config?(currentThemeStyle)
+        }else if let provider = object as? ThemeProvider<NSAttributedString> {
+            provider.config?(currentThemeStyle)
+        }else if let provider = object as? ThemeProvider<UIKeyboardAppearance> {
+            provider.config?(currentThemeStyle)
+        }else if let provider = object as? ThemeProvider<CGFloat> {
+            provider.config?(currentThemeStyle)
+        }else if let provider = object as? ThemeProvider<[NSAttributedString.Key : Any]> {
+            provider.config?(currentThemeStyle)
+        }else if let provider = object as? ThemeProvider<UIFont> {
+            provider.config?(currentThemeStyle)
+        }else if let provider = object as? ThemeProvider<UIBarStyle> {
+            provider.config?(currentThemeStyle)
+        }else if let provider = object as? ThemeProvider<UIActivityIndicatorView.Style> {
+            provider.config?(currentThemeStyle)
+        }else if let provider = object as? ThemeProvider<Void> {
+            provider.config?(currentThemeStyle)
+        }
     }
 }
 

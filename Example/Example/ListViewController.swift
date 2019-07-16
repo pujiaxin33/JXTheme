@@ -10,31 +10,32 @@ import UIKit
 import JXTheme
 
 class ListViewController: UITableViewController {
+
     override init(style: UITableView.Style) {
         super.init(style: style)
 
         tableView.register(ListCell.self, forCellReuseIdentifier: "cell")
-        navigationController?.navigationBar.theme.barStyle = { (style) -> UIBarStyle in
+        navigationController?.navigationBar.theme.barStyle = ThemeProvider({ (style) -> UIBarStyle in
             if style == .dark {
                 return .black
             }else {
                 return .default
             }
-        }
-        tableView.theme.separatorColor = { (style) -> UIColor in
+        })
+        tableView.theme.separatorColor = ThemeProvider({ (style) -> UIColor in
             if style == .dark {
                 return .white
             }else {
                 return .black
             }
-        }
-        tableView.theme.backgroundColor = { (style) -> UIColor in
+        })
+        tableView.theme.backgroundColor = ThemeProvider({ (style) -> UIColor in
             if style == .dark {
                 return .black
             }else {
                 return .white
             }
-        }
+        })
         refreshToggleButton()
     }
 
@@ -44,13 +45,13 @@ class ListViewController: UITableViewController {
 
     func refreshToggleButton() {
         let barButtonItem = UIBarButtonItem(title: ThemeManager.shared.currentThemeStyle.rawValue, style: .plain, target: self, action: #selector(toggleThemeStyle))
-        barButtonItem.theme.tintColor = { (style) -> UIColor in
+        barButtonItem.theme.tintColor = ThemeProvider({ (style) -> UIColor in
             if style == .dark {
                 return .white
             }else {
                 return .black
             }
-        }
+        })
         navigationItem.rightBarButtonItem = barButtonItem
     }
 
@@ -89,43 +90,56 @@ class ListCell: UITableViewCell {
         indexLabel = UILabel()
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        contentView.theme.backgroundColor = { (style) in
+        contentView.theme.backgroundColor = ThemeProvider({[weak self] (style) in
+            if self?.isSelected == true && self?.selectedBackgroundView != nil {
+                //①有背景选中视图且被选中状态，返回UIColor.clear
+                return UIColor.clear
+            }
             if style == .dark {
                 return .black
             }else {
                 return .white
             }
-        }
+        })
 
-        nickLabel.theme.textColor = { (style) in
+        selectedBackgroundView = UIView()
+        selectedBackgroundView?.theme.backgroundColor = ThemeProvider({ (style) in
+            if style == .dark {
+                return .red
+            }else {
+                return .green
+            }
+        })
+
+        nickLabel.theme.textColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .white
             }else {
                 return .black
             }
-        }
+        })
         nickLabel.font = UIFont.systemFont(ofSize: 18)
         nickLabel.text = "这是昵称"
         contentView.addSubview(nickLabel)
 
-        genderLabel.theme.textColor = { (style) in
+        genderLabel.theme.textColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .white
             }else {
                 return .gray
             }
-        }
+        })
         genderLabel.font = UIFont.systemFont(ofSize: 15)
         genderLabel.text = "这是性别"
         contentView.addSubview(genderLabel)
 
-        indexLabel.theme.textColor = { (style) in
+        indexLabel.theme.textColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .white
             }else {
                 return .lightGray
             }
-        }
+        })
         indexLabel.font = UIFont.systemFont(ofSize: 13)
         indexLabel.text = "这是index"
         contentView.addSubview(indexLabel)
@@ -138,15 +152,10 @@ class ListCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-//        if !selected {
-//            contentView.theme.backgroundColor = { (style) in
-//                if style == .dark {
-//                    return .black
-//                }else {
-//                    return .white
-//                }
-//            }
-//        }
+        if !selected && selectedBackgroundView != nil {
+            //因为上面①处在选中状态设置为clear，所以在未选中时，就需要刷新backgroundColor
+            contentView.theme.backgroundColor?.refresh()
+        }
     }
 
     override func layoutSubviews() {

@@ -28,65 +28,79 @@ class ViewController: UITableViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(themeDidChange(notification:)), name: Notification.Name.JXThemeDidChange, object: nil)
         refreshToggleButton()
+        tableView.theme.backgroundColor = ThemeProvider({ (style) in
+            if style == .dark {
+                return .black
+            }else {
+                return .white
+            }
+        })
         
-        themeView.theme.backgroundColor = { (style) -> UIColor in
+        themeView.theme.backgroundColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .white
             }else {
                 return .black
             }
-        }
+        })
         //UIView customization自定义
-        themeView.theme.customization = {[weak self] style in
+        themeView.theme.customization = ThemeProvider({[weak self] style in
             if style == .dark {
                 self?.themeView.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
             }else {
                 self?.themeView.bounds = CGRect(x: 0, y: 0, width: 80, height: 80)
             }
-        }
+        })
 
-        themeLabel.theme.backgroundColor = { (style) -> UIColor in
+        themeLabel.theme.backgroundColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .black
             }else {
                 return .white
             }
-        }
-        themeLabel.theme.textColor = { (style) -> UIColor in
+        })
+        themeLabel.theme.textColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .white
             }else {
                 return .black
             }
-        }
+        })
         //配置逻辑封装示例
 //        themeLabel.theme.textColor = dynamicTextColor(.mainTitle)
 //        themeLabel.theme.textColor = dynamicPlistTextColor(.subTitle)
 //        themeLabel.theme.textColor = dynamicJSONTextColor(.subTitle)
 
-        themeButton.theme.backgroundColor = { (style) -> UIColor in
+        themeButton.theme.backgroundColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .black
             }else {
                 return .white
             }
-        }
-        themeButton.theme.setTitleColor({ (style) -> UIColor in
+        })
+        themeButton.theme.setTitleColor(ThemeProvider({ (style) in
             if style == .dark {
                 return .white
             }else {
                 return .black
             }
-        }, for: .normal)
-        themeButton.theme.setTitleColor({ (style) -> UIColor in
+        }), for: .normal)
+        themeButton.theme.setTitleColor(ThemeProvider({ (style) in
             if style == .dark {
                 return .yellow
             }else {
                 return .orange
             }
-        }, for: .selected)
-        /*
-        themeButton.theme.setAttributedTitle({ (style) -> NSAttributedString in
+        }), for: .selected)
+
+        attributedLabel.theme.backgroundColor = ThemeProvider({ (style) in
+            if style == .dark {
+                return .black
+            }else {
+                return .white
+            }
+        })
+        attributedLabel.theme.attributedText = ThemeProvider({ (style) in
             if style == .dark {
                 let attributedText = NSMutableAttributedString(string: "这是attributedText主题测试文本", attributes: [.foregroundColor : UIColor.white, .font : UIFont.systemFont(ofSize: 15)])
                 attributedText.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: 2, length: 14))
@@ -96,100 +110,80 @@ class ViewController: UITableViewController {
                 attributedText.addAttribute(.foregroundColor, value: UIColor.blue, range: NSRange(location: 2, length: 14))
                 return attributedText
             }
-        }, for: .normal)
-       */
+        })
 
-        attributedLabel.theme.backgroundColor = { (style) -> UIColor in
+        themeTextField.theme.backgroundColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .black
             }else {
                 return .white
             }
-        }
-        attributedLabel.theme.attributedText = { (style) -> NSAttributedString in
+        })
+        themeTextField.theme.textColor = ThemeProvider({ (style) in
             if style == .dark {
-                let attributedText = NSMutableAttributedString(string: "这是attributedText主题测试文本", attributes: [.foregroundColor : UIColor.white, .font : UIFont.systemFont(ofSize: 15)])
-                attributedText.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: 2, length: 14))
-                return attributedText
+                return .white
             }else {
-                let attributedText = NSMutableAttributedString(string: "这是attributedText主题测试文本", attributes: [.foregroundColor : UIColor.black, .font : UIFont.systemFont(ofSize: 15)])
-                attributedText.addAttribute(.foregroundColor, value: UIColor.blue, range: NSRange(location: 2, length: 14))
-                return attributedText
+                return .black
             }
-        }
+        })
 
-        themeTextField.theme.backgroundColor = { (style) -> UIColor in
+        themeTextView.theme.backgroundColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .black
             }else {
                 return .white
             }
-        }
-        themeTextField.theme.textColor = { (style) -> UIColor in
+        })
+        themeTextView.theme.textColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .white
             }else {
                 return .black
             }
-        }
+        })
 
-        themeTextView.theme.backgroundColor = { (style) -> UIColor in
+        themeImageView.theme.backgroundColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .black
             }else {
                 return .white
             }
-        }
-        themeTextView.theme.textColor = { (style) -> UIColor in
-            if style == .dark {
-                return .white
-            }else {
-                return .black
-            }
-        }
-
-        themeImageView.theme.backgroundColor = { (style) -> UIColor in
-            if style == .dark {
-                return .black
-            }else {
-                return .white
-            }
-        }
+        })
         //图片本地静态配置
-        themeImageView.theme.image = { (style) -> UIImage in
+        themeImageView.theme.image = ThemeProvider({ (style) in
             if style == .dark {
                 return UIImage(named: "catWhite")!
             }else {
                 return UIImage(named: "catBlack")!
             }
-        }
+        })
         //图片动态下载配置
         /*
-        themeImageView.theme.customization = {[weak self] style in
+        themeImageView.theme.customization = ThemeProvider({[weak self] style in
 //            let url = switch sytle choose image url
 //            self?.themeImageView.image = download image with url by other third library like Kingfisher
-        }
+        })
         */
 
         themeLayerContainerView.layer.addSublayer(themeLayer)
-        themeLayer.theme.backgroundColor = { (style) -> UIColor in
+        themeLayer.theme.backgroundColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .white
             }else {
                 return .black
             }
-        }
+        })
         //CALayer customization自定义
-        themeLayer.theme.customization = { [weak self] style in
+        themeLayer.theme.customization = ThemeProvider({ [weak self] style in
             if style == .dark {
                 self?.themeLayer.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
             }else {
                 self?.themeLayer.bounds = CGRect(x: 0, y: 0, width: 80, height: 80)
             }
-        }
+        })
 
         //自定义ThemeStyle示例
-        customThemeStyleLabel.theme.backgroundColor = { (style) -> UIColor in
+        customThemeStyleLabel.theme.backgroundColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .black
             }else if style == .pink {
@@ -197,8 +191,8 @@ class ViewController: UITableViewController {
             }else {
                 return .white
             }
-        }
-        customThemeStyleLabel.theme.textColor = { (style) -> UIColor in
+        })
+        customThemeStyleLabel.theme.textColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .white
             }else if style == .pink {
@@ -206,23 +200,23 @@ class ViewController: UITableViewController {
             }else {
                 return .black
             }
-        }
+        })
 
-        tableView.theme.separatorColor = { (style) -> UIColor in
+        tableView.theme.separatorColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .white
             }else {
                 return .black
             }
-        }
+        })
         navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.theme.barStyle = { (style) -> UIBarStyle in
+        navigationController?.navigationBar.theme.barStyle = ThemeProvider({ (style) in
             if style == .dark {
                 return .black
             }else {
                 return .default
             }
-        }
+        })
     }
 
     override func viewDidLayoutSubviews() {
@@ -249,6 +243,7 @@ class ViewController: UITableViewController {
         }
     }
 
+    // 使用通知刷新页面
     @objc func themeDidChange(notification: Notification) {
         let newStyle = notification.userInfo?["style"] as! ThemeStyle
         if newStyle == .dark {
@@ -262,13 +257,13 @@ class ViewController: UITableViewController {
 
     func refreshToggleButton() {
         let barButtonItem = UIBarButtonItem(title: ThemeManager.shared.currentThemeStyle.rawValue, style: .plain, target: self, action: #selector(toggleThemeStyle))
-        barButtonItem.theme.tintColor = { (style) -> UIColor in
+        barButtonItem.theme.tintColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .white
             }else {
                 return .black
             }
-        }
+        })
         navigationItem.rightBarButtonItem = barButtonItem
     }
 
@@ -310,45 +305,45 @@ enum TextColorLevel: String {
     case subTitle
 }
 
-func dynamicTextColor(_ level: TextColorLevel) -> ThemeColorDynamicProvider {
+func dynamicTextColor(_ level: TextColorLevel) -> ThemeProvider<UIColor> {
     switch level {
     case .normal:
-        return { (style) -> UIColor in
+        return ThemeProvider({ (style) in
             if style == .dark {
                 return UIColor.white
             }else {
                 return UIColor.gray
             }
-        }
+        })
     case .mainTitle:
-        return { (style) -> UIColor in
+        return ThemeProvider({ (style) in
             if style == .dark {
                 return UIColor.white
             }else {
                 return UIColor.black
             }
-        }
+        })
     case .subTitle:
-        return { (style) -> UIColor in
+        return ThemeProvider({ (style) in
             if style == .dark {
                 return UIColor.white
             }else {
                 return UIColor.lightGray
             }
-        }
+        })
     }
 }
 
 //静态plist使用示例
-func dynamicPlistTextColor(_ level: TextColorLevel) -> ThemeColorDynamicProvider {
-    return { (style) -> UIColor in
+func dynamicPlistTextColor(_ level: TextColorLevel) -> ThemeProvider<UIColor> {
+    return ThemeProvider({ (style) in
         return StaticSourceManager.shared.textColor(style: style, level: level)
-    }
+    })
 }
 
 //动态json使用示例
-func dynamicJSONTextColor(_ level: TextColorLevel) -> ThemeColorDynamicProvider {
-    return { (style) -> UIColor in
+func dynamicJSONTextColor(_ level: TextColorLevel) -> ThemeProvider<UIColor> {
+    return ThemeProvider({ (style) in
         return DynamicSourceManager.shared.textColor(style: style, level: level)
-    }
+    })
 }

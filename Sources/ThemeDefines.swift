@@ -49,18 +49,24 @@ public struct ThemeStyle: RawRepresentable, Equatable, Hashable, Comparable {
     }
 }
 
-public typealias ThemePropertyDynamicProvider<T> = (ThemeStyle) -> T
-public typealias ThemeColorDynamicProvider = ThemePropertyDynamicProvider<UIColor>
-public typealias ThemeImageDynamicProvider = ThemePropertyDynamicProvider<UIImage>
-public typealias ThemeAttributedTextDynamicProvider = ThemePropertyDynamicProvider<NSAttributedString>
-public typealias ThemeKeyboardAppearanceDynamicProvider = ThemePropertyDynamicProvider<UIKeyboardAppearance>
-public typealias ThemeCGFloatDynamicProvider = ThemePropertyDynamicProvider<CGFloat>
-public typealias ThemeAttributesDynamicProvider = ThemePropertyDynamicProvider<[NSAttributedString.Key : Any]>
-public typealias ThemeFontDynamicProvider = ThemePropertyDynamicProvider<UIFont>
-public typealias ThemeBarStyleDynamicProvider = ThemePropertyDynamicProvider<UIBarStyle>
-public typealias ThemeActivityIndicatorViewStyleDynamicProvider = ThemePropertyDynamicProvider<UIActivityIndicatorView.Style>
-public typealias ThemeUIScrollViewIndicatorStyleDynamicProvider = ThemePropertyDynamicProvider<UIScrollView.IndicatorStyle>
-public typealias ThemeCustomizationClosure = (ThemeStyle) -> ()
+public struct ThemeProvider<T> {
+    var provider: ThemePropertyProvider<T>
+    var config: ThemeCustomizationClosure?
+    public init(_ provider: @escaping ThemePropertyProvider<T>) {
+        self.provider = provider
+    }
+    /// 根据传入的style直接触发主题属性的刷新。默认值unspecified表示用ThemeManager.shared.currentThemeStyle刷新，否则用传入的style刷新。
+    public func refresh(style: ThemeStyle = .unspecified) {
+        if style == .unspecified {
+            config?(ThemeManager.shared.currentThemeStyle)
+        }else {
+            config?(style)
+        }
+    }
+}
+
+public typealias ThemePropertyProvider<T> = (ThemeStyle) -> T
+internal typealias ThemeCustomizationClosure = (ThemeStyle) -> ()
 
 
 

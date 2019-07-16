@@ -9,685 +9,690 @@
 import Foundation
 import UIKit
 
-func setupViewThemeProperty<T>(view: UIView, key: String, provider: ThemePropertyDynamicProvider<T>?, customization: @escaping (ThemeStyle) -> ()) {
+func setupViewThemeProperty<T>(view: UIView, key: String, provider: ThemeProvider<T>?, customization: @escaping (ThemeStyle) -> ()) {
     if provider != nil {
         let config: ThemeCustomizationClosure = {(style) in
             customization(style)
         }
-        view.configs[key] = config
+        var newProvider = provider
+        newProvider?.config = config
+        view.providers[key] = newProvider
         ThemeManager.shared.addTrackedObject(view, addedConfig: config)
     }else {
-        view.configs.removeValue(forKey: key)
+        view.providers.removeValue(forKey: key)
     }
 }
-func setupLayerThemeProperty<T>(layer: CALayer, key: String, provider: ThemePropertyDynamicProvider<T>?, customization: @escaping (ThemeStyle) -> ()) {
+func setupLayerThemeProperty<T>(layer: CALayer, key: String, provider: ThemeProvider<T>?, customization: @escaping (ThemeStyle) -> ()) {
     if provider != nil {
         let config: ThemeCustomizationClosure = {(style) in
             customization(style)
         }
-        layer.configs[key] = config
+        var newProvider = provider
+        newProvider?.config = config
+        layer.providers[key] = newProvider
         ThemeManager.shared.addTrackedObject(layer, addedConfig: config)
     }else {
-        layer.configs.removeValue(forKey: key)
+        layer.providers.removeValue(forKey: key)
+    }
+}
+func setupBarItemThemeProperty<T>(barItem: UIBarItem, key: String, provider: ThemeProvider<T>?, customization: @escaping (ThemeStyle) -> ()) {
+    if provider != nil {
+        let config: ThemeCustomizationClosure = {(style) in
+            customization(style)
+        }
+        var newProvider = provider
+        newProvider?.config = config
+        barItem.providers[key] = newProvider
+        ThemeManager.shared.addTrackedObject(barItem, addedConfig: config)
+    }else {
+        barItem.providers.removeValue(forKey: key)
     }
 }
 
 //MARK: - ThemeWapper
 public extension ThemeWapper where Base: UIView {
-    var backgroundColor: ThemeColorDynamicProvider? {
+    var backgroundColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIView.backgroundColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.backgroundColor = new?(style)
+                baseItem?.backgroundColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIView.backgroundColor"] as? ThemeProvider<UIColor> }
     }
-    var tintColor: ThemeColorDynamicProvider? {
+    var tintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIView.tintColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.tintColor = new?(style)
+                baseItem?.tintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIView.tintColor"] as? ThemeProvider<UIColor> }
     }
-    var alpha: ThemeCGFloatDynamicProvider? {
+    var alpha: ThemeProvider<CGFloat>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIView.alpha", provider: new) {[weak baseItem] (style) in
-                baseItem?.alpha = new?(style) ?? 1
+                baseItem?.alpha = new?.provider(style) ?? 1
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIView.alpha"] as? ThemeProvider<CGFloat> }
     }
-    var customization: ThemeCustomizationClosure? {
+    var customization: ThemeProvider<Void>? {
         set(new) {
             setupViewThemeProperty(view: self.base, key: "UIView.customization", provider: new) { (style) in
-                new?(style)
+                new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIView.customization"] as? ThemeProvider<Void> }
     }
 }
 public extension ThemeWapper where Base: UILabel {
-    var font: ThemeFontDynamicProvider? {
+    var font: ThemeProvider<UIFont>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UILabel.font", provider: new) {[weak baseItem] (style) in
-                baseItem?.font = new?(style)
+                baseItem?.font = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UILabel.font"] as? ThemeProvider<UIFont> }
     }
-    var textColor: ThemeColorDynamicProvider? {
+    var textColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UILabel.textColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.textColor = new?(style)
+                baseItem?.textColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UILabel.textColor"] as? ThemeProvider<UIColor> }
     }
-    var shadowColor: ThemeColorDynamicProvider? {
+    var shadowColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UILabel.shadowColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.shadowColor = new?(style)
+                baseItem?.shadowColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UILabel.shadowColor"] as? ThemeProvider<UIColor> }
     }
-    var highlightedTextColor: ThemeColorDynamicProvider? {
+    var highlightedTextColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UILabel.highlightedTextColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.highlightedTextColor = new?(style)
+                baseItem?.highlightedTextColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UILabel.highlightedTextColor"] as? ThemeProvider<UIColor> }
     }
-    var attributedText: ThemeAttributedTextDynamicProvider? {
+    var attributedText: ThemeProvider<NSAttributedString>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UILabel.attributedText", provider: new) {[weak baseItem] (style) in
-                baseItem?.attributedText = new?(style)
+                baseItem?.attributedText = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UILabel.attributedText"] as? ThemeProvider<NSAttributedString> }
     }
 }
 
 public extension ThemeWapper where Base: UIButton {
-    func setTitleColor(_ colorProvider: ThemeColorDynamicProvider?, for state: UIControl.State) {
+    func setTitleColor(_ colorProvider: ThemeProvider<UIColor>?, for state: UIControl.State) {
         let baseItem = self.base
         setupViewThemeProperty(view: self.base, key: "UIButton.titleColor.\(state.rawValue)", provider: colorProvider) {[weak baseItem] (style) in
-            baseItem?.setTitleColor(colorProvider?(style), for: state)
+            baseItem?.setTitleColor(colorProvider?.provider(style), for: state)
         }
     }
-    func setTitleShadowColor(_ colorProvider: ThemeColorDynamicProvider?, for state: UIControl.State) {
+    func setTitleShadowColor(_ colorProvider: ThemeProvider<UIColor>?, for state: UIControl.State) {
         let baseItem = self.base
         setupViewThemeProperty(view: self.base, key: "UIButton.titleShadowColor.\(state.rawValue)", provider: colorProvider) {[weak baseItem] (style) in
-            baseItem?.setTitleShadowColor(colorProvider?(style), for: state)
+            baseItem?.setTitleShadowColor(colorProvider?.provider(style), for: state)
         }
     }
-    func setAttributedTitle(_ textProvider: ThemeAttributedTextDynamicProvider?, for state: UIControl.State) {
+    func setAttributedTitle(_ textProvider: ThemeProvider<NSAttributedString>?, for state: UIControl.State) {
         let baseItem = self.base
         setupViewThemeProperty(view: self.base, key: "UIButton.attributedTitle.\(state.rawValue)", provider: textProvider) {[weak baseItem] (style) in
             UIView.setAnimationsEnabled(false)
-            baseItem?.setAttributedTitle(textProvider?(style), for: state)
+            baseItem?.setAttributedTitle(textProvider?.provider(style), for: state)
             baseItem?.layoutIfNeeded()
             UIView.setAnimationsEnabled(true)
         }
     }
-    func setImage(_ imageProvider: ThemeImageDynamicProvider?, for state: UIControl.State) {
+    func setImage(_ imageProvider: ThemeProvider<UIImage>?, for state: UIControl.State) {
         let baseItem = self.base
         setupViewThemeProperty(view: self.base, key: "UIButton.image.\(state.rawValue)", provider: imageProvider) {[weak baseItem] (style) in
-            baseItem?.setImage(imageProvider?(style), for: state)
+            baseItem?.setImage(imageProvider?.provider(style), for: state)
         }
     }
-    func setBackgroundImage(_ imageProvider: ThemeImageDynamicProvider?, for state: UIControl.State) {
+    func setBackgroundImage(_ imageProvider: ThemeProvider<UIImage>?, for state: UIControl.State) {
         let baseItem = self.base
         setupViewThemeProperty(view: self.base, key: "UIButton.backgroundImage.\(state.rawValue)", provider: imageProvider) {[weak baseItem] (style) in
-            baseItem?.setBackgroundImage(imageProvider?(style), for: state)
+            baseItem?.setBackgroundImage(imageProvider?.provider(style), for: state)
         }
     }
 }
 public extension ThemeWapper where Base: UITextField {
-    var font: ThemeFontDynamicProvider? {
+    var font: ThemeProvider<UIFont>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UITextField.font", provider: new) {[weak baseItem] (style) in
-                baseItem?.font = new?(style)
+                baseItem?.font = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UITextField.font"] as? ThemeProvider<UIFont> }
     }
-    var textColor: ThemeColorDynamicProvider? {
+    var textColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UITextField.textColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.textColor = new?(style)
+                baseItem?.textColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UITextField.textColor"] as? ThemeProvider<UIColor> }
     }
-    var attributedText: ThemeAttributedTextDynamicProvider? {
+    var attributedText: ThemeProvider<NSAttributedString>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UITextField.attributedText", provider: new) {[weak baseItem] (style) in
-                baseItem?.attributedText = new?(style)
+                baseItem?.attributedText = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UITextField.attributedText"] as? ThemeProvider<NSAttributedString> }
     }
-    var attributedPlaceholder: ThemeAttributedTextDynamicProvider? {
+    var attributedPlaceholder: ThemeProvider<NSAttributedString>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UITextField.attributedPlaceholder", provider: new) {[weak baseItem] (style) in
-                baseItem?.attributedPlaceholder = new?(style)
+                baseItem?.attributedPlaceholder = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UITextField.attributedPlaceholder"] as? ThemeProvider<NSAttributedString> }
     }
-    var keyboardAppearance: ThemeKeyboardAppearanceDynamicProvider? {
+    var keyboardAppearance: ThemeProvider<UIKeyboardAppearance>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UITextField.keyboardAppearance", provider: new) {[weak baseItem] (style) in
-                baseItem?.keyboardAppearance = new?(style) ?? .default
+                baseItem?.keyboardAppearance = new?.provider(style) ?? .default
             }
         }
-        get { return nil }
+        get { return self.base.providers["UITextField.keyboardAppearance"] as? ThemeProvider<UIKeyboardAppearance> }
     }
 }
 public extension ThemeWapper where Base: UITextView {
-    var font: ThemeFontDynamicProvider? {
+    var font: ThemeProvider<UIFont>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UITextView.font", provider: new) {[weak baseItem] (style) in
-                baseItem?.font = new?(style)
+                baseItem?.font = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UITextView.font"] as? ThemeProvider<UIFont> }
     }
-    var textColor: ThemeColorDynamicProvider? {
+    var textColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UITextView.textColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.textColor = new?(style)
+                baseItem?.textColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UITextView.textColor"] as? ThemeProvider<UIColor> }
     }
-    var attributedText: ThemeAttributedTextDynamicProvider? {
+    var attributedText: ThemeProvider<NSAttributedString>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UITextView.attributedText", provider: new) {[weak baseItem] (style) in
-                baseItem?.attributedText = new?(style)
+                baseItem?.attributedText = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UITextView.attributedText"] as? ThemeProvider<NSAttributedString> }
     }
-    var keyboardAppearance: ThemeKeyboardAppearanceDynamicProvider? {
+    var keyboardAppearance: ThemeProvider<UIKeyboardAppearance>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UITextView.keyboardAppearance", provider: new) {[weak baseItem] (style) in
-                baseItem?.keyboardAppearance = new?(style) ?? .default
+                baseItem?.keyboardAppearance = new?.provider(style) ?? .default
             }
         }
-        get { return nil }
+        get { return self.base.providers["UITextView.keyboardAppearance"] as? ThemeProvider<UIKeyboardAppearance> }
     }
 }
 public extension ThemeWapper where Base: UIImageView {
-    var image: ThemeImageDynamicProvider? {
+    var image: ThemeProvider<UIImage>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIImageView.image", provider: new) {[weak baseItem] (style) in
-                baseItem?.image = new?(style)
+                baseItem?.image = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIImageView.image"] as? ThemeProvider<UIImage> }
     }
 }
 public extension ThemeWapper where Base: CALayer {
-    var backgroundColor: ThemeColorDynamicProvider? {
+    var backgroundColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupLayerThemeProperty(layer: self.base, key: "CALayer.backgroundColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.backgroundColor = new?(style).cgColor
+                baseItem?.backgroundColor = new?.provider(style).cgColor
             }
         }
-        get { return nil }
+        get { return self.base.providers["CALayer.backgroundColor"] as? ThemeProvider<UIColor> }
     }
-    var borderColor: ThemeColorDynamicProvider? {
+    var borderColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupLayerThemeProperty(layer: self.base, key: "CALayer.borderColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.borderColor = new?(style).cgColor
+                baseItem?.borderColor = new?.provider(style).cgColor
             }
         }
-        get { return nil }
+        get { return self.base.providers["CALayer.borderColor"] as? ThemeProvider<UIColor> }
     }
-    var borderWidth: ThemeCGFloatDynamicProvider? {
+    var borderWidth: ThemeProvider<CGFloat>? {
         set(new) {
             let baseItem = self.base
             setupLayerThemeProperty(layer: self.base, key: "CALayer.borderWidth", provider: new) {[weak baseItem] (style) in
-                baseItem?.borderWidth = new?(style) ?? 0
+                baseItem?.borderWidth = new?.provider(style) ?? 0
             }
         }
-        get { return nil }
+        get { return self.base.providers["CALayer.borderWidth"] as? ThemeProvider<CGFloat> }
     }
-    var shadowColor: ThemeColorDynamicProvider? {
+    var shadowColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupLayerThemeProperty(layer: self.base, key: "CALayer.shadowColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.shadowColor = new?(style).cgColor
+                baseItem?.shadowColor = new?.provider(style).cgColor
             }
         }
-        get { return nil }
+        get { return self.base.providers["CALayer.shadowColor"] as? ThemeProvider<UIColor> }
     }
-    var customization: ThemeCustomizationClosure? {
+    var customization: ThemeProvider<Void>? {
         set(new) {
             setupLayerThemeProperty(layer: self.base, key: "CALayer.customization", provider: new) { (style) in
-                new?(style)
+                new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["CALayer.customization"] as? ThemeProvider<Void> }
     }
 }
 public extension ThemeWapper where Base: CAShapeLayer {
-    var fillColor: ThemeColorDynamicProvider? {
+    var fillColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupLayerThemeProperty(layer: self.base, key: "CAShapeLayer.fillColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.fillColor = new?(style).cgColor
+                baseItem?.fillColor = new?.provider(style).cgColor
             }
         }
-        get { return nil }
+        get { return self.base.providers["CAShapeLayer.fillColor"] as? ThemeProvider<UIColor> }
     }
-    var strokeColor: ThemeColorDynamicProvider? {
+    var strokeColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupLayerThemeProperty(layer: self.base, key: "CAShapeLayer.strokeColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.strokeColor = new?(style).cgColor
+                baseItem?.strokeColor = new?.provider(style).cgColor
             }
         }
-        get { return nil }
+        get { return self.base.providers["CAShapeLayer.strokeColor"] as? ThemeProvider<UIColor> }
     }
 }
 public extension ThemeWapper where Base: UINavigationBar {
-    var barStyle: ThemeBarStyleDynamicProvider? {
+    var barStyle: ThemeProvider<UIBarStyle>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UINavigationBar.barStyle", provider: new) {[weak baseItem] (style) in
-                baseItem?.barStyle = new?(style) ?? .default
+                baseItem?.barStyle = new?.provider(style) ?? .default
             }
         }
-        get { return nil }
+        get { return self.base.providers["UINavigationBar.barStyle"] as? ThemeProvider<UIBarStyle> }
     }
-    var barTintColor: ThemeColorDynamicProvider? {
+    var barTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UINavigationBar.barTintColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.barTintColor = new?(style)
+                baseItem?.barTintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UINavigationBar.barTintColor"] as? ThemeProvider<UIColor> }
     }
-    var titleTextAttributes: ThemeAttributesDynamicProvider? {
+    var titleTextAttributes: ThemeProvider<[NSAttributedString.Key : Any]>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UINavigationBar.titleTextAttributes", provider: new) {[weak baseItem] (style) in
-                baseItem?.titleTextAttributes = new?(style)
+                baseItem?.titleTextAttributes = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UINavigationBar.titleTextAttributes"] as? ThemeProvider<[NSAttributedString.Key : Any]> }
     }
     @available(iOS 11.0, *)
-    var largeTitleTextAttributes: ThemeAttributesDynamicProvider? {
+    var largeTitleTextAttributes: ThemeProvider<[NSAttributedString.Key : Any]>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UINavigationBar.largeTitleTextAttributes", provider: new) {[weak baseItem] (style) in
-                baseItem?.largeTitleTextAttributes = new?(style)
+                baseItem?.largeTitleTextAttributes = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UINavigationBar.largeTitleTextAttributes"] as? ThemeProvider<[NSAttributedString.Key : Any]> }
     }
 }
 public extension ThemeWapper where Base: UITabBar {
-    var barStyle: ThemeBarStyleDynamicProvider? {
+    var barStyle: ThemeProvider<UIBarStyle>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UITabBar.barStyle", provider: new) {[weak baseItem] (style) in
-                baseItem?.barStyle = new?(style) ?? .default
+                baseItem?.barStyle = new?.provider(style) ?? .default
             }
         }
-        get { return nil }
+        get { return self.base.providers["UITabBar.barStyle"] as? ThemeProvider<UIBarStyle> }
     }
-    var barTintColor: ThemeColorDynamicProvider? {
+    var barTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UITabBar.barTintColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.barTintColor = new?(style)
+                baseItem?.barTintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UITabBar.barTintColor"] as? ThemeProvider<UIColor> }
     }
 }
 public extension ThemeWapper where Base: UISearchBar {
-    var barStyle: ThemeBarStyleDynamicProvider? {
+    var barStyle: ThemeProvider<UIBarStyle>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UISearchBar.barStyle", provider: new) {[weak baseItem] (style) in
-                baseItem?.barStyle = new?(style) ?? .default
+                baseItem?.barStyle = new?.provider(style) ?? .default
             }
         }
-        get { return nil }
+        get { return self.base.providers["UISearchBar.barStyle"] as? ThemeProvider<UIBarStyle> }
     }
-    var barTintColor: ThemeColorDynamicProvider? {
+    var barTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UISearchBar.barTintColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.barTintColor = new?(style)
+                baseItem?.barTintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UISearchBar.barTintColor"] as? ThemeProvider<UIColor> }
     }
-    var keyboardAppearance: ThemeKeyboardAppearanceDynamicProvider? {
+    var keyboardAppearance: ThemeProvider<UIKeyboardAppearance>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UISearchBar.keyboardAppearance", provider: new) {[weak baseItem] (style) in
-                baseItem?.keyboardAppearance = new?(style) ?? .default
+                baseItem?.keyboardAppearance = new?.provider(style) ?? .default
             }
         }
-        get { return nil }
+        get { return self.base.providers["UISearchBar.keyboardAppearance"] as? ThemeProvider<UIKeyboardAppearance> }
     }
 }
 public extension ThemeWapper where Base: UIToolbar {
-    var barStyle: ThemeBarStyleDynamicProvider? {
+    var barStyle: ThemeProvider<UIBarStyle>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIToolbar.barStyle", provider: new) {[weak baseItem] (style) in
-                baseItem?.barStyle = new?(style) ?? .default
+                baseItem?.barStyle = new?.provider(style) ?? .default
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIToolbar.barStyle"] as? ThemeProvider<UIBarStyle> }
     }
-    var barTintColor: ThemeColorDynamicProvider? {
+    var barTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIToolbar.barTintColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.barTintColor = new?(style)
+                baseItem?.barTintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIToolbar.barTintColor"] as? ThemeProvider<UIColor> }
     }
 }
 public extension ThemeWapper where Base: UISwitch {
-    var onTintColor: ThemeColorDynamicProvider? {
+    var onTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UISwitch.onTintColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.onTintColor = new?(style)
+                baseItem?.onTintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UISwitch.onTintColor"] as? ThemeProvider<UIColor> }
     }
-    var thumbTintColor: ThemeColorDynamicProvider? {
+    var thumbTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UISwitch.thumbTintColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.thumbTintColor = new?(style)
+                baseItem?.thumbTintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UISwitch.thumbTintColor"] as? ThemeProvider<UIColor> }
     }
 }
 public extension ThemeWapper where Base: UISlider {
-    var thumbTintColor: ThemeColorDynamicProvider? {
+    var thumbTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UISlider.thumbTintColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.thumbTintColor = new?(style)
+                baseItem?.thumbTintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UISlider.thumbTintColor"] as? ThemeProvider<UIColor> }
     }
-    var minimumTrackTintColor: ThemeColorDynamicProvider? {
+    var minimumTrackTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UISlider.minimumTrackTintColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.minimumTrackTintColor = new?(style)
+                baseItem?.minimumTrackTintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UISlider.minimumTrackTintColor"] as? ThemeProvider<UIColor> }
     }
-    var maximumTrackTintColor: ThemeColorDynamicProvider? {
+    var maximumTrackTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UISlider.maximumTrackTintColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.maximumTrackTintColor = new?(style)
+                baseItem?.maximumTrackTintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UISlider.maximumTrackTintColor"] as? ThemeProvider<UIColor> }
     }
-    var minimumValueImage: ThemeImageDynamicProvider? {
+    var minimumValueImage: ThemeProvider<UIImage>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UISlider.minimumValueImage", provider: new) {[weak baseItem] (style) in
-                baseItem?.minimumValueImage = new?(style)
+                baseItem?.minimumValueImage = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UISlider.minimumValueImage"] as? ThemeProvider<UIImage> }
     }
-    var maximumValueImage: ThemeImageDynamicProvider? {
+    var maximumValueImage: ThemeProvider<UIImage>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UISlider.maximumValueImage", provider: new) {[weak baseItem] (style) in
-                baseItem?.maximumValueImage = new?(style)
+                baseItem?.maximumValueImage = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UISlider.maximumValueImage"] as? ThemeProvider<UIImage> }
     }
 }
 public extension ThemeWapper where Base: UIRefreshControl {
-    var attributedTitle: ThemeAttributedTextDynamicProvider? {
+    var attributedTitle: ThemeProvider<NSAttributedString>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIRefreshControl.attributedTitle", provider: new) {[weak baseItem] (style) in
-                baseItem?.attributedTitle = new?(style)
+                baseItem?.attributedTitle = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIRefreshControl.attributedTitle"] as? ThemeProvider<NSAttributedString> }
     }
 }
 public extension ThemeWapper where Base: UIProgressView {
-    var progressTintColor: ThemeColorDynamicProvider? {
+    var progressTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIProgressView.progressTintColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.progressTintColor = new?(style)
+                baseItem?.progressTintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIProgressView.progressTintColor"] as? ThemeProvider<UIColor> }
     }
-    var trackTintColor: ThemeColorDynamicProvider? {
+    var trackTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIProgressView.trackTintColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.trackTintColor = new?(style)
+                baseItem?.trackTintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIProgressView.trackTintColor"] as? ThemeProvider<UIColor> }
     }
-    var progressImage: ThemeImageDynamicProvider? {
+    var progressImage: ThemeProvider<UIImage>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIProgressView.progressImage", provider: new) {[weak baseItem] (style) in
-                baseItem?.progressImage = new?(style)
+                baseItem?.progressImage = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIProgressView.progressImage"] as? ThemeProvider<UIImage> }
     }
-    var trackImage: ThemeImageDynamicProvider? {
+    var trackImage: ThemeProvider<UIImage>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIProgressView.trackImage", provider: new) {[weak baseItem] (style) in
-                baseItem?.trackImage = new?(style)
+                baseItem?.trackImage = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIProgressView.trackImage"] as? ThemeProvider<UIImage> }
     }
 }
 public extension ThemeWapper where Base: UIPageControl {
-    var pageIndicatorTintColor: ThemeColorDynamicProvider? {
+    var pageIndicatorTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIPageControl.pageIndicatorTintColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.pageIndicatorTintColor = new?(style)
+                baseItem?.pageIndicatorTintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIPageControl.pageIndicatorTintColor"] as? ThemeProvider<UIColor> }
     }
-    var currentPageIndicatorTintColor: ThemeColorDynamicProvider? {
+    var currentPageIndicatorTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIProgressView.currentPageIndicatorTintColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.currentPageIndicatorTintColor = new?(style)
+                baseItem?.currentPageIndicatorTintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIProgressView.currentPageIndicatorTintColor"] as? ThemeProvider<UIColor> }
     }
 }
 public extension ThemeWapper where Base: UIBarItem {
-    func setTitleTextAttributes(_ attributesProvider: ThemeAttributesDynamicProvider?, for state: UIControl.State) {
-        if attributesProvider != nil {
-            let baseItem = self.base
-            let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
-                baseItem?.setTitleTextAttributes(attributesProvider?(style), for: state)
-            }
-            self.base.configs["UIBarItem.setTitleTextAttributes"] = config
-            ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
-        }else {
-            self.base.configs.removeValue(forKey: "UIBarItem.setTitleTextAttributes")
+    func setTitleTextAttributes(_ attributesProvider: ThemeProvider<[NSAttributedString.Key : Any]>?, for state: UIControl.State) {
+        let baseItem = self.base
+        setupBarItemThemeProperty(barItem: self.base, key: "UIBarItem.setTitleTextAttributes", provider: attributesProvider) {[weak baseItem] (style) in
+            baseItem?.setTitleTextAttributes(attributesProvider?.provider(style), for: state)
         }
     }
 }
 public extension ThemeWapper where Base: UIBarButtonItem {
-    var tintColor: ThemeColorDynamicProvider? {
+    var tintColor: ThemeProvider<UIColor>? {
         set(new) {
-            if new != nil {
-                let baseItem = self.base
-                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
-                    baseItem?.tintColor = new?(style)
-                }
-                self.base.configs["UIBarButtonItem.tintColor"] = config
-                ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
-            }else {
-                self.base.configs.removeValue(forKey: "UIBarButtonItem.tintColor")
+            let baseItem = self.base
+            setupBarItemThemeProperty(barItem: self.base, key: "UIBarButtonItem.tintColor", provider: new) {[weak baseItem] (style) in
+                baseItem?.tintColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIBarButtonItem.tintColor"] as? ThemeProvider<UIColor> }
     }
 }
 public extension ThemeWapper where Base: UIActivityIndicatorView {
-    var style: ThemeActivityIndicatorViewStyleDynamicProvider? {
+    var style: ThemeProvider<UIActivityIndicatorView.Style>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIActivityIndicatorView.style", provider: new) {[weak baseItem] (style) in
-                baseItem?.style = new?(style) ?? UIActivityIndicatorView.Style.gray
+                baseItem?.style = new?.provider(style) ?? UIActivityIndicatorView.Style.gray
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIActivityIndicatorView.style"] as? ThemeProvider<UIActivityIndicatorView.Style> }
     }
 }
 public extension ThemeWapper where Base: UIScrollView {
-    var indicatorStyle: ThemeUIScrollViewIndicatorStyleDynamicProvider? {
+    var indicatorStyle: ThemeProvider<UIScrollView.IndicatorStyle>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UIScrollView.indicatorStyle", provider: new) {[weak baseItem] (style) in
-                baseItem?.indicatorStyle = new?(style) ?? UIScrollView.IndicatorStyle.default
+                baseItem?.indicatorStyle = new?.provider(style) ?? UIScrollView.IndicatorStyle.default
             }
         }
-        get { return nil }
+        get { return self.base.providers["UIScrollView.indicatorStyle"] as? ThemeProvider<UIScrollView.IndicatorStyle> }
     }
 }
 public extension ThemeWapper where Base: UITableView {
-    var separatorColor: ThemeColorDynamicProvider? {
+    var separatorColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UITableView.separatorColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.separatorColor = new?(style)
+                baseItem?.separatorColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UITableView.separatorColor"] as? ThemeProvider<UIColor> }
     }
-    var sectionIndexColor: ThemeColorDynamicProvider? {
+    var sectionIndexColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UITableView.sectionIndexColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.sectionIndexColor = new?(style)
+                baseItem?.sectionIndexColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UITableView.sectionIndexColor"] as? ThemeProvider<UIColor> }
     }
-    var sectionIndexBackgroundColor: ThemeColorDynamicProvider? {
+    var sectionIndexBackgroundColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
             setupViewThemeProperty(view: self.base, key: "UITableView.sectionIndexBackgroundColor", provider: new) {[weak baseItem] (style) in
-                baseItem?.sectionIndexBackgroundColor = new?(style)
+                baseItem?.sectionIndexBackgroundColor = new?.provider(style)
             }
         }
-        get { return nil }
+        get { return self.base.providers["UITableView.sectionIndexBackgroundColor"] as? ThemeProvider<UIColor> }
     }
 }
 
 //MARK: - Extentsion Property
 internal extension UIView {
     struct AssociatedKey {
-        static var configs: Void?
+        static var providers: Void?
     }
-    var configs: [String: ThemeCustomizationClosure] {
+    var providers: [String: Any] {
         set(new) {
-            objc_setAssociatedObject(self, &AssociatedKey.configs, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, &AssociatedKey.providers, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         get {
-            if objc_getAssociatedObject(self, &AssociatedKey.configs) as? [String: ThemeCustomizationClosure] == nil {
-                self.configs = [String: ThemeCustomizationClosure]()
+            if objc_getAssociatedObject(self, &AssociatedKey.providers) == nil {
+                self.providers = [String: Any]()
             }
-            return objc_getAssociatedObject(self, &AssociatedKey.configs) as! [String: ThemeCustomizationClosure]
+            return objc_getAssociatedObject(self, &AssociatedKey.providers) as! [String: Any]
         }
     }
 }
 internal extension CALayer {
     struct AssociatedKey {
-        static var configs: Void?
+        static var providers: Void?
     }
-    var configs: [String: ThemeCustomizationClosure] {
+    var providers: [String: Any] {
         set(new) {
-            objc_setAssociatedObject(self, &AssociatedKey.configs, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, &AssociatedKey.providers, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         get {
-            if objc_getAssociatedObject(self, &AssociatedKey.configs) as? [String: ThemeCustomizationClosure] == nil {
-                self.configs = [String: ThemeCustomizationClosure]()
+            if objc_getAssociatedObject(self, &AssociatedKey.providers) == nil {
+                self.providers = [String: Any]()
             }
-            return objc_getAssociatedObject(self, &AssociatedKey.configs) as! [String: ThemeCustomizationClosure]
+            return objc_getAssociatedObject(self, &AssociatedKey.providers) as! [String: Any]
         }
     }
 }
 internal extension UIBarItem {
     struct AssociatedKey {
-        static var configs: Void?
+        static var providers: Void?
     }
-    var configs: [String: ThemeCustomizationClosure] {
+    var providers: [String: Any] {
         set(new) {
-            objc_setAssociatedObject(self, &AssociatedKey.configs, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, &AssociatedKey.providers, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         get {
-            if objc_getAssociatedObject(self, &AssociatedKey.configs) as? [String: ThemeCustomizationClosure] == nil {
-                self.configs = [String: ThemeCustomizationClosure]()
+            if objc_getAssociatedObject(self, &AssociatedKey.providers) == nil {
+                self.providers = [String: Any]()
             }
-            return objc_getAssociatedObject(self, &AssociatedKey.configs) as! [String: ThemeCustomizationClosure]
+            return objc_getAssociatedObject(self, &AssociatedKey.providers) as! [String: Any]
         }
     }
 }
