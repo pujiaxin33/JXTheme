@@ -288,8 +288,60 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="100" id="GXj-bY-AAK">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="100" id="gT8-Im-bwj">
                                         <rect key="frame" x="0.0" y="900" width="414" height="100"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="gT8-Im-bwj" id="hae-w1-jsZ">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="99.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="overrideThemeStyle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CF9-pz-OdE">
+                                                    <rect key="frame" x="20" y="39.5" width="153" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zxu-fg-34e">
+                                                    <rect key="frame" x="204" y="10" width="200" height="79.5"/>
+                                                    <subviews>
+                                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TbE-vC-TUY">
+                                                            <rect key="frame" x="25" y="10" width="150" height="60"/>
+                                                            <subviews>
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="我永远是dark" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="er8-F5-slT">
+                                                                    <rect key="frame" x="23" y="19.5" width="104" height="21"/>
+                                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                    <nil key="textColor"/>
+                                                                    <nil key="highlightedColor"/>
+                                                                </label>
+                                                            </subviews>
+                                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            <constraints>
+                                                                <constraint firstItem="er8-F5-slT" firstAttribute="centerX" secondItem="TbE-vC-TUY" secondAttribute="centerX" id="4Bv-GY-gYg"/>
+                                                                <constraint firstItem="er8-F5-slT" firstAttribute="centerY" secondItem="TbE-vC-TUY" secondAttribute="centerY" id="ZMe-Hz-oQu"/>
+                                                                <constraint firstAttribute="height" constant="60" id="a29-0Y-07c"/>
+                                                                <constraint firstAttribute="width" constant="150" id="mOu-8k-eLY"/>
+                                                            </constraints>
+                                                        </view>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="200" id="8hp-tK-M4g"/>
+                                                        <constraint firstItem="TbE-vC-TUY" firstAttribute="centerY" secondItem="Zxu-fg-34e" secondAttribute="centerY" id="JV0-32-19c"/>
+                                                        <constraint firstItem="TbE-vC-TUY" firstAttribute="centerX" secondItem="Zxu-fg-34e" secondAttribute="centerX" id="Vba-Y6-TQY"/>
+                                                    </constraints>
+                                                </view>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="Zxu-fg-34e" secondAttribute="trailing" constant="10" id="9Zf-cv-jHm"/>
+                                                <constraint firstItem="CF9-pz-OdE" firstAttribute="leading" secondItem="hae-w1-jsZ" secondAttribute="leading" constant="20" id="FXP-tR-0P3"/>
+                                                <constraint firstItem="Zxu-fg-34e" firstAttribute="top" secondItem="hae-w1-jsZ" secondAttribute="top" constant="10" id="MbT-QS-4xY"/>
+                                                <constraint firstAttribute="bottom" secondItem="Zxu-fg-34e" secondAttribute="bottom" constant="10" id="lcB-mb-IvA"/>
+                                                <constraint firstItem="CF9-pz-OdE" firstAttribute="centerY" secondItem="hae-w1-jsZ" secondAttribute="centerY" id="nJJ-OW-C5m"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="100" id="GXj-bY-AAK">
+                                        <rect key="frame" x="0.0" y="1000" width="414" height="100"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="GXj-bY-AAK" id="pLl-IW-M3u">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="99.5"/>
@@ -329,7 +381,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="100" id="jQA-ut-YCP">
-                                        <rect key="frame" x="0.0" y="1000" width="414" height="100"/>
+                                        <rect key="frame" x="0.0" y="1100" width="414" height="100"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jQA-ut-YCP" id="CqR-Gd-WM7">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="99.5"/>
@@ -361,6 +413,9 @@
                     <connections>
                         <outlet property="attributedLabel" destination="3ld-gf-Blh" id="DBd-0n-XUh"/>
                         <outlet property="customThemeStyleLabel" destination="mjM-ze-PoF" id="itD-pt-j0z"/>
+                        <outlet property="overrideThemeStyleLabel" destination="er8-F5-slT" id="Xkc-lp-bM1"/>
+                        <outlet property="overrideThemeStyleParentView" destination="Zxu-fg-34e" id="aq8-73-ufB"/>
+                        <outlet property="overrideThemeStyleSubview" destination="TbE-vC-TUY" id="Nkj-YR-Egg"/>
                         <outlet property="statusLabel" destination="gZK-cW-0tp" id="GnI-At-GRD"/>
                         <outlet property="statusSwitch" destination="k4l-m4-zZw" id="PSO-Mu-PBe"/>
                         <outlet property="themeButton" destination="PMI-Lb-i1N" id="DfC-id-ID4"/>
@@ -393,6 +448,8 @@
                         <outletCollection property="cellTitleLabels" destination="8d3-Wm-cYZ" collectionClass="NSMutableArray" id="H94-gC-q7l"/>
                         <outletCollection property="cellTitleLabels" destination="ceU-TY-wc4" collectionClass="NSMutableArray" id="NSf-xz-A2R"/>
                         <outletCollection property="cells" destination="PY9-sh-3yy" collectionClass="NSMutableArray" id="Ncm-lH-dk5"/>
+                        <outletCollection property="cells" destination="gT8-Im-bwj" collectionClass="NSMutableArray" id="mWn-Xa-zJG"/>
+                        <outletCollection property="cellTitleLabels" destination="CF9-pz-OdE" collectionClass="NSMutableArray" id="qr2-ZH-OQ7"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mbv-7b-i2k" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

@@ -22,6 +22,9 @@ class ViewController: UITableViewController {
     @IBOutlet weak var attributedLabel: UILabel!
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var statusSwitch: UISwitch!
+    @IBOutlet weak var overrideThemeStyleParentView: UIView!
+    @IBOutlet weak var overrideThemeStyleSubview: UIView!
+    @IBOutlet weak var overrideThemeStyleLabel: UILabel!
     @IBOutlet var cellTitleLabels: [UILabel]!
     @IBOutlet var cells: [UITableViewCell]!
 
@@ -53,7 +56,7 @@ class ViewController: UITableViewController {
                 self?.themeView.bounds = CGRect(x: 0, y: 0, width: 80, height: 80)
             }
         })
-
+        
         themeLabel.theme.backgroundColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .black
@@ -181,6 +184,37 @@ class ViewController: UITableViewController {
                 self?.themeLayer.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
             }else {
                 self?.themeLayer.bounds = CGRect(x: 0, y: 0, width: 80, height: 80)
+            }
+        })
+
+        //可以下面这行注释掉，看看运行效果
+        overrideThemeStyleParentView.theme.overrideThemeStyle = .dark
+        overrideThemeStyleParentView.theme.backgroundColor = ThemeProvider({ (style) in
+            if style == .dark {
+                return .red
+            }else {
+                return .green
+            }
+        })
+        overrideThemeStyleSubview.theme.backgroundColor = ThemeProvider({ (style) in
+            if style == .dark {
+                return .green
+            }else {
+                return .blue
+            }
+        })
+        overrideThemeStyleLabel.theme.backgroundColor = ThemeProvider({ (style) in
+            if style == .dark {
+                return .black
+            }else {
+                return .white
+            }
+        })
+        overrideThemeStyleLabel.theme.textColor = ThemeProvider({ (style) in
+            if style == .dark {
+                return .white
+            }else {
+                return .black
             }
         })
 

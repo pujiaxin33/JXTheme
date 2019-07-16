@@ -31,6 +31,8 @@ public class ThemeManager {
 
     init() {
         refreshStoreConfigs()
+        UIView.swizzleAddSubview
+        CALayer.swizzleAddSublayer
     }
 
     public func changeTheme(to style: ThemeStyle) {
@@ -39,11 +41,13 @@ public class ThemeManager {
         DispatchQueue.main.async {
             self.trackedHashTable.allObjects.forEach { (object) in
                 if let view = object as? UIView {
-                    view.providers.values.forEach { self.resolveProvider($0) }
+                    let style = view.overrideThemeStyle ?? self.currentThemeStyle
+                    view.providers.values.forEach { self.resolveProvider($0, style: style) }
                 }else if let layer = object as? CALayer {
-                    layer.providers.values.forEach { self.resolveProvider($0) }
+                    let style = layer.overrideThemeStyle ?? self.currentThemeStyle
+                    layer.providers.values.forEach { self.resolveProvider($0, style: style) }
                 }else if let barItem = object as? UIBarItem {
-                    barItem.providers.values.forEach { self.resolveProvider($0) }
+                    barItem.providers.values.forEach { self.resolveProvider($0, style: self.currentThemeStyle) }
                 }
             }
         }
@@ -54,27 +58,27 @@ public class ThemeManager {
         addedConfig(currentThemeStyle)
     }
 
-    private func resolveProvider(_ object: Any) {
+    private func resolveProvider(_ object: Any, style: ThemeStyle) {
         if let provider = object as? ThemeProvider<UIColor> {
-            provider.config?(currentThemeStyle)
+            provider.config?(style)
         }else if let provider = object as? ThemeProvider<UIImage> {
-            provider.config?(currentThemeStyle)
+            provider.config?(style)
         }else if let provider = object as? ThemeProvider<NSAttributedString> {
-            provider.config?(currentThemeStyle)
+            provider.config?(style)
         }else if let provider = object as? ThemeProvider<UIKeyboardAppearance> {
-            provider.config?(currentThemeStyle)
+            provider.config?(style)
         }else if let provider = object as? ThemeProvider<CGFloat> {
-            provider.config?(currentThemeStyle)
+            provider.config?(style)
         }else if let provider = object as? ThemeProvider<[NSAttributedString.Key : Any]> {
-            provider.config?(currentThemeStyle)
+            provider.config?(style)
         }else if let provider = object as? ThemeProvider<UIFont> {
-            provider.config?(currentThemeStyle)
+            provider.config?(style)
         }else if let provider = object as? ThemeProvider<UIBarStyle> {
-            provider.config?(currentThemeStyle)
+            provider.config?(style)
         }else if let provider = object as? ThemeProvider<UIActivityIndicatorView.Style> {
-            provider.config?(currentThemeStyle)
+            provider.config?(style)
         }else if let provider = object as? ThemeProvider<Void> {
-            provider.config?(currentThemeStyle)
+            provider.config?(style)
         }
     }
 }

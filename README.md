@@ -77,6 +77,7 @@ private func resolveProvider(_ object: Any) {
 - [x] 使用`ThemeProvider`传入闭包配置。根据不同的`ThemeStyle`完成主题属性配置，实现最大化的自定义；
 - [x] `ThemeStyle`可通过`extension`自定义style，不再局限于`light`和`dark`;
 - [x] 提供`customization`属性，作为主题切换的回调入口，可以灵活配置任何属性。不再局限于提供的`backgroundColor`、`textColor`等属性；
+- [x] 支持控件设置`overrideThemeStyle`，会影响到其子视图； 
 - [x] 提供根据`ThemeStyle`配置属性的常规封装、Plist文件静态加载、服务器动态加载示例；
 
 # 预览
@@ -222,6 +223,11 @@ func statusDidChange() {
 }
 ```
 
+## overrideThemeStyle
+不管主题如何切换，`overrideThemeStyleParentView`及其子视图的`themeStyle`都是`dark`
+```Swift 
+overrideThemeStyleParentView.theme.overrideThemeStyle = .dark
+```
 
 # 目前支持的类及其属性
 

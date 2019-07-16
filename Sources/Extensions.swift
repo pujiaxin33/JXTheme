@@ -86,6 +86,12 @@ public extension ThemeWapper where Base: UIView {
         }
         get { return self.base.providers["UIView.customization"] as? ThemeProvider<Void> }
     }
+    var overrideThemeStyle: ThemeStyle? {
+        set(new) {
+            self.base.overrideThemeStyle = new
+        }
+        get { return self.base.overrideThemeStyle }
+    }
 }
 public extension ThemeWapper where Base: UILabel {
     var font: ThemeProvider<UIFont>? {
@@ -267,6 +273,12 @@ public extension ThemeWapper where Base: UIImageView {
     }
 }
 public extension ThemeWapper where Base: CALayer {
+    var overrideThemeStyle: ThemeStyle? {
+        set(new) {
+            self.base.overrideThemeStyle = new
+        }
+        get { return self.base.overrideThemeStyle }
+    }
     var backgroundColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
@@ -577,6 +589,12 @@ public extension ThemeWapper where Base: UIPageControl {
     }
 }
 public extension ThemeWapper where Base: UIBarItem {
+    var overrideThemeStyle: ThemeStyle? {
+        set(new) {
+            self.base.overrideThemeStyle = new
+        }
+        get { return self.base.overrideThemeStyle }
+    }
     func setTitleTextAttributes(_ attributesProvider: ThemeProvider<[NSAttributedString.Key : Any]>?, for state: UIControl.State) {
         let baseItem = self.base
         setupBarItemThemeProperty(barItem: self.base, key: "UIBarItem.setTitleTextAttributes", provider: attributesProvider) {[weak baseItem] (style) in
@@ -651,6 +669,7 @@ public extension ThemeWapper where Base: UITableView {
 internal extension UIView {
     struct AssociatedKey {
         static var providers: Void?
+        static var overrideThemeStyle: Void?
     }
     var providers: [String: Any] {
         set(new) {
@@ -661,12 +680,22 @@ internal extension UIView {
                 self.providers = [String: Any]()
             }
             return objc_getAssociatedObject(self, &AssociatedKey.providers) as! [String: Any]
+        }
+    }
+    var overrideThemeStyle: ThemeStyle? {
+        set(new) {
+            objc_setAssociatedObject(self, &AssociatedKey.overrideThemeStyle, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            subviews.forEach { $0.overrideThemeStyle = self.overrideThemeStyle }
+        }
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKey.overrideThemeStyle) as? ThemeStyle
         }
     }
 }
 internal extension CALayer {
     struct AssociatedKey {
         static var providers: Void?
+        static var overrideThemeStyle: Void?
     }
     var providers: [String: Any] {
         set(new) {
@@ -677,12 +706,22 @@ internal extension CALayer {
                 self.providers = [String: Any]()
             }
             return objc_getAssociatedObject(self, &AssociatedKey.providers) as! [String: Any]
+        }
+    }
+    var overrideThemeStyle: ThemeStyle? {
+        set(new) {
+            objc_setAssociatedObject(self, &AssociatedKey.overrideThemeStyle, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            sublayers?.forEach { $0.overrideThemeStyle = self.overrideThemeStyle }
+        }
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKey.overrideThemeStyle) as? ThemeStyle
         }
     }
 }
 internal extension UIBarItem {
     struct AssociatedKey {
         static var providers: Void?
+        static var overrideThemeStyle: Void?
     }
     var providers: [String: Any] {
         set(new) {
@@ -693,6 +732,51 @@ internal extension UIBarItem {
                 self.providers = [String: Any]()
             }
             return objc_getAssociatedObject(self, &AssociatedKey.providers) as! [String: Any]
+        }
+    }
+    var overrideThemeStyle: ThemeStyle? {
+        set(new) {
+            objc_setAssociatedObject(self, &AssociatedKey.overrideThemeStyle, new, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKey.overrideThemeStyle) as? ThemeStyle
+        }
+    }
+}
+
+//MARK: - Swizzle
+extension UIView {
+    static let swizzleAddSubview: Void = {
+        let aClass: AnyClass! = object_getClass(UIView())
+        let originalMethod = class_getInstanceMethod(aClass, #selector(addSubview(_:)))
+        let newMehod = class_getInstanceMethod(aClass, #selector(swizzledAddSubview(_:)))
+        if let originalMethod = originalMethod, let newMehod = newMehod {
+            method_exchangeImplementations(originalMethod, newMehod)
+        }
+    }()
+
+    @objc func swizzledAddSubview(_ subview: UIView) {
+        swizzledAddSubview(subview)
+        if overrideThemeStyle != nil {
+            subview.overrideThemeStyle = overrideThemeStyle
+        }
+    }
+}
+
+extension CALayer {
+    static let swizzleAddSublayer: Void = {
+        let aClass: AnyClass! = object_getClass(CALayer())
+        let originalMethod = class_getInstanceMethod(aClass, #selector(addSublayer(_:)))
+        let newMehod = class_getInstanceMethod(aClass, #selector(swizzledAddSublayer(_:)))
+        if let originalMethod = originalMethod, let newMehod = newMehod {
+            method_exchangeImplementations(originalMethod, newMehod)
+        }
+    }()
+
+    @objc func swizzledAddSublayer(_ sublayer: CALayer) {
+        swizzledAddSublayer(sublayer)
+        if overrideThemeStyle != nil {
+            sublayer.overrideThemeStyle = overrideThemeStyle
         }
     }
 }
