@@ -114,6 +114,15 @@ github "pujiaxin33/JXTheme"
 
 # 使用示例
 
+## 扩展`ThemeStyle`添加自定义style
+`ThemeStyle`内部仅提供了一个默认的`unspecified`style，其他的业务style需要自己添加，比如只支持`light`和`dark`，代码如下：
+```Swift
+extension ThemeStyle {
+    static let light = ThemeStyle(rawValue: "light")
+    static let dark = ThemeStyle(rawValue: "dark")
+}
+```
+
 ## 基础使用
 ```Swift
 view.theme.backgroundColor = { (style) -> UIColor in
@@ -186,15 +195,6 @@ themeLabel.theme.textColor = dynamicTextColor(.mainTitle)
 
 ### 根据服务器动态添加主题
 与**常规配置封装**一样，只是该方法是从服务器加载配置的具体值，具体代码参加`Example`的`DynamicSourceManager`类
-
-# 扩展`ThemeStyle`添加自定义style
-`ThemeStyle`内部仅提供了一个默认的`unspecified`style，其他的业务style需要自己添加，比如只支持`light`和`dark`，代码如下：
-```Swift
-extension ThemeStyle {
-    static let light = ThemeStyle(rawValue: "light")
-    static let dark = ThemeStyle(rawValue: "dark")
-}
-```
 
 
 # 目前支持的类及其属性
