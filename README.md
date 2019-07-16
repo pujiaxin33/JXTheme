@@ -51,7 +51,7 @@ ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
 ```
 
 ## 5.如何切换主题并调用主题属性配置闭包
-通过`ThemeManager.changeTheme(to: style)`完成主题切换，方法内部再调用被追踪的控件的`configs`里面的主题属性配置闭包。
+通过`ThemeManager.changeTheme(to: style)`完成主题切换，方法内部再调用被追踪的控件的`providers`里面的`ThemeProvider.provider`主题属性配置闭包。
 核心代码如下：
 ```Swift
 public func changeTheme(to style: ThemeStyle) {
@@ -76,7 +76,7 @@ private func resolveProvider(_ object: Any) {
 - [x] 使用`theme`命名空间属性:`view.theme.xx = xx`。告别`theme_xx`属性扩展用法；
 - [x] 使用`ThemeProvider`传入闭包配置。根据不同的`ThemeStyle`完成主题属性配置，实现最大化的自定义；
 - [x] `ThemeStyle`可通过`extension`自定义style，不再局限于`light`和`dark`;
-- [x] 提供`customization`属性，作为主体切换的回调入口，可以灵活配置任何属性。不再局限于提供的`backgroundColor`、`textColor`等属性；
+- [x] 提供`customization`属性，作为主题切换的回调入口，可以灵活配置任何属性。不再局限于提供的`backgroundColor`、`textColor`等属性；
 - [x] 提供根据`ThemeStyle`配置属性的常规封装、Plist文件静态加载、服务器动态加载示例；
 
 # 预览
@@ -195,7 +195,7 @@ themeLabel.theme.textColor = dynamicTextColor(.mainTitle)
 与**常规配置封装**一样，只是该方法是从服务器加载配置的具体值，具体代码参加`Example`的`DynamicSourceManager`类
 
 ## 有状态的控件
-某些业务需求会存在一个控件有多种状态，必须选中与未选中。不同的状态对于不同的主题又会有不同的配置。配置代码参考如下：
+某些业务需求会存在一个控件有多种状态，比如选中与未选中。不同的状态对于不同的主题又会有不同的配置。配置代码参考如下：
 ```Swift
 statusLabel.theme.textColor = ThemeProvider({[weak self] (style) in
     if self?.statusLabelStatus == .isSelected {
@@ -217,7 +217,9 @@ statusLabel.theme.textColor = ThemeProvider({[weak self] (style) in
 ```
 当控件的状态更新时，需要刷新当前的主题属性配置，代码如下：
 ```Swift
-statusLabel.theme.textColor?.refresh()
+func statusDidChange() {
+    statusLabel.theme.textColor?.refresh()
+}
 ```
 
 
