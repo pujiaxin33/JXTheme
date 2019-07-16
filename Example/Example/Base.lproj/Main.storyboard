@@ -252,8 +252,44 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="100" id="GXj-bY-AAK">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="100" id="PY9-sh-3yy">
                                         <rect key="frame" x="0.0" y="800" width="414" height="100"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="PY9-sh-3yy" id="agl-kj-9mz">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="99.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="有状态控件" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ceU-TY-wc4">
+                                                    <rect key="frame" x="20" y="20" width="87" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="这是一个有状态的控件" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gZK-cW-0tp">
+                                                    <rect key="frame" x="220" y="39.5" width="174" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="k4l-m4-zZw">
+                                                    <rect key="frame" x="39" y="51" width="51" height="31"/>
+                                                    <connections>
+                                                        <action selector="statusSwitchDidClicked:" destination="QnE-G2-WxN" eventType="valueChanged" id="zrw-Jr-9od"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="k4l-m4-zZw" firstAttribute="top" secondItem="ceU-TY-wc4" secondAttribute="bottom" constant="10" id="2of-lN-Q1z"/>
+                                                <constraint firstItem="ceU-TY-wc4" firstAttribute="top" secondItem="agl-kj-9mz" secondAttribute="top" constant="20" id="cR4-RI-tMv"/>
+                                                <constraint firstItem="k4l-m4-zZw" firstAttribute="centerX" secondItem="ceU-TY-wc4" secondAttribute="centerX" id="dys-AW-EvH"/>
+                                                <constraint firstItem="ceU-TY-wc4" firstAttribute="leading" secondItem="agl-kj-9mz" secondAttribute="leading" constant="20" id="fWF-D9-4PP"/>
+                                                <constraint firstAttribute="trailing" secondItem="gZK-cW-0tp" secondAttribute="trailing" constant="20" id="hpg-fH-3Ge"/>
+                                                <constraint firstItem="gZK-cW-0tp" firstAttribute="centerY" secondItem="agl-kj-9mz" secondAttribute="centerY" id="jYh-OW-We7"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="100" id="GXj-bY-AAK">
+                                        <rect key="frame" x="0.0" y="900" width="414" height="100"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="GXj-bY-AAK" id="pLl-IW-M3u">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="99.5"/>
@@ -293,7 +329,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="100" id="jQA-ut-YCP">
-                                        <rect key="frame" x="0.0" y="900" width="414" height="100"/>
+                                        <rect key="frame" x="0.0" y="1000" width="414" height="100"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jQA-ut-YCP" id="CqR-Gd-WM7">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="99.5"/>
@@ -325,6 +361,8 @@
                     <connections>
                         <outlet property="attributedLabel" destination="3ld-gf-Blh" id="DBd-0n-XUh"/>
                         <outlet property="customThemeStyleLabel" destination="mjM-ze-PoF" id="itD-pt-j0z"/>
+                        <outlet property="statusLabel" destination="gZK-cW-0tp" id="GnI-At-GRD"/>
+                        <outlet property="statusSwitch" destination="k4l-m4-zZw" id="PSO-Mu-PBe"/>
                         <outlet property="themeButton" destination="PMI-Lb-i1N" id="DfC-id-ID4"/>
                         <outlet property="themeImageView" destination="vVK-Q2-PdK" id="eTN-kA-5ly"/>
                         <outlet property="themeLabel" destination="T2S-y6-xff" id="9se-Fa-ew6"/>
@@ -353,6 +391,8 @@
                         <outletCollection property="cells" destination="GXj-bY-AAK" collectionClass="NSMutableArray" id="eCN-z6-myi"/>
                         <outletCollection property="cells" destination="jQA-ut-YCP" collectionClass="NSMutableArray" id="Vej-yy-Kc9"/>
                         <outletCollection property="cellTitleLabels" destination="8d3-Wm-cYZ" collectionClass="NSMutableArray" id="H94-gC-q7l"/>
+                        <outletCollection property="cellTitleLabels" destination="ceU-TY-wc4" collectionClass="NSMutableArray" id="NSf-xz-A2R"/>
+                        <outletCollection property="cells" destination="PY9-sh-3yy" collectionClass="NSMutableArray" id="Ncm-lH-dk5"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mbv-7b-i2k" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

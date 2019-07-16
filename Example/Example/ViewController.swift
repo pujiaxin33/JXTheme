@@ -20,6 +20,8 @@ class ViewController: UITableViewController {
     lazy var themeLayer: CALayer = { CALayer() }()
     @IBOutlet weak var customThemeStyleLabel: UILabel!
     @IBOutlet weak var attributedLabel: UILabel!
+    @IBOutlet weak var statusLabel: UILabel!
+    @IBOutlet weak var statusSwitch: UISwitch!
     @IBOutlet var cellTitleLabels: [UILabel]!
     @IBOutlet var cells: [UITableViewCell]!
 
@@ -182,6 +184,22 @@ class ViewController: UITableViewController {
             }
         })
 
+        statusLabel.theme.textColor = ThemeProvider({[weak self] (style) in
+            if self?.statusSwitch.isOn == true {
+                if style == .dark {
+                    return .red
+                }else {
+                    return .green
+                }
+            }else {
+                if style == .dark {
+                    return .white
+                }else {
+                    return .black
+                }
+            }
+        })
+
         //自定义ThemeStyle示例
         customThemeStyleLabel.theme.backgroundColor = ThemeProvider({ (style) in
             if style == .dark {
@@ -288,6 +306,11 @@ class ViewController: UITableViewController {
     @IBAction func togglePinkButtonClicked(_ sender: UIButton) {
         ThemeManager.shared.changeTheme(to: .pink)
         refreshToggleButton()
+    }
+
+    @IBAction func statusSwitchDidClicked(_ sender: UISwitch) {
+        //当statusLabel的状态发生变化时，调用refresh方法，触发主题色更新
+        statusLabel.theme.textColor?.refresh()
     }
 }
 
