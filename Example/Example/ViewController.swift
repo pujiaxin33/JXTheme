@@ -48,7 +48,7 @@ class ViewController: UITableViewController {
                 return .black
             }
         })
-        //UIView customization自定义
+        //UIView customization
         themeView.theme.customization = ThemeProvider({[weak self] style in
             if style == .dark {
                 self?.themeView.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
@@ -154,7 +154,7 @@ class ViewController: UITableViewController {
                 return .white
             }
         })
-        //图片本地静态配置
+        //图片本地静态配置(load image from bundle)
         themeImageView.theme.image = ThemeProvider({ (style) in
             if style == .dark {
                 return UIImage(named: "catWhite")!
@@ -162,7 +162,7 @@ class ViewController: UITableViewController {
                 return UIImage(named: "catBlack")!
             }
         })
-        //图片动态下载配置
+        //图片动态下载配置(load image from server)
         /*
         themeImageView.theme.customization = ThemeProvider({[weak self] style in
 //            let url = switch sytle choose image url
@@ -178,7 +178,7 @@ class ViewController: UITableViewController {
                 return .black
             }
         })
-        //CALayer customization自定义
+        //CALayer customization
         themeLayer.theme.customization = ThemeProvider({ [weak self] style in
             if style == .dark {
                 self?.themeLayer.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
@@ -187,7 +187,7 @@ class ViewController: UITableViewController {
             }
         })
 
-        //可以下面这行注释掉，看看运行效果
+        //可以下面这行注释掉，看看运行效果(Try comment below code.)
         overrideThemeStyleParentView.theme.overrideThemeStyle = .dark
         overrideThemeStyleParentView.theme.backgroundColor = ThemeProvider({ (style) in
             if style == .dark {
@@ -234,7 +234,7 @@ class ViewController: UITableViewController {
             }
         })
 
-        //自定义ThemeStyle示例
+        //ThemeStyle customization
         customThemeStyleLabel.theme.backgroundColor = ThemeProvider({ (style) in
             if style == .dark {
                 return .black
@@ -295,7 +295,7 @@ class ViewController: UITableViewController {
         }
     }
 
-    // 使用通知刷新页面
+    // The notification of theme did change
     @objc func themeDidChange(notification: Notification) {
         let newStyle = notification.userInfo?["style"] as! ThemeStyle
         if newStyle == .dark {
@@ -320,15 +320,6 @@ class ViewController: UITableViewController {
     }
 
     @objc func toggleThemeStyle() {
-        //动态json配置设置
-        /*
-        if let themes = DynamicSourceManager.shared.themes, let newTheme = themes.first {
-            //这里的newTheme完全是透明的，依赖于服务器的数据
-            ThemeManager.shared.changeTheme(to: ThemeStyle(rawValue: newTheme))
-        }else {
-            //当前暂无服务器下发的主题资源，这里是你配置默认主题的地方。当然你也可以整合进DynamicSourceManager里面。
-        }
- */
         if ThemeManager.shared.currentThemeStyle == .dark {
             ThemeManager.shared.changeTheme(to: .light)
         }else {

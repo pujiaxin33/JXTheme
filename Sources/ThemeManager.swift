@@ -19,7 +19,7 @@ public class ThemeManager {
             storeCurrentThemeStyle()
         }
     }
-    /// 配置存储的标志key。可以设置为用户的ID，这样在同一个手机，可以分别记录不同用户的配置。需要优先设置该属性再设置其他值。
+    /// The unique identifier key for store configs. For example,set userID. You should set this before config other property.
     public var storeConfigsIdentifierKey: String = "default" {
         didSet {
             refreshStoreConfigs()

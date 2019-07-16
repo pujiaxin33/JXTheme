@@ -30,7 +30,6 @@ public struct ThemeWapper<Base> {
 }
 
 //MARK: - Defines
-/// 为了便于外部自定义style，使用了struct类型。如果使用枚举类型，外部就无法自定义扩展了。
 public struct ThemeStyle: RawRepresentable, Equatable, Hashable, Comparable {
     public typealias RawValue = String
     public var rawValue: String
@@ -55,7 +54,9 @@ public struct ThemeProvider<T> {
     public init(_ provider: @escaping ThemePropertyProvider<T>) {
         self.provider = provider
     }
-    /// 根据传入的style直接触发主题属性的刷新。默认值unspecified表示用ThemeManager.shared.currentThemeStyle刷新，否则用传入的style刷新。
+    /// Refresh theme value with style.The default value is `.unspecified` that's say use `ThemeManager.shared.currentThemeStyle`.
+    ///
+    /// - Parameter style: ThemeStyle
     public func refresh(style: ThemeStyle = .unspecified) {
         if style == .unspecified {
             config?(ThemeManager.shared.currentThemeStyle)
