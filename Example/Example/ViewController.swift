@@ -231,6 +231,12 @@ class ViewController: UITableViewController {
         themeLayer.frame = themeLayerContainerView.bounds
     }
 
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == 9 {
+            navigationController?.pushViewController(ListViewController(style: .plain), animated: true)
+        }
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 

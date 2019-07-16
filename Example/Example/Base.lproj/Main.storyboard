@@ -14,7 +14,7 @@
             <objects>
                 <tableViewController id="QnE-G2-WxN" customClass="ViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="bfi-rK-ueo">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="1000"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="1200"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <sections>
@@ -292,6 +292,26 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="100" id="jQA-ut-YCP">
+                                        <rect key="frame" x="0.0" y="900" width="414" height="100"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jQA-ut-YCP" id="CqR-Gd-WM7">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="99.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="滚动列表示例" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8d3-Wm-cYZ">
+                                                    <rect key="frame" x="20" y="39.5" width="104" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="8d3-Wm-cYZ" firstAttribute="leading" secondItem="CqR-Gd-WM7" secondAttribute="leading" constant="20" id="5bf-Lg-qov"/>
+                                                <constraint firstItem="8d3-Wm-cYZ" firstAttribute="centerY" secondItem="CqR-Gd-WM7" secondAttribute="centerY" id="x58-Y6-Q4u"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                         </sections>
@@ -301,7 +321,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Example" id="egm-J2-2tv"/>
-                    <size key="freeformSize" width="414" height="1000"/>
+                    <size key="freeformSize" width="414" height="1200"/>
                     <connections>
                         <outlet property="attributedLabel" destination="3ld-gf-Blh" id="DBd-0n-XUh"/>
                         <outlet property="customThemeStyleLabel" destination="mjM-ze-PoF" id="itD-pt-j0z"/>
@@ -331,6 +351,8 @@
                         <outletCollection property="cells" destination="ogL-Tv-E1q" collectionClass="NSMutableArray" id="Z7P-Hd-WXu"/>
                         <outletCollection property="cells" destination="N55-18-2Tw" collectionClass="NSMutableArray" id="zhp-5P-kKB"/>
                         <outletCollection property="cells" destination="GXj-bY-AAK" collectionClass="NSMutableArray" id="eCN-z6-myi"/>
+                        <outletCollection property="cells" destination="jQA-ut-YCP" collectionClass="NSMutableArray" id="Vej-yy-Kc9"/>
+                        <outletCollection property="cellTitleLabels" destination="8d3-Wm-cYZ" collectionClass="NSMutableArray" id="H94-gC-q7l"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mbv-7b-i2k" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

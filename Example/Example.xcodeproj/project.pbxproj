@@ -17,6 +17,7 @@
 		19879EC322D58AA800767E2E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 19879EC122D58AA800767E2E /* Main.storyboard */; };
 		19879EC522D58AAD00767E2E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 19879EC422D58AAD00767E2E /* Assets.xcassets */; };
 		19879EC822D58AAD00767E2E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 19879EC622D58AAD00767E2E /* LaunchScreen.storyboard */; };
+		19D4BBE822DD752A00ACC1A4 /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19D4BBE722DD752A00ACC1A4 /* ListViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -45,6 +46,7 @@
 		19879EC422D58AAD00767E2E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		19879EC722D58AAD00767E2E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		19879EC922D58AAD00767E2E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		19D4BBE722DD752A00ACC1A4 /* ListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +91,7 @@
 			children = (
 				19879EBD22D58AA800767E2E /* AppDelegate.swift */,
 				19879EBF22D58AA800767E2E /* ViewController.swift */,
+				19D4BBE722DD752A00ACC1A4 /* ListViewController.swift */,
 				1906719522D86A2E00D8AEDD /* StaticSourceManager.swift */,
 				1906719722D8712900D8AEDD /* DynamicSourceManager.swift */,
 				19879EC122D58AA800767E2E /* Main.storyboard */,
@@ -176,6 +179,7 @@
 				19879EC022D58AA800767E2E /* ViewController.swift in Sources */,
 				1906719622D86A2E00D8AEDD /* StaticSourceManager.swift in Sources */,
 				1906719822D8712900D8AEDD /* DynamicSourceManager.swift in Sources */,
+				19D4BBE822DD752A00ACC1A4 /* ListViewController.swift in Sources */,
 				19879EBE22D58AA800767E2E /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
