@@ -1,7 +1,7 @@
 
 <div align=center><img width="468" height="90" src="https://github.com/pujiaxin33/JXTheme/blob/master/GIF/JXTheme.png"/></div>
 
-[中文文档]()
+[中文文档](https://github.com/pujiaxin33/JXTheme/blob/master/README-CN.md)
 
 JXTheme is a lightweight library for theme properties configuration. In order to achieve the theme switching, the following five problems are mainly solved:
 ## 1. How to elegantly set theme properties
