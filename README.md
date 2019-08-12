@@ -1,4 +1,6 @@
-# 简介
+
+<div align=center><img width="468" height="90" src="https://github.com/pujiaxin33/JXTheme/blob/master/GIF/JXTheme.png"/></div>
+
 JXTheme是一个提供主题属性配置的轻量级基础库。为了实现主题切换，主要解决以下五个问题：
 ## 1.如何优雅的设置主题属性
 通过给控件扩展命名空间属性`theme`，类似于`SnapKit`的`snp`、`Kingfisher`的`kf`，这样可以将支持主题修改的属性，集中到`theme`属性。这样比直接给控件扩展属性`theme_backgroundColor`更加优雅。
