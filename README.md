@@ -1,271 +1,271 @@
 
 <div align=center><img width="468" height="90" src="https://github.com/pujiaxin33/JXTheme/blob/master/GIF/JXTheme.png"/></div>
 
-JXTheme是一个提供主题属性配置的轻量级基础库。为了实现主题切换，主要解决以下五个问题：
-## 1.如何优雅的设置主题属性
-通过给控件扩展命名空间属性`theme`，类似于`SnapKit`的`snp`、`Kingfisher`的`kf`，这样可以将支持主题修改的属性，集中到`theme`属性。这样比直接给控件扩展属性`theme_backgroundColor`更加优雅。
-核心代码如下：
+[中文文档]()
+
+JXTheme is a lightweight library for theme properties configuration. In order to achieve the theme switching, the following five problems are mainly solved:
+## 1. How to elegantly set theme properties
+By extending the namespace property `theme` to the control, similar to the `snp` of `SnapKit` and the `kf` of `Kingfisher`, you can concentrate the properties that support the theme modification to the `theme` property. This is more elegant than directly extending the property 'theme_backgroundColor` to the control.
+The core code is as follows:
 ```Swift
 view.theme.backgroundColor = ThemeProvider({ (style) in
-    if style == .dark {
-        return .white
-    }else {
-        return .black
-    }
+    If style == .dark {
+        Return .white
+    }else {
+        Return .black
+    }
 })
 ```
 
-## 2.如何根据传入的style配置对应的值
-借鉴iOS13系统API`UIColor(dynamicProvider: <UITraitCollection) -> UIColor>)`。自定义`ThemeProvider`结构体，初始化器为`init(_ provider: @escaping ThemePropertyProvider<T>)`。传入的参数`ThemePropertyProvider`是一个闭包，定义为：`typealias ThemePropertyProvider<T> = (ThemeStyle) -> T`。这样就可以针对不同的控件，不同的属性配置，实现最大化的自定义。
-核心代码参考第一步示例代码。
+## 2. How to configure the corresponding value according to the incoming style
+Reference the iOS13 system API `UIColor(dynamicProvider: <UITraitCollection) -> UIColor>)`. Customize the `ThemeProvider` structure, the initializer is `init(_ provider: @escaping ThemePropertyProvider<T>)`. The passed argument `ThemePropertyProvider` is a closure defined as: `typealias ThemePropertyProvider<T> = (ThemeStyle) -> T`. This allows for maximum customization of different controls and different attribute configurations.
+The core code refers to the first step sample code.
 
-## 3.如何保存主题属性配置闭包
-对控件添加`Associated object`属性`providers`存储`ThemeProvider`。
-核心代码如下：
+## 3. How to save the theme properties configuration closure
+Add the `Associated object` property `providers` to the control to store `ThemeProvider`.
+The core code is as follows:
 ```Swift
-public extension ThemeWapper where Base: UIView {
-    var backgroundColor: ThemeProvider<UIColor>? {
-        set(new) {
-            if new != nil {
-                let baseItem = self.base
-                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
-                    baseItem?.backgroundColor = new?.provider(style)
-                }
-                //存储在扩展属性providers里面
-                var newProvider = new
-                newProvider?.config = config
-                self.base.providers["UIView.backgroundColor"] = newProvider
-                ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
-            }else {
-                self.base.configs.removeValue(forKey: "UIView.backgroundColor")
-            }
-        }
-        get { return self.base.providers["UIView.backgroundColor"] as? ThemeProvider<UIColor> }
-    }
+Public extension ThemeWapper where Base: UIView {
+    Var backgroundColor: ThemeProvider<UIColor>? {
+        Set(new) {
+            If new != nil {
+                Let baseItem = self.base
+                Let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.backgroundColor = new?.provider(style)
+                }
+                / / Stored in the extended properties provider
+                Var newProvider = new
+                newProvider?.config = config
+                Self.base.providers["UIView.backgroundColor"] = newProvider
+                ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
+            }else {
+                self.base.configs.removeValue(forKey: "UIView.backgroundColor")
+            }
+        }
+        Get { return self.base.providers["UIView.backgroundColor"] as? ThemeProvider<UIColor> }
+    }
 }
 ```
 
-## 4.如何记录支持主题属性的控件
-为了在主题切换的时候，通知到支持主题属性配置的控件。通过在设置主题属性时，就记录目标控件。
-核心代码就是第3步里面的这句代码：
-```Swift 
+## 4. How to track controls that support theme properties
+In order to switch to the theme, notify the control that supports the theme property configuration. By tracking the target control when setting the theme properties.
+The core code is the code in step 3:
+```Swift
 ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
 ```
 
-## 5.如何切换主题并调用主题属性配置闭包
-通过`ThemeManager.changeTheme(to: style)`完成主题切换，方法内部再调用被追踪的控件的`providers`里面的`ThemeProvider.provider`主题属性配置闭包。
-核心代码如下：
+## 5. How to switch the theme and call the closure of theme property
+The theme is switched by `ThemeManager.changeTheme(to: style)`, and the method internally calls the `ThemeProvider.provider` theme property in the `providers` of the tracked control to configure the closure.
+The core code is as follows:
 ```Swift
-public func changeTheme(to style: ThemeStyle) {
-    currentThemeStyle = style
-    self.trackedHashTable.allObjects.forEach { (object) in
-        if let view = object as? UIView {
-            view.providers.values.forEach { self.resolveProvider($0) }
-        }
-    }
+Public func changeTheme(to style: ThemeStyle) {
+    currentThemeStyle = style
+    self.trackedHashTable.allObjects.forEach { (object) in
+        If let view = object as? UIView {
+            view.providers.values.forEach { self.resolveProvider($0) }
+        }
+    }
 }
-private func resolveProvider(_ object: Any) {
-    //castdown泛型
-    if let provider = object as? ThemeProvider<UIColor> {
-        provider.config?(currentThemeStyle)
-    }else ...
+Private func resolveProvider(_ object: Any) {
+    //castdown generic
+    If let provider = object as? ThemeProvider<UIColor> {
+        Provider.config?(currentThemeStyle)
+    }else ...
 }
 ```
 
-# 特性
+# Feature
 
-- [x] 支持iOS 9+，让你的APP更早的实现`DarkMode`;
-- [x] 使用`theme`命名空间属性:`view.theme.xx = xx`。告别`theme_xx`属性扩展用法；
-- [x] 使用`ThemeProvider`传入闭包配置。根据不同的`ThemeStyle`完成主题属性配置，实现最大化的自定义；
-- [x] `ThemeStyle`可通过`extension`自定义style，不再局限于`light`和`dark`;
-- [x] 提供`customization`属性，作为主题切换的回调入口，可以灵活配置任何属性。不再局限于提供的`backgroundColor`、`textColor`等属性；
-- [x] 支持控件设置`overrideThemeStyle`，会影响到其子视图； 
-- [x] 提供根据`ThemeStyle`配置属性的常规封装、Plist文件静态加载、服务器动态加载示例；
+- [x] Support for iOS 9+, let your app implement `DarkMode` earlier;
+- [x] Use the `theme` namespace attribute: `view.theme.xx = xx`. Say goodbye to the `theme_xx` attribute extension usage;
+- [x] `ThemeStyle` can be customized by `extension`, no longer limited to `light` and `dark`;
+- [x] provides the `customization` attribute as a callback entry for theme switching, with the flexibility to configure any property. It is no longer limited to the provided attributes such as `backgroundColor` and `textColor`;
+- [x] supports the control setting `overrideThemeStyle`, which affects its child views;
 
-# 预览
+# Preview
 ![preview](https://github.com/pujiaxin33/JXTheme/blob/master/GIF/preview.gif)
 
-# 要求
+# Requirements
 
 - iOS 9.0+
 - XCode 10.2.1+
 - Swift 5.0+
 
-# 安装
+# Install
 
-## 手动
+## Manual
 
-Clone代码，把Sources文件夹拖入项目，就可以使用了；
+Clone code, drag the Sources folder into the project, you can use it;
 
 ## CocoaPods
 
 ```ruby
-target '<Your Target Name>' do
-    pod 'JXTheme'
-end
+Target '<Your Target Name>' do
+     Pod 'JXTheme'
+End
 ```
-先执行`pod repo update`，再执行`pod install`
+Execute `pod repo update` first, then execute `pod install`
 
 ## Carthage
-在cartfile文件添加：
+Add in the cartfile:
 ```
-github "pujiaxin33/JXTheme"
+Github "pujiaxin33/JXTheme"
 ```
-然后执行`carthage update --platform iOS` ，其他配置请参考Carthage文档
+Then execute `carthage update --platform iOS`. For other configurations, please refer to the Carthage documentation.
 
-# 使用示例
+#Usage
 
-## 扩展`ThemeStyle`添加自定义style
-`ThemeStyle`内部仅提供了一个默认的`unspecified`style，其他的业务style需要自己添加，比如只支持`light`和`dark`，代码如下：
+## Add a custom style by extension`ThemeStyle` 
+`ThemeStyle` only provides a default `unspecified` style. Other business styles need to be added by themselves. For example, only `light` and `dark` are supported. The code is as follows:
 ```Swift
-extension ThemeStyle {
-    static let light = ThemeStyle(rawValue: "light")
-    static let dark = ThemeStyle(rawValue: "dark")
+Extension ThemeStyle {
+    Static let light = ThemeStyle(rawValue: "light")
+    Static let dark = ThemeStyle(rawValue: "dark")
 }
 ```
 
-## 基础使用
+## Basic use
 ```Swift
 view.theme.backgroundColor = ThemeProvider({ (style) in
-    if style == .dark {
-        return .white
-    }else {
-        return .black
-    }
+    If style == .dark {
+        Return .white
+    }else {
+        Return .black
+    }
 })
 imageView.theme.image = ThemeProvider({ (style) in
-    if style == .dark {
-        return UIImage(named: "catWhite")!
-    }else {
-        return UIImage(named: "catBlack")!
-    }
+    If style == .dark {
+        Return UIImage(named: "catWhite")!
+    }else {
+        Return UIImage(named: "catBlack")!
+    }
 })
 ```
 
-## 自定义属性配置
+## Custom Properties Configuration
 ```Swift
-view.theme.customization = ThemeProvider({[weak self] style in
-    //可以选择任一其他属性
-    if style == .dark {
-        self?.view.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
-    }else {
-        self?.view.bounds = CGRect(x: 0, y: 0, width: 80, height: 80)
-    }
+View.theme.customization = ThemeProvider({[weak self] style in
+    / / You can choose any other property
+    If style == .dark {
+        Self?.view.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
+    }else {
+        Self?.view.bounds = CGRect(x: 0, y: 0, width: 80, height: 80)
+    }
 })
 ```
 
-## 配置封装示例
-`JXTheme`是一个提供主题属性配置的轻量级基础库，不限制使用哪种方式加载资源。下面提供的三个示例仅供参考。
+## Configuring the package example
+`JXTheme` is a lightweight base library that provides configuration of theme properties, and does not restrict which way to load resources. The three examples provided below are for reference only.
 
-### 常规配置封装示例
+### General Configuration Package Example
 
-一般的换肤需求，都会有一个UI标准。比如`UILabel.textColor`定义三个等级，代码如下：
+There is a UI standard for general skinning needs. For example, `UILabel.textColor` defines three levels, the code is as follows:
 ```Swift
-enum TextColorLevel: String {
-    case normal
-    case mainTitle
-    case subTitle
+Enum TextColorLevel: String {
+    Case normal
+    Case mainTitle
+    Case subTitle
 }
 ```
-然后可以封装一个全局函数传入`TextColorLevel`返回对应的配置闭包，就可以极大的减少配置时的代码量，全局函数如下：
+Then you can encapsulate a global function and pass `TextColorLevel` to return the corresponding configuration closure, which can greatly reduce the amount of code during configuration. The global functions are as follows:
 ```Swift
-func dynamicTextColor(_ level: TextColorLevel) -> ThemeProvider<UIColor> {
-    switch level {
-    case .normal:
-        return ThemeProvider({ (style) in
-            if style == .dark {
-                return UIColor.white
-            }else {
-                return UIColor.gray
-            }
-        })
-    case .mainTitle:
-        ...
-    case .subTitle:
-        ...
-    }
+Func dynamicTextColor(_ level: TextColorLevel) -> ThemeProvider<UIColor> {
+    Switch level {
+    Case .normal:
+        Return ThemeProvider({ (style) in
+            If style == .dark {
+                Return UIColor.white
+            }else {
+                Return UIColor.gray
+            }
+        })
+    Case .mainTitle:
+        ...
+    Case .subTitle:
+        ...
+    }
 }
 ```
-主题属性配置时的代码如下：
+The code for configuring the theme properties is as follows:
 ```Swift
 themeLabel.theme.textColor = dynamicTextColor(.mainTitle)
 ```
 
-### 本地Plist文件配置示例
-与**常规配置封装**一样，只是该方法是从本地Plist文件加载配置的具体值，具体代码参加`Example`的`StaticSourceManager`类
+### Local Plist file configuration example
+Same as **General Configuration Package**, except that the method loads the configuration value from the local Plist file. The specific code participates in the `Example``StaticSourceManager` class.
 
-### 根据服务器动态添加主题
-与**常规配置封装**一样，只是该方法是从服务器加载配置的具体值，具体代码参加`Example`的`DynamicSourceManager`类
+### Add topics based on server dynamics
+Same as **General Configuration Package**, except that the method loads the specific values ​​of the configuration from the server. The specific code participates in the `DynamicSourceManager` class of `Example`.
 
-## 有状态的控件
-某些业务需求会存在一个控件有多种状态，比如选中与未选中。不同的状态对于不同的主题又会有不同的配置。配置代码参考如下：
+## Stateful controls
+Some business requirements exist for a control with multiple states, such as checked and unchecked. Different states have different configurations for different theme. The configuration code is as follows:
 ```Swift
 statusLabel.theme.textColor = ThemeProvider({[weak self] (style) in
-    if self?.statusLabelStatus == .isSelected {
-        //选中状态一种配置
-        if style == .dark {
-            return .red
-        }else {
-            return .green
-        }
-    }else {
-        //未选中状态另一种配置
-        if style == .dark {
-            return .white
-        }else {
-            return .black
-        }
-    }
+    If self?.statusLabelStatus == .isSelected {
+        / / selected state a configuration
+        If style == .dark {
+            Return .red
+        }else {
+            Return .green
+        }
+    }else {
+        //Unselected another configuration
+        If style == .dark {
+            Return .white
+        }else {
+            Return .black
+        }
+    }
 })
 ```
 
-当控件的状态更新时，需要刷新当前的主题属性配置，代码如下：
+When the state of the control is updated, you need to refresh the current theme property configuration, the code is as follows:
 ```Swift
-func statusDidChange() {
-    statusLabel.theme.textColor?.refresh()
+Func statusDidChange() {
+    statusLabel.theme.textColor?.refresh()
 }
 ```
 
-如果你的控件支持多个状态属性，比如有`textColor`、`backgroundColor`、`font`等等，你可以不用一个一个的主题属性调用`refresh`方法，可以使用下面的代码完成所有配置的主题属性刷新：
+If your control supports multiple state properties, such as `textColor`, `backgroundColor`, `font`, etc., you can call the `refresh` method without using one of the theme properties. You can use the following code to complete all the configured themes. Property refresh:
 ```Swift
-func statusDidChange() {
-    statusLabel.theme.refresh()
+Func statusDidChange() {
+    statusLabel.theme.refresh()
 }
 ```
 
 ## overrideThemeStyle
-不管主题如何切换，`overrideThemeStyleParentView`及其子视图的`themeStyle`都是`dark`
-```Swift 
+Regardless of how the theme switches, `overrideThemeStyleParentView` and its subview's `themeStyle` are `dark`
+```Swift
 overrideThemeStyleParentView.theme.overrideThemeStyle = .dark
 ```
 
-# 其他说明
+# Other tips
 
-## 为什么使用`theme`命名空间属性，而不是使用`theme_xx`扩展属性呢？
-- 如果你给系统的类扩展了N个函数，当你在使用该类时，进行函数索引时，就会有N个扩展的方法干扰你的选择。尤其是你在进行其他业务开发，而不是想配置主题属性时。
-- 像`Kingfisher`、`SnapKit`等知名三方库，都使用了命名空间属性实现对系统类的扩展，这是一个更`Swift`的写法，值得学习。
+## Why use the `theme` namespace attribute instead of the `theme_xx` extension attribute?
+- If you extend N functions to the system class, when you use the class, there are N extended methods that interfere with your choice. Especially if you are doing other business development, not when you want to configure theme properties.
+- Well-known three-party libraries like `Kingfisher`, `SnapKit`, etc., all use namespace attributes to implement extensions to system classes. This is a more `Swift` way of writing and worth learning.
 
-## 主题切换通知
+## Theme Switch Notification
 ```Swift
-extension Notification.Name {
-    public static let JXThemeDidChange = Notification.Name("com.jiaxin.theme.themeDidChangeNotification")
+Extension Notification.Name {
+    Public static let JXThemeDidChange = Notification.Name("com.jiaxin.theme.themeDidChangeNotification")
 }
 ```
 
-## `ThemeManager`根据用户ID存储主题配置
+## `ThemeManager` stores the theme configuration according to the user ID
 
 ```
-/// 配置存储的标志key。可以设置为用户的ID，这样在同一个手机，可以分别记录不同用户的配置。需要优先设置该属性再设置其他值。
-public var storeConfigsIdentifierKey: String = "default"
+/// Configure the stored flag key. Can be set to the user's ID, so that in the same phone, you can record the configuration of different users. You need to set this property first and then set other values.
+Public var storeConfigsIdentifierKey: String = "default"
 ```
 
-## 迁移到系统API指南
-当你的应用最低支持iOS13时，如果需要的话可以按照如下指南，迁移到系统方案。
-[迁移到系统API指南，点击阅读](https://github.com/pujiaxin33/JXTheme/blob/master/Document/%E8%BF%81%E7%A7%BB%E5%88%B0%E7%B3%BB%E7%BB%9FAPI%E6%8C%87%E5%8D%97.md)
+## Migrating to System API Guide
+When your app supports iOS13 at the minimum, you can migrate to the system plan if you need to follow the guidelines below.
+[Migrate to System API Guide, click to read] (https://github.com/pujiaxin33/JXTheme/blob/master/Document/%E8%BF%81%E7%A7%BB%E5%88%B0%E7% B3%BB%E7%BB%9FAPI%E6%8C%87%E5%8D%97.md)
 
-# 目前支持的类及其属性
+# Currently supported classes and their properties
 
-这里的属性是有继承关系的，比如`UIView`支持`backgroundColor`属性，那么它的子类`UILabel`等也就支持`backgroundColor`。如果没有你想要支持的类或属性，欢迎提PullRequest进行扩展。
+The properties here are inherited. For example, `UIView` supports the `backgroundColor` property, then its subclass `UILabel` also supports `backgroundColor`. If you don't have the class or property you want to support, you are welcome to extend the PullRequest.
 
 ## UIView
 
@@ -398,7 +398,7 @@ public var storeConfigsIdentifierKey: String = "default"
 
 # Contribution
 
-有任何疑问或建议，欢迎提Issue和Pull Request进行交流🤝
+If you have any questions or suggestions, please feel free to contact us by Issue and Pull Request🤝
 
 
 
