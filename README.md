@@ -237,6 +237,30 @@ func statusDidChange() {
 overrideThemeStyleParentView.theme.overrideThemeStyle = .dark
 ```
 
+# 其他说明
+
+## 为什么使用`theme`命名空间属性，而不是使用`theme_xx`扩展属性呢？
+- 如果你给系统的类扩展了N个函数，当你在使用该类时，进行函数索引时，就会有N个扩展的方法干扰你的选择。尤其是你在进行其他业务开发，而不是想配置主题属性时。
+- 像`Kingfisher`、`SnapKit`等知名三方库，都使用了命名空间属性实现对系统类的扩展，这是一个更`Swift`的写法，值得学习。
+
+## 主题切换通知
+```Swift
+extension Notification.Name {
+    public static let JXThemeDidChange = Notification.Name("com.jiaxin.theme.themeDidChangeNotification")
+}
+```
+
+## `ThemeManager`根据用户ID存储主题配置
+
+```
+/// 配置存储的标志key。可以设置为用户的ID，这样在同一个手机，可以分别记录不同用户的配置。需要优先设置该属性再设置其他值。
+public var storeConfigsIdentifierKey: String = "default"
+```
+
+## 迁移到系统API指南
+当你的应用最低支持iOS13时，如果需要的话可以按照如下指南，迁移到系统方案。
+[迁移到系统API指南，点击阅读](https://github.com/pujiaxin33/JXTheme/blob/master/Document/%E8%BF%81%E7%A7%BB%E5%88%B0%E7%B3%BB%E7%BB%9FAPI%E6%8C%87%E5%8D%97.md)
+
 # 目前支持的类及其属性
 
 这里的属性是有继承关系的，比如`UIView`支持`backgroundColor`属性，那么它的子类`UILabel`等也就支持`backgroundColor`。如果没有你想要支持的类或属性，欢迎提PullRequest进行扩展。
@@ -369,30 +393,6 @@ overrideThemeStyleParentView.theme.overrideThemeStyle = .dark
 - `separatorColor`
 - `sectionIndexColor`
 - `sectionIndexBackgroundColor`
-
-# 其他说明
-
-## 为什么使用`theme`命名空间属性，而不是使用`theme_xx`扩展属性呢？
-- 如果你给系统的类扩展了N个函数，当你在使用该类时，进行函数索引时，就会有N个扩展的方法干扰你的选择。尤其是你在进行其他业务开发，而不是想配置主题属性时。
-- 像`Kingfisher`、`SnapKit`等知名三方库，都使用了命名空间属性实现对系统类的扩展，这是一个更`Swift`的写法，值得学习。
-
-## 主题切换通知
-```Swift
-extension Notification.Name {
-    public static let JXThemeDidChange = Notification.Name("com.jiaxin.theme.themeDidChangeNotification")
-}
-```
-
-## `ThemeManager`根据用户ID存储主题配置
-
-```
-/// 配置存储的标志key。可以设置为用户的ID，这样在同一个手机，可以分别记录不同用户的配置。需要优先设置该属性再设置其他值。
-public var storeConfigsIdentifierKey: String = "default"
-```
-
-## 迁移到系统API指南
-当你的应用最低支持iOS13时，如果需要的话可以按照如下指南，迁移到系统方案。
-[迁移到系统API指南，点击阅读](https://github.com/pujiaxin33/JXTheme/blob/master/Document/%E8%BF%81%E7%A7%BB%E5%88%B0%E7%B3%BB%E7%BB%9FAPI%E6%8C%87%E5%8D%97.md)
 
 # Contribution
 
