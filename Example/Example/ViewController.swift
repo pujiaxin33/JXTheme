@@ -278,7 +278,7 @@ class ViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 9 {
+        if indexPath.row == 11 {
             navigationController?.pushViewController(ListViewController(style: .plain), animated: true)
         }
     }
@@ -334,8 +334,10 @@ class ViewController: UITableViewController {
     }
 
     @IBAction func statusSwitchDidClicked(_ sender: UISwitch) {
-        //当statusLabel的状态发生变化时，调用refresh方法，触发主题色更新
+        //当statusLabel的状态发生变化时，调用目标主题属性的refresh方法，触发主题色更新
         statusLabel.theme.textColor?.refresh()
+        //如果你的状态控件有许多支持状态的主题属性，你也可以使用下面的方法，触发所有的主题属性刷新
+//        statusLabel.theme.refresh()
     }
 }
 

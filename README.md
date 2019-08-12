@@ -216,10 +216,18 @@ statusLabel.theme.textColor = ThemeProvider({[weak self] (style) in
     }
 })
 ```
+
 当控件的状态更新时，需要刷新当前的主题属性配置，代码如下：
 ```Swift
 func statusDidChange() {
     statusLabel.theme.textColor?.refresh()
+}
+```
+
+如果你的控件支持多个状态属性，比如有`textColor`、`backgroundColor`、`font`等等，你可以不用一个一个的主题属性调用`refresh`方法，可以使用下面的代码完成所有配置的主题属性刷新：
+```Swift
+func statusDidChange() {
+    statusLabel.theme.refresh()
 }
 ```
 

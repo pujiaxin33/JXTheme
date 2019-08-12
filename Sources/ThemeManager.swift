@@ -40,15 +40,7 @@ public class ThemeManager {
         NotificationCenter.default.post(name: Notification.Name.JXThemeDidChange, object: nil, userInfo: ["style" : style])
         DispatchQueue.main.async {
             self.trackedHashTable.allObjects.forEach { (object) in
-                if let view = object as? UIView {
-                    let style = view.overrideThemeStyle ?? self.currentThemeStyle
-                    view.providers.values.forEach { self.resolveProvider($0, style: style) }
-                }else if let layer = object as? CALayer {
-                    let style = layer.overrideThemeStyle ?? self.currentThemeStyle
-                    layer.providers.values.forEach { self.resolveProvider($0, style: style) }
-                }else if let barItem = object as? UIBarItem {
-                    barItem.providers.values.forEach { self.resolveProvider($0, style: self.currentThemeStyle) }
-                }
+                self.refreshTargetObject(object)
             }
         }
     }
@@ -58,7 +50,19 @@ public class ThemeManager {
         addedConfig(currentThemeStyle)
     }
 
-    private func resolveProvider(_ object: Any, style: ThemeStyle) {
+    func refreshTargetObject(_ object: AnyObject) {
+        if let view = object as? UIView {
+            let style = view.overrideThemeStyle ?? self.currentThemeStyle
+            view.providers.values.forEach { self.resolveProvider($0, style: style) }
+        }else if let layer = object as? CALayer {
+            let style = layer.overrideThemeStyle ?? self.currentThemeStyle
+            layer.providers.values.forEach { self.resolveProvider($0, style: style) }
+        }else if let barItem = object as? UIBarItem {
+            barItem.providers.values.forEach { self.resolveProvider($0, style: self.currentThemeStyle) }
+        }
+    }
+
+    func resolveProvider(_ object: Any, style: ThemeStyle) {
         if let provider = object as? ThemeProvider<UIColor> {
             provider.config?(style)
         }else if let provider = object as? ThemeProvider<UIImage> {
@@ -78,6 +82,8 @@ public class ThemeManager {
         }else if let provider = object as? ThemeProvider<UIActivityIndicatorView.Style> {
             provider.config?(style)
         }else if let provider = object as? ThemeProvider<Void> {
+            provider.config?(style)
+        }else if let provider = object as? ThemeProvider<UIScrollView.IndicatorStyle> {
             provider.config?(style)
         }
     }

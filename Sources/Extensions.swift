@@ -51,6 +51,10 @@ func setupBarItemThemeProperty<T>(barItem: UIBarItem, key: String, provider: The
 
 //MARK: - ThemeWapper
 public extension ThemeWapper where Base: UIView {
+    /// 刷新当前控件的所有的主题配置属性
+    func refresh() {
+        ThemeManager.shared.refreshTargetObject(self.base)
+    }
     var backgroundColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
@@ -273,6 +277,10 @@ public extension ThemeWapper where Base: UIImageView {
     }
 }
 public extension ThemeWapper where Base: CALayer {
+    /// 刷新当前控件的所有的主题配置属性
+    func refresh() {
+        ThemeManager.shared.refreshTargetObject(self.base)
+    }
     var overrideThemeStyle: ThemeStyle? {
         set(new) {
             self.base.overrideThemeStyle = new
@@ -589,6 +597,10 @@ public extension ThemeWapper where Base: UIPageControl {
     }
 }
 public extension ThemeWapper where Base: UIBarItem {
+    /// 刷新当前控件的所有的主题配置属性
+    func refresh() {
+        ThemeManager.shared.refreshTargetObject(self.base)
+    }
     var overrideThemeStyle: ThemeStyle? {
         set(new) {
             self.base.overrideThemeStyle = new

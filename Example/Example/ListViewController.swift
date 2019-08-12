@@ -36,6 +36,13 @@ class ListViewController: UITableViewController {
                 return .white
             }
         })
+        tableView.theme.indicatorStyle = ThemeProvider({ (style) -> UIScrollView.IndicatorStyle in
+            if style == .dark {
+                return .white
+            }else {
+                return .black
+            }
+        })
         refreshToggleButton()
     }
 
