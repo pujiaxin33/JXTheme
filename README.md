@@ -390,6 +390,10 @@ extension Notification.Name {
 public var storeConfigsIdentifierKey: String = "default"
 ```
 
+## 迁移到系统API指南
+当你的应用最低支持iOS13时，如果需要的话可以按照如下指南，迁移到系统方案。
+[迁移到系统API指南，点击阅读](https://github.com/pujiaxin33/JXTheme/blob/master/Document/%E8%BF%81%E7%A7%BB%E5%88%B0%E7%B3%BB%E7%BB%9FAPI%E6%8C%87%E5%8D%97.md)
+
 # Contribution
 
 有任何疑问或建议，欢迎提Issue和Pull Request进行交流🤝
