@@ -22,7 +22,7 @@ view.theme.backgroundColor = ThemeProvider({ (style) in
 核心代码如下：
 ```Swift
 public extension ThemeWapper where Base: UIView {
-    var backgroundColor: ThemeProvider<UIColor>?? {
+    var backgroundColor: ThemeProvider<UIColor>? {
         set(new) {
             if new != nil {
                 let baseItem = self.base
