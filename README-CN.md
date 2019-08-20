@@ -23,7 +23,7 @@ view.theme.backgroundColor = ThemeProvider({ (style) in
 对控件添加`Associated object`属性`providers`存储`ThemeProvider`。
 核心代码如下：
 ```Swift
-public extension ThemeWapper where Base: UIView {
+public extension ThemeWrapper where Base: UIView {
     var backgroundColor: ThemeProvider<UIColor>? {
         set(new) {
             if new != nil {
