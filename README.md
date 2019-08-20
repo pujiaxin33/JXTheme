@@ -25,7 +25,7 @@ The core code refers to the first step sample code.
 Add the `Associated object` property `providers` to the control to store `ThemeProvider`.
 The core code is as follows:
 ```Swift
-Public extension ThemeWapper where Base: UIView {
+Public extension ThemeWrapper where Base: UIView {
     Var backgroundColor: ThemeProvider<UIColor>? {
         Set(new) {
             If new != nil {
