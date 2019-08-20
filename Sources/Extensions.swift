@@ -49,8 +49,8 @@ func setupBarItemThemeProperty<T>(barItem: UIBarItem, key: String, provider: The
     }
 }
 
-//MARK: - ThemeWapper
-public extension ThemeWapper where Base: UIView {
+//MARK: - ThemeWrapper
+public extension ThemeWrapper where Base: UIView {
     /// 刷新当前控件的所有的主题配置属性
     func refresh() {
         ThemeManager.shared.refreshTargetObject(self.base)
@@ -97,7 +97,7 @@ public extension ThemeWapper where Base: UIView {
         get { return self.base.overrideThemeStyle }
     }
 }
-public extension ThemeWapper where Base: UILabel {
+public extension ThemeWrapper where Base: UILabel {
     var font: ThemeProvider<UIFont>? {
         set(new) {
             let baseItem = self.base
@@ -145,7 +145,7 @@ public extension ThemeWapper where Base: UILabel {
     }
 }
 
-public extension ThemeWapper where Base: UIButton {
+public extension ThemeWrapper where Base: UIButton {
     func setTitleColor(_ colorProvider: ThemeProvider<UIColor>?, for state: UIControl.State) {
         let baseItem = self.base
         setupViewThemeProperty(view: self.base, key: "UIButton.titleColor.\(state.rawValue)", provider: colorProvider) {[weak baseItem] (style) in
@@ -180,7 +180,7 @@ public extension ThemeWapper where Base: UIButton {
         }
     }
 }
-public extension ThemeWapper where Base: UITextField {
+public extension ThemeWrapper where Base: UITextField {
     var font: ThemeProvider<UIFont>? {
         set(new) {
             let baseItem = self.base
@@ -227,7 +227,7 @@ public extension ThemeWapper where Base: UITextField {
         get { return self.base.providers["UITextField.keyboardAppearance"] as? ThemeProvider<UIKeyboardAppearance> }
     }
 }
-public extension ThemeWapper where Base: UITextView {
+public extension ThemeWrapper where Base: UITextView {
     var font: ThemeProvider<UIFont>? {
         set(new) {
             let baseItem = self.base
@@ -265,7 +265,7 @@ public extension ThemeWapper where Base: UITextView {
         get { return self.base.providers["UITextView.keyboardAppearance"] as? ThemeProvider<UIKeyboardAppearance> }
     }
 }
-public extension ThemeWapper where Base: UIImageView {
+public extension ThemeWrapper where Base: UIImageView {
     var image: ThemeProvider<UIImage>? {
         set(new) {
             let baseItem = self.base
@@ -276,7 +276,7 @@ public extension ThemeWapper where Base: UIImageView {
         get { return self.base.providers["UIImageView.image"] as? ThemeProvider<UIImage> }
     }
 }
-public extension ThemeWapper where Base: CALayer {
+public extension ThemeWrapper where Base: CALayer {
     /// 刷新当前控件的所有的主题配置属性
     func refresh() {
         ThemeManager.shared.refreshTargetObject(self.base)
@@ -332,7 +332,7 @@ public extension ThemeWapper where Base: CALayer {
         get { return self.base.providers["CALayer.customization"] as? ThemeProvider<Void> }
     }
 }
-public extension ThemeWapper where Base: CAShapeLayer {
+public extension ThemeWrapper where Base: CAShapeLayer {
     var fillColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
@@ -352,7 +352,7 @@ public extension ThemeWapper where Base: CAShapeLayer {
         get { return self.base.providers["CAShapeLayer.strokeColor"] as? ThemeProvider<UIColor> }
     }
 }
-public extension ThemeWapper where Base: UINavigationBar {
+public extension ThemeWrapper where Base: UINavigationBar {
     var barStyle: ThemeProvider<UIBarStyle>? {
         set(new) {
             let baseItem = self.base
@@ -391,7 +391,7 @@ public extension ThemeWapper where Base: UINavigationBar {
         get { return self.base.providers["UINavigationBar.largeTitleTextAttributes"] as? ThemeProvider<[NSAttributedString.Key : Any]> }
     }
 }
-public extension ThemeWapper where Base: UITabBar {
+public extension ThemeWrapper where Base: UITabBar {
     var barStyle: ThemeProvider<UIBarStyle>? {
         set(new) {
             let baseItem = self.base
@@ -411,7 +411,7 @@ public extension ThemeWapper where Base: UITabBar {
         get { return self.base.providers["UITabBar.barTintColor"] as? ThemeProvider<UIColor> }
     }
 }
-public extension ThemeWapper where Base: UISearchBar {
+public extension ThemeWrapper where Base: UISearchBar {
     var barStyle: ThemeProvider<UIBarStyle>? {
         set(new) {
             let baseItem = self.base
@@ -440,7 +440,7 @@ public extension ThemeWapper where Base: UISearchBar {
         get { return self.base.providers["UISearchBar.keyboardAppearance"] as? ThemeProvider<UIKeyboardAppearance> }
     }
 }
-public extension ThemeWapper where Base: UIToolbar {
+public extension ThemeWrapper where Base: UIToolbar {
     var barStyle: ThemeProvider<UIBarStyle>? {
         set(new) {
             let baseItem = self.base
@@ -460,7 +460,7 @@ public extension ThemeWapper where Base: UIToolbar {
         get { return self.base.providers["UIToolbar.barTintColor"] as? ThemeProvider<UIColor> }
     }
 }
-public extension ThemeWapper where Base: UISwitch {
+public extension ThemeWrapper where Base: UISwitch {
     var onTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
@@ -480,7 +480,7 @@ public extension ThemeWapper where Base: UISwitch {
         get { return self.base.providers["UISwitch.thumbTintColor"] as? ThemeProvider<UIColor> }
     }
 }
-public extension ThemeWapper where Base: UISlider {
+public extension ThemeWrapper where Base: UISlider {
     var thumbTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
@@ -527,7 +527,7 @@ public extension ThemeWapper where Base: UISlider {
         get { return self.base.providers["UISlider.maximumValueImage"] as? ThemeProvider<UIImage> }
     }
 }
-public extension ThemeWapper where Base: UIRefreshControl {
+public extension ThemeWrapper where Base: UIRefreshControl {
     var attributedTitle: ThemeProvider<NSAttributedString>? {
         set(new) {
             let baseItem = self.base
@@ -538,7 +538,7 @@ public extension ThemeWapper where Base: UIRefreshControl {
         get { return self.base.providers["UIRefreshControl.attributedTitle"] as? ThemeProvider<NSAttributedString> }
     }
 }
-public extension ThemeWapper where Base: UIProgressView {
+public extension ThemeWrapper where Base: UIProgressView {
     var progressTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
@@ -576,7 +576,7 @@ public extension ThemeWapper where Base: UIProgressView {
         get { return self.base.providers["UIProgressView.trackImage"] as? ThemeProvider<UIImage> }
     }
 }
-public extension ThemeWapper where Base: UIPageControl {
+public extension ThemeWrapper where Base: UIPageControl {
     var pageIndicatorTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
@@ -596,7 +596,7 @@ public extension ThemeWapper where Base: UIPageControl {
         get { return self.base.providers["UIProgressView.currentPageIndicatorTintColor"] as? ThemeProvider<UIColor> }
     }
 }
-public extension ThemeWapper where Base: UIBarItem {
+public extension ThemeWrapper where Base: UIBarItem {
     /// 刷新当前控件的所有的主题配置属性
     func refresh() {
         ThemeManager.shared.refreshTargetObject(self.base)
@@ -614,7 +614,7 @@ public extension ThemeWapper where Base: UIBarItem {
         }
     }
 }
-public extension ThemeWapper where Base: UIBarButtonItem {
+public extension ThemeWrapper where Base: UIBarButtonItem {
     var tintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
@@ -625,7 +625,7 @@ public extension ThemeWapper where Base: UIBarButtonItem {
         get { return self.base.providers["UIBarButtonItem.tintColor"] as? ThemeProvider<UIColor> }
     }
 }
-public extension ThemeWapper where Base: UIActivityIndicatorView {
+public extension ThemeWrapper where Base: UIActivityIndicatorView {
     var style: ThemeProvider<UIActivityIndicatorView.Style>? {
         set(new) {
             let baseItem = self.base
@@ -636,7 +636,7 @@ public extension ThemeWapper where Base: UIActivityIndicatorView {
         get { return self.base.providers["UIActivityIndicatorView.style"] as? ThemeProvider<UIActivityIndicatorView.Style> }
     }
 }
-public extension ThemeWapper where Base: UIScrollView {
+public extension ThemeWrapper where Base: UIScrollView {
     var indicatorStyle: ThemeProvider<UIScrollView.IndicatorStyle>? {
         set(new) {
             let baseItem = self.base
@@ -647,7 +647,7 @@ public extension ThemeWapper where Base: UIScrollView {
         get { return self.base.providers["UIScrollView.indicatorStyle"] as? ThemeProvider<UIScrollView.IndicatorStyle> }
     }
 }
-public extension ThemeWapper where Base: UITableView {
+public extension ThemeWrapper where Base: UITableView {
     var separatorColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base

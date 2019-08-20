@@ -12,8 +12,8 @@ import UIKit
 //MARK: - ThemeCompatible
 public protocol ThemeCompatible: AnyObject { }
 public extension ThemeCompatible {
-    var theme: ThemeWapper<Self> {
-        get { return ThemeWapper<Self>(self) }
+    var theme: ThemeWrapper<Self> {
+        get { return ThemeWrapper<Self>(self) }
         set { }
     }
 }
@@ -21,8 +21,8 @@ extension UIView: ThemeCompatible { }
 extension CALayer: ThemeCompatible { }
 extension UIBarItem: ThemeCompatible { }
 
-//MARK: - ThemeWapper
-public struct ThemeWapper<Base> {
+//MARK: - ThemeWrapper
+public struct ThemeWrapper<Base> {
     let base: Base
     init(_ base: Base) {
         self.base = base
