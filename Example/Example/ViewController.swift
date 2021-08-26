@@ -9,6 +9,19 @@
 import UIKit
 import JXTheme
 
+extension ThemeProvider {
+    //根据项目支持的ThemeStyle调整
+    init(light: T, dark: T) {
+        self.init { style in
+            switch style {
+            case .light: return light
+            case .dark: return dark
+            default: return light
+            }
+        }
+    }
+}
+
 class ViewController: UITableViewController {
     @IBOutlet weak var themeView: UIView!
     @IBOutlet weak var themeLabel: UILabel!
@@ -33,13 +46,14 @@ class ViewController: UITableViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(themeDidChange(notification:)), name: Notification.Name.JXThemeDidChange, object: nil)
         refreshToggleButton()
-        tableView.theme.backgroundColor = ThemeProvider({ (style) in
-            if style == .dark {
-                return .black
-            }else {
-                return .white
-            }
-        })
+//        tableView.theme.backgroundColor = ThemeProvider({ (style) in
+//            if style == .dark {
+//                return .black
+//            }else {
+//                return .white
+//            }
+//        })
+        tableView.theme.backgroundColor = ThemeProvider(light: UIColor.white, dark: UIColor.white)
         
         themeView.theme.backgroundColor = ThemeProvider({ (style) in
             if style == .dark {
