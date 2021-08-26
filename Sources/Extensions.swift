@@ -635,6 +635,15 @@ public extension ThemeWrapper where Base: UIActivityIndicatorView {
         }
         get { return self.base.providers["UIActivityIndicatorView.style"] as? ThemeProvider<UIActivityIndicatorView.Style> }
     }
+    var color: ThemeProvider<UIColor>? {
+        set(new) {
+            let baseItem = self.base
+            setupViewThemeProperty(view: self.base, key: "UIActivityIndicatorView.color", provider: new) {[weak baseItem] (style) in
+                baseItem?.color = new?.provider(style)
+            }
+        }
+        get { return self.base.providers["UIActivityIndicatorView.color"] as? ThemeProvider<UIColor> }
+    }
 }
 public extension ThemeWrapper where Base: UIScrollView {
     var indicatorStyle: ThemeProvider<UIScrollView.IndicatorStyle>? {
