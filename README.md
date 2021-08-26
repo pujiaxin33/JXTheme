@@ -3,76 +3,7 @@
 
 [中文文档](https://github.com/pujiaxin33/JXTheme/blob/master/README-CN.md)
 
-JXTheme is a lightweight library for theme properties configuration. In order to achieve the theme switching, the following five problems are mainly solved:
-## 1. How to elegantly set theme properties
-By extending the namespace property `theme` to the control, similar to the `snp` of `SnapKit` and the `kf` of `Kingfisher`, you can concentrate the properties that support the theme modification to the `theme` property. This is more elegant than directly extending the property 'theme_backgroundColor` to the control.
-The core code is as follows:
-```Swift
-view.theme.backgroundColor = ThemeProvider({ (style) in
-    If style == .dark {
-        Return .white
-    }else {
-        Return .black
-    }
-})
-```
-
-## 2. How to configure the corresponding value according to the incoming style
-Reference the iOS13 system API `UIColor(dynamicProvider: <UITraitCollection) -> UIColor>)`. Customize the `ThemeProvider` structure, the initializer is `init(_ provider: @escaping ThemePropertyProvider<T>)`. The passed argument `ThemePropertyProvider` is a closure defined as: `typealias ThemePropertyProvider<T> = (ThemeStyle) -> T`. This allows for maximum customization of different controls and different attribute configurations.
-The core code refers to the first step sample code.
-
-## 3. How to save the theme properties configuration closure
-Add the `Associated object` property `providers` to the control to store `ThemeProvider`.
-The core code is as follows:
-```Swift
-Public extension ThemeWrapper where Base: UIView {
-    Var backgroundColor: ThemeProvider<UIColor>? {
-        Set(new) {
-            If new != nil {
-                Let baseItem = self.base
-                Let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
-                    baseItem?.backgroundColor = new?.provider(style)
-                }
-                / / Stored in the extended properties provider
-                Var newProvider = new
-                newProvider?.config = config
-                Self.base.providers["UIView.backgroundColor"] = newProvider
-                ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
-            }else {
-                self.base.configs.removeValue(forKey: "UIView.backgroundColor")
-            }
-        }
-        Get { return self.base.providers["UIView.backgroundColor"] as? ThemeProvider<UIColor> }
-    }
-}
-```
-
-## 4. How to track controls that support theme properties
-In order to switch to the theme, notify the control that supports the theme property configuration. By tracking the target control when setting the theme properties.
-The core code is the code in step 3:
-```Swift
-ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
-```
-
-## 5. How to switch the theme and call the closure of theme property
-The theme is switched by `ThemeManager.changeTheme(to: style)`, and the method internally calls the `ThemeProvider.provider` theme property in the `providers` of the tracked control to configure the closure.
-The core code is as follows:
-```Swift
-Public func changeTheme(to style: ThemeStyle) {
-    currentThemeStyle = style
-    self.trackedHashTable.allObjects.forEach { (object) in
-        If let view = object as? UIView {
-            view.providers.values.forEach { self.resolveProvider($0) }
-        }
-    }
-}
-Private func resolveProvider(_ object: Any) {
-    //castdown generic
-    If let provider = object as? ThemeProvider<UIColor> {
-        Provider.config?(currentThemeStyle)
-    }else ...
-}
-```
+JXTheme is a lightweight library for theme properties configuration. 
 
 # Feature
 
@@ -143,6 +74,7 @@ imageView.theme.image = ThemeProvider({ (style) in
 ```
 
 ## Custom Properties Configuration
+If the library does not natively support a certain attribute, it can be handled uniformly in the customization.
 ```Swift
 View.theme.customization = ThemeProvider({[weak self] style in
     / / You can choose any other property
@@ -154,8 +86,62 @@ View.theme.customization = ThemeProvider({[weak self] style in
 })
 ```
 
+## extension ThemeWrapper add property
+
+If a certain attribute is frequently used in the project, and it is troublesome to use the above **Custom Properties Configuration**, you can add the desired property by yourself with the extension ThemeWrapper. (Ps: You can also submit a Pull Request  to add)
+
+The following is an example of UILabel adding shadowColor:
+```Swift
+//Custom add ThemeProperty, currently only supports UIView, CALayer, UIBarItem and their subclasses
+extension ThemeWrapper where Base: UILabel {
+    var shadowColor: ThemeProvider<UIColor>? {
+        set(new) {
+            let baseItem = self.base
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UILabel.shadowColor", provider: new) {[weak baseItem] (style) in
+                baseItem?.shadowColor = new?.provider(style)
+            }
+        }
+        get {return ThemeTool.getThemeProvider(target: self.base, with: "UILabel.shadowColor") as? ThemeProvider<UIColor>}
+    }
+}
+```
+The call is still the same:
+```
+//Custom attribute shadowColor
+shadowColorLabel.shadowOffset = CGSize(width: 0, height: 2)
+shadowColorLabel.theme.shadowColor = ThemeProvider({ style in
+    if style == .dark {
+        return .red
+    }else {
+        return .green
+    }
+})
+```
+
 ## Configuring the package example
 `JXTheme` is a lightweight base library that provides configuration of theme properties, and does not restrict which way to load resources. The three examples provided below are for reference only.
+
+### ThemeProvider custom initializer
+For example, add the following code to the project:
+```Swift
+extension ThemeProvider {
+     //Adjust according to the ThemeStyle supported by the project
+     init(light: T, dark: T) {
+         self.init {style in
+             switch style {
+             case .light: return light
+             case .dark: return dark
+             default: return light
+             }
+         }
+     }
+}
+```
+Call in business code:
+```Swift
+tableView.theme.backgroundColor = ThemeProvider(light: UIColor.white, dark: UIColor.white)
+```
+In this way, the form of ThemeProvider closure can be avoided and it is more concise.
 
 ### General Configuration Package Example
 
@@ -237,6 +223,79 @@ Func statusDidChange() {
 Regardless of how the theme switches, `overrideThemeStyleParentView` and its subview's `themeStyle` are `dark`
 ```Swift
 overrideThemeStyleParentView.theme.overrideThemeStyle = .dark
+```
+
+# Principle
+
+In order to achieve the theme switching, the following five problems are mainly solved:
+## 1. How to elegantly set theme properties
+By extending the namespace property `theme` to the control, similar to the `snp` of `SnapKit` and the `kf` of `Kingfisher`, you can concentrate the properties that support the theme modification to the `theme` property. This is more elegant than directly extending the property 'theme_backgroundColor` to the control.
+The core code is as follows:
+```Swift
+view.theme.backgroundColor = ThemeProvider({ (style) in
+    If style == .dark {
+        Return .white
+    }else {
+        Return .black
+    }
+})
+```
+
+## 2. How to configure the corresponding value according to the incoming style
+Reference the iOS13 system API `UIColor(dynamicProvider: <UITraitCollection) -> UIColor>)`. Customize the `ThemeProvider` structure, the initializer is `init(_ provider: @escaping ThemePropertyProvider<T>)`. The passed argument `ThemePropertyProvider` is a closure defined as: `typealias ThemePropertyProvider<T> = (ThemeStyle) -> T`. This allows for maximum customization of different controls and different attribute configurations.
+The core code refers to the first step sample code.
+
+## 3. How to save the theme properties configuration closure
+Add the `Associated object` property `providers` to the control to store `ThemeProvider`.
+The core code is as follows:
+```Swift
+Public extension ThemeWrapper where Base: UIView {
+    Var backgroundColor: ThemeProvider<UIColor>? {
+        Set(new) {
+            If new != nil {
+                Let baseItem = self.base
+                Let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.backgroundColor = new?.provider(style)
+                }
+                / / Stored in the extended properties provider
+                Var newProvider = new
+                newProvider?.config = config
+                Self.base.providers["UIView.backgroundColor"] = newProvider
+                ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
+            }else {
+                self.base.configs.removeValue(forKey: "UIView.backgroundColor")
+            }
+        }
+        Get { return self.base.providers["UIView.backgroundColor"] as? ThemeProvider<UIColor> }
+    }
+}
+```
+
+## 4. How to track controls that support theme properties
+In order to switch to the theme, notify the control that supports the theme property configuration. By tracking the target control when setting the theme properties.
+The core code is the code in step 3:
+```Swift
+ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
+```
+
+## 5. How to switch the theme and call the closure of theme property
+The theme is switched by `ThemeManager.changeTheme(to: style)`, and the method internally calls the `ThemeProvider.provider` theme property in the `providers` of the tracked control to configure the closure.
+The core code is as follows:
+```Swift
+Public func changeTheme(to style: ThemeStyle) {
+    currentThemeStyle = style
+    self.trackedHashTable.allObjects.forEach { (object) in
+        If let view = object as? UIView {
+            view.providers.values.forEach { self.resolveProvider($0) }
+        }
+    }
+}
+Private func resolveProvider(_ object: Any) {
+    //castdown generic
+    If let provider = object as? ThemeProvider<UIColor> {
+        Provider.config?(currentThemeStyle)
+    }else ...
+}
 ```
 
 # Other tips
@@ -333,6 +392,7 @@ The properties here are inherited. For example, `UIView` supports the `backgroun
 
 - `barStyle`
 - `barTintColor`
+- `shadowImage`
 
 ## UISearchBar
 
@@ -377,6 +437,7 @@ The properties here are inherited. For example, `UIView` supports the `backgroun
 ## UIBarItem
 
 - `func setTitleTextAttributes(_ attributesProvider: ThemeAttributesDynamicProvider?, for state: UIControl.State)`
+- `image`
 
 ## UIBarButtonItem
 
@@ -385,6 +446,7 @@ The properties here are inherited. For example, `UIView` supports the `backgroun
 ## UIActivityIndicatorView
 
 - `style`
+- `color`
 
 ## UIScrollView
 

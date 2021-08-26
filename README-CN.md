@@ -1,76 +1,8 @@
 
 <div align=center><img width="468" height="90" src="https://github.com/pujiaxin33/JXTheme/blob/master/GIF/JXTheme.png"/></div>
 
-JXTheme是一个提供主题属性配置的轻量级基础库。为了实现主题切换，主要解决以下五个问题：
-## 1.如何优雅的设置主题属性
-通过给控件扩展命名空间属性`theme`，类似于`SnapKit`的`snp`、`Kingfisher`的`kf`，这样可以将支持主题修改的属性，集中到`theme`属性。这样比直接给控件扩展属性`theme_backgroundColor`更加优雅。
-核心代码如下：
-```Swift
-view.theme.backgroundColor = ThemeProvider({ (style) in
-    if style == .dark {
-        return .white
-    }else {
-        return .black
-    }
-})
-```
+JXTheme是一个提供主题属性配置的轻量级基础库。
 
-## 2.如何根据传入的style配置对应的值
-借鉴iOS13系统API`UIColor(dynamicProvider: <UITraitCollection) -> UIColor>)`。自定义`ThemeProvider`结构体，初始化器为`init(_ provider: @escaping ThemePropertyProvider<T>)`。传入的参数`ThemePropertyProvider`是一个闭包，定义为：`typealias ThemePropertyProvider<T> = (ThemeStyle) -> T`。这样就可以针对不同的控件，不同的属性配置，实现最大化的自定义。
-核心代码参考第一步示例代码。
-
-## 3.如何保存主题属性配置闭包
-对控件添加`Associated object`属性`providers`存储`ThemeProvider`。
-核心代码如下：
-```Swift
-public extension ThemeWrapper where Base: UIView {
-    var backgroundColor: ThemeProvider<UIColor>? {
-        set(new) {
-            if new != nil {
-                let baseItem = self.base
-                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
-                    baseItem?.backgroundColor = new?.provider(style)
-                }
-                //存储在扩展属性providers里面
-                var newProvider = new
-                newProvider?.config = config
-                self.base.providers["UIView.backgroundColor"] = newProvider
-                ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
-            }else {
-                self.base.configs.removeValue(forKey: "UIView.backgroundColor")
-            }
-        }
-        get { return self.base.providers["UIView.backgroundColor"] as? ThemeProvider<UIColor> }
-    }
-}
-```
-
-## 4.如何记录支持主题属性的控件
-为了在主题切换的时候，通知到支持主题属性配置的控件。通过在设置主题属性时，就记录目标控件。
-核心代码就是第3步里面的这句代码：
-```Swift 
-ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
-```
-
-## 5.如何切换主题并调用主题属性配置闭包
-通过`ThemeManager.changeTheme(to: style)`完成主题切换，方法内部再调用被追踪的控件的`providers`里面的`ThemeProvider.provider`主题属性配置闭包。
-核心代码如下：
-```Swift
-public func changeTheme(to style: ThemeStyle) {
-    currentThemeStyle = style
-    self.trackedHashTable.allObjects.forEach { (object) in
-        if let view = object as? UIView {
-            view.providers.values.forEach { self.resolveProvider($0) }
-        }
-    }
-}
-private func resolveProvider(_ object: Any) {
-    //castdown泛型
-    if let provider = object as? ThemeProvider<UIColor> {
-        provider.config?(currentThemeStyle)
-    }else ...
-}
-```
 
 # 特性
 
@@ -143,6 +75,7 @@ imageView.theme.image = ThemeProvider({ (style) in
 ```
 
 ## 自定义属性配置
+如果库没有原生支持某个属性，可以在customization里面统一处理。
 ```Swift
 view.theme.customization = ThemeProvider({[weak self] style in
     //可以选择任一其他属性
@@ -154,10 +87,64 @@ view.theme.customization = ThemeProvider({[weak self] style in
 })
 ```
 
+## extension ThemeWrapper添加属性
+
+如果某一个属性在项目中经常使用，使用上面的**自定义属性配置**觉得麻烦，就可以自己extension ThemeWrapper添加想要的属性。（ps：你也可以提交一个Pull Request申请添加哟）
+
+下面是UILabel添加shadowColor的示例：
+```Swift
+//自定义添加ThemeProperty，目前仅支持UIView、CALayer、UIBarItem及其它们的子类
+extension ThemeWrapper where Base: UILabel {
+    var shadowColor: ThemeProvider<UIColor>? {
+        set(new) {
+            let baseItem = self.base
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UILabel.shadowColor", provider: new) {[weak baseItem] (style) in
+                baseItem?.shadowColor = new?.provider(style)
+            }
+        }
+        get { return ThemeTool.getThemeProvider(target: self.base, with: "UILabel.shadowColor") as? ThemeProvider<UIColor> }
+    }
+}
+```
+调用还是一样的：
+```
+//自定义属性shadowColor
+shadowColorLabel.shadowOffset = CGSize(width: 0, height: 2)
+shadowColorLabel.theme.shadowColor = ThemeProvider({ style in
+    if style == .dark {
+        return .red
+    }else {
+        return .green
+    }
+})
+```
+
 ## 配置封装示例
 `JXTheme`是一个提供主题属性配置的轻量级基础库，不限制使用哪种方式加载资源。下面提供的三个示例仅供参考。
 
-### 常规配置封装示例
+### ThemeProvider自定义初始化器
+比如在项目中添加如下代码：
+```Swift
+extension ThemeProvider {
+    //根据项目支持的ThemeStyle调整
+    init(light: T, dark: T) {
+        self.init { style in
+            switch style {
+            case .light: return light
+            case .dark: return dark
+            default: return light
+            }
+        }
+    }
+}
+```
+在业务代码中调用：
+```Swift
+tableView.theme.backgroundColor = ThemeProvider(light: UIColor.white, dark: UIColor.white)
+```
+这样就可以避免ThemeProvider闭包的形式，更加简洁。
+
+### 根据枚举定义封装示例
 
 一般的换肤需求，都会有一个UI标准。比如`UILabel.textColor`定义三个等级，代码如下：
 ```Swift
@@ -237,6 +224,79 @@ func statusDidChange() {
 不管主题如何切换，`overrideThemeStyleParentView`及其子视图的`themeStyle`都是`dark`
 ```Swift 
 overrideThemeStyleParentView.theme.overrideThemeStyle = .dark
+```
+
+# 实现原理
+
+为了实现主题切换，主要解决以下五个问题：
+## 1.如何优雅的设置主题属性
+通过给控件扩展命名空间属性`theme`，类似于`SnapKit`的`snp`、`Kingfisher`的`kf`，这样可以将支持主题修改的属性，集中到`theme`属性。这样比直接给控件扩展属性`theme_backgroundColor`更加优雅。
+核心代码如下：
+```Swift
+view.theme.backgroundColor = ThemeProvider({ (style) in
+    if style == .dark {
+        return .white
+    }else {
+        return .black
+    }
+})
+```
+
+## 2.如何根据传入的style配置对应的值
+借鉴iOS13系统API`UIColor(dynamicProvider: <UITraitCollection) -> UIColor>)`。自定义`ThemeProvider`结构体，初始化器为`init(_ provider: @escaping ThemePropertyProvider<T>)`。传入的参数`ThemePropertyProvider`是一个闭包，定义为：`typealias ThemePropertyProvider<T> = (ThemeStyle) -> T`。这样就可以针对不同的控件，不同的属性配置，实现最大化的自定义。
+核心代码参考第一步示例代码。
+
+## 3.如何保存主题属性配置闭包
+对控件添加`Associated object`属性`providers`存储`ThemeProvider`。
+核心代码如下：
+```Swift
+public extension ThemeWrapper where Base: UIView {
+    var backgroundColor: ThemeProvider<UIColor>? {
+        set(new) {
+            if new != nil {
+                let baseItem = self.base
+                let config: ThemeCustomizationClosure = {[weak baseItem] (style) in
+                    baseItem?.backgroundColor = new?.provider(style)
+                }
+                //存储在扩展属性providers里面
+                var newProvider = new
+                newProvider?.config = config
+                self.base.providers["UIView.backgroundColor"] = newProvider
+                ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
+            }else {
+                self.base.configs.removeValue(forKey: "UIView.backgroundColor")
+            }
+        }
+        get { return self.base.providers["UIView.backgroundColor"] as? ThemeProvider<UIColor> }
+    }
+}
+```
+
+## 4.如何记录支持主题属性的控件
+为了在主题切换的时候，通知到支持主题属性配置的控件。通过在设置主题属性时，就记录目标控件。
+核心代码就是第3步里面的这句代码：
+```Swift 
+ThemeManager.shared.addTrackedObject(self.base, addedConfig: config)
+```
+
+## 5.如何切换主题并调用主题属性配置闭包
+通过`ThemeManager.changeTheme(to: style)`完成主题切换，方法内部再调用被追踪的控件的`providers`里面的`ThemeProvider.provider`主题属性配置闭包。
+核心代码如下：
+```Swift
+public func changeTheme(to style: ThemeStyle) {
+    currentThemeStyle = style
+    self.trackedHashTable.allObjects.forEach { (object) in
+        if let view = object as? UIView {
+            view.providers.values.forEach { self.resolveProvider($0) }
+        }
+    }
+}
+private func resolveProvider(_ object: Any) {
+    //castdown泛型
+    if let provider = object as? ThemeProvider<UIColor> {
+        provider.config?(currentThemeStyle)
+    }else ...
+}
 ```
 
 # 其他说明
@@ -333,6 +393,7 @@ public var storeConfigsIdentifierKey: String = "default"
 
 - `barStyle`
 - `barTintColor`
+- `shadowImage`
 
 ## UISearchBar
 
@@ -377,6 +438,7 @@ public var storeConfigsIdentifierKey: String = "default"
 ## UIBarItem
 
 - `func setTitleTextAttributes(_ attributesProvider: ThemeAttributesDynamicProvider?, for state: UIControl.State)`
+- `image`
 
 ## UIBarButtonItem
 
@@ -385,6 +447,7 @@ public var storeConfigsIdentifierKey: String = "default"
 ## UIActivityIndicatorView
 
 - `style`
+- `color`
 
 ## UIScrollView
 
