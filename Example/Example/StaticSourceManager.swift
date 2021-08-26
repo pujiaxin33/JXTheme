@@ -32,7 +32,7 @@ class StaticSourceManager {
         if let hex = configs[style.rawValue]?[level.rawValue] {
             return hexStringToUIColor(hex: hex)
         }else {
-            //可以根据需求配置默认色
+            //可以根据需求配置默认色.
             return UIColor.gray
         }
     }
