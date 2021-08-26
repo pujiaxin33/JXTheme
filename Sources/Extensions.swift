@@ -9,43 +9,57 @@
 import Foundation
 import UIKit
 
-func setupViewThemeProperty<T>(view: UIView, key: String, provider: ThemeProvider<T>?, customization: @escaping (ThemeStyle) -> ()) {
-    if provider != nil {
-        let config: ThemeCustomizationClosure = {(style) in
-            customization(style)
+public class ThemeTool {
+    public static func setupViewThemeProperty<T>(view: UIView, key: String, provider: ThemeProvider<T>?, customization: @escaping (ThemeStyle) -> ()) {
+        if provider != nil {
+            let config: ThemeCustomizationClosure = {(style) in
+                customization(style)
+            }
+            var newProvider = provider
+            newProvider?.config = config
+            view.providers[key] = newProvider
+            ThemeManager.shared.addTrackedObject(view, addedConfig: config)
+        }else {
+            view.providers.removeValue(forKey: key)
         }
-        var newProvider = provider
-        newProvider?.config = config
-        view.providers[key] = newProvider
-        ThemeManager.shared.addTrackedObject(view, addedConfig: config)
-    }else {
-        view.providers.removeValue(forKey: key)
     }
-}
-func setupLayerThemeProperty<T>(layer: CALayer, key: String, provider: ThemeProvider<T>?, customization: @escaping (ThemeStyle) -> ()) {
-    if provider != nil {
-        let config: ThemeCustomizationClosure = {(style) in
-            customization(style)
+    public static func setupLayerThemeProperty<T>(layer: CALayer, key: String, provider: ThemeProvider<T>?, customization: @escaping (ThemeStyle) -> ()) {
+        if provider != nil {
+            let config: ThemeCustomizationClosure = {(style) in
+                customization(style)
+            }
+            var newProvider = provider
+            newProvider?.config = config
+            layer.providers[key] = newProvider
+            ThemeManager.shared.addTrackedObject(layer, addedConfig: config)
+        }else {
+            layer.providers.removeValue(forKey: key)
         }
-        var newProvider = provider
-        newProvider?.config = config
-        layer.providers[key] = newProvider
-        ThemeManager.shared.addTrackedObject(layer, addedConfig: config)
-    }else {
-        layer.providers.removeValue(forKey: key)
     }
-}
-func setupBarItemThemeProperty<T>(barItem: UIBarItem, key: String, provider: ThemeProvider<T>?, customization: @escaping (ThemeStyle) -> ()) {
-    if provider != nil {
-        let config: ThemeCustomizationClosure = {(style) in
-            customization(style)
+    public static func setupBarItemThemeProperty<T>(barItem: UIBarItem, key: String, provider: ThemeProvider<T>?, customization: @escaping (ThemeStyle) -> ()) {
+        if provider != nil {
+            let config: ThemeCustomizationClosure = {(style) in
+                customization(style)
+            }
+            var newProvider = provider
+            newProvider?.config = config
+            barItem.providers[key] = newProvider
+            ThemeManager.shared.addTrackedObject(barItem, addedConfig: config)
+        }else {
+            barItem.providers.removeValue(forKey: key)
         }
-        var newProvider = provider
-        newProvider?.config = config
-        barItem.providers[key] = newProvider
-        ThemeManager.shared.addTrackedObject(barItem, addedConfig: config)
-    }else {
-        barItem.providers.removeValue(forKey: key)
+    }
+    
+    public static func getThemeProvider(target: UIView, with key: String) -> Any? {
+        return target.providers[key]
+    }
+    
+    public static func getThemeProvider(target: CALayer, with key: String) -> Any? {
+        return target.providers[key]
+    }
+    
+    public static func getThemeProvider(target: UIBarItem, with key: String) -> Any? {
+        return target.providers[key]
     }
 }
 
@@ -58,7 +72,7 @@ public extension ThemeWrapper where Base: UIView {
     var backgroundColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIView.backgroundColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIView.backgroundColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.backgroundColor = new?.provider(style)
             }
         }
@@ -67,7 +81,7 @@ public extension ThemeWrapper where Base: UIView {
     var tintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIView.tintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIView.tintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.tintColor = new?.provider(style)
             }
         }
@@ -76,7 +90,7 @@ public extension ThemeWrapper where Base: UIView {
     var alpha: ThemeProvider<CGFloat>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIView.alpha", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIView.alpha", provider: new) {[weak baseItem] (style) in
                 baseItem?.alpha = new?.provider(style) ?? 1
             }
         }
@@ -84,7 +98,7 @@ public extension ThemeWrapper where Base: UIView {
     }
     var customization: ThemeProvider<Void>? {
         set(new) {
-            setupViewThemeProperty(view: self.base, key: "UIView.customization", provider: new) { (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIView.customization", provider: new) { (style) in
                 new?.provider(style)
             }
         }
@@ -101,7 +115,7 @@ public extension ThemeWrapper where Base: UILabel {
     var font: ThemeProvider<UIFont>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UILabel.font", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UILabel.font", provider: new) {[weak baseItem] (style) in
                 baseItem?.font = new?.provider(style)
             }
         }
@@ -110,7 +124,7 @@ public extension ThemeWrapper where Base: UILabel {
     var textColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UILabel.textColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UILabel.textColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.textColor = new?.provider(style)
             }
         }
@@ -119,7 +133,7 @@ public extension ThemeWrapper where Base: UILabel {
     var shadowColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UILabel.shadowColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UILabel.shadowColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.shadowColor = new?.provider(style)
             }
         }
@@ -128,7 +142,7 @@ public extension ThemeWrapper where Base: UILabel {
     var highlightedTextColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UILabel.highlightedTextColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UILabel.highlightedTextColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.highlightedTextColor = new?.provider(style)
             }
         }
@@ -137,7 +151,7 @@ public extension ThemeWrapper where Base: UILabel {
     var attributedText: ThemeProvider<NSAttributedString>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UILabel.attributedText", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UILabel.attributedText", provider: new) {[weak baseItem] (style) in
                 baseItem?.attributedText = new?.provider(style)
             }
         }
@@ -148,19 +162,19 @@ public extension ThemeWrapper where Base: UILabel {
 public extension ThemeWrapper where Base: UIButton {
     func setTitleColor(_ colorProvider: ThemeProvider<UIColor>?, for state: UIControl.State) {
         let baseItem = self.base
-        setupViewThemeProperty(view: self.base, key: "UIButton.titleColor.\(state.rawValue)", provider: colorProvider) {[weak baseItem] (style) in
+        ThemeTool.setupViewThemeProperty(view: self.base, key: "UIButton.titleColor.\(state.rawValue)", provider: colorProvider) {[weak baseItem] (style) in
             baseItem?.setTitleColor(colorProvider?.provider(style), for: state)
         }
     }
     func setTitleShadowColor(_ colorProvider: ThemeProvider<UIColor>?, for state: UIControl.State) {
         let baseItem = self.base
-        setupViewThemeProperty(view: self.base, key: "UIButton.titleShadowColor.\(state.rawValue)", provider: colorProvider) {[weak baseItem] (style) in
+        ThemeTool.setupViewThemeProperty(view: self.base, key: "UIButton.titleShadowColor.\(state.rawValue)", provider: colorProvider) {[weak baseItem] (style) in
             baseItem?.setTitleShadowColor(colorProvider?.provider(style), for: state)
         }
     }
     func setAttributedTitle(_ textProvider: ThemeProvider<NSAttributedString>?, for state: UIControl.State) {
         let baseItem = self.base
-        setupViewThemeProperty(view: self.base, key: "UIButton.attributedTitle.\(state.rawValue)", provider: textProvider) {[weak baseItem] (style) in
+        ThemeTool.setupViewThemeProperty(view: self.base, key: "UIButton.attributedTitle.\(state.rawValue)", provider: textProvider) {[weak baseItem] (style) in
             UIView.setAnimationsEnabled(false)
             baseItem?.setAttributedTitle(textProvider?.provider(style), for: state)
             baseItem?.layoutIfNeeded()
@@ -169,13 +183,13 @@ public extension ThemeWrapper where Base: UIButton {
     }
     func setImage(_ imageProvider: ThemeProvider<UIImage>?, for state: UIControl.State) {
         let baseItem = self.base
-        setupViewThemeProperty(view: self.base, key: "UIButton.image.\(state.rawValue)", provider: imageProvider) {[weak baseItem] (style) in
+        ThemeTool.setupViewThemeProperty(view: self.base, key: "UIButton.image.\(state.rawValue)", provider: imageProvider) {[weak baseItem] (style) in
             baseItem?.setImage(imageProvider?.provider(style), for: state)
         }
     }
     func setBackgroundImage(_ imageProvider: ThemeProvider<UIImage>?, for state: UIControl.State) {
         let baseItem = self.base
-        setupViewThemeProperty(view: self.base, key: "UIButton.backgroundImage.\(state.rawValue)", provider: imageProvider) {[weak baseItem] (style) in
+        ThemeTool.setupViewThemeProperty(view: self.base, key: "UIButton.backgroundImage.\(state.rawValue)", provider: imageProvider) {[weak baseItem] (style) in
             baseItem?.setBackgroundImage(imageProvider?.provider(style), for: state)
         }
     }
@@ -184,7 +198,7 @@ public extension ThemeWrapper where Base: UITextField {
     var font: ThemeProvider<UIFont>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITextField.font", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITextField.font", provider: new) {[weak baseItem] (style) in
                 baseItem?.font = new?.provider(style)
             }
         }
@@ -193,7 +207,7 @@ public extension ThemeWrapper where Base: UITextField {
     var textColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITextField.textColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITextField.textColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.textColor = new?.provider(style)
             }
         }
@@ -202,7 +216,7 @@ public extension ThemeWrapper where Base: UITextField {
     var attributedText: ThemeProvider<NSAttributedString>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITextField.attributedText", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITextField.attributedText", provider: new) {[weak baseItem] (style) in
                 baseItem?.attributedText = new?.provider(style)
             }
         }
@@ -211,7 +225,7 @@ public extension ThemeWrapper where Base: UITextField {
     var attributedPlaceholder: ThemeProvider<NSAttributedString>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITextField.attributedPlaceholder", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITextField.attributedPlaceholder", provider: new) {[weak baseItem] (style) in
                 baseItem?.attributedPlaceholder = new?.provider(style)
             }
         }
@@ -220,7 +234,7 @@ public extension ThemeWrapper where Base: UITextField {
     var keyboardAppearance: ThemeProvider<UIKeyboardAppearance>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITextField.keyboardAppearance", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITextField.keyboardAppearance", provider: new) {[weak baseItem] (style) in
                 baseItem?.keyboardAppearance = new?.provider(style) ?? .default
             }
         }
@@ -231,7 +245,7 @@ public extension ThemeWrapper where Base: UITextView {
     var font: ThemeProvider<UIFont>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITextView.font", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITextView.font", provider: new) {[weak baseItem] (style) in
                 baseItem?.font = new?.provider(style)
             }
         }
@@ -240,7 +254,7 @@ public extension ThemeWrapper where Base: UITextView {
     var textColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITextView.textColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITextView.textColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.textColor = new?.provider(style)
             }
         }
@@ -249,7 +263,7 @@ public extension ThemeWrapper where Base: UITextView {
     var attributedText: ThemeProvider<NSAttributedString>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITextView.attributedText", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITextView.attributedText", provider: new) {[weak baseItem] (style) in
                 baseItem?.attributedText = new?.provider(style)
             }
         }
@@ -258,7 +272,7 @@ public extension ThemeWrapper where Base: UITextView {
     var keyboardAppearance: ThemeProvider<UIKeyboardAppearance>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITextView.keyboardAppearance", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITextView.keyboardAppearance", provider: new) {[weak baseItem] (style) in
                 baseItem?.keyboardAppearance = new?.provider(style) ?? .default
             }
         }
@@ -269,7 +283,7 @@ public extension ThemeWrapper where Base: UIImageView {
     var image: ThemeProvider<UIImage>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIImageView.image", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIImageView.image", provider: new) {[weak baseItem] (style) in
                 baseItem?.image = new?.provider(style)
             }
         }
@@ -290,7 +304,7 @@ public extension ThemeWrapper where Base: CALayer {
     var backgroundColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupLayerThemeProperty(layer: self.base, key: "CALayer.backgroundColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupLayerThemeProperty(layer: self.base, key: "CALayer.backgroundColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.backgroundColor = new?.provider(style).cgColor
             }
         }
@@ -299,7 +313,7 @@ public extension ThemeWrapper where Base: CALayer {
     var borderColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupLayerThemeProperty(layer: self.base, key: "CALayer.borderColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupLayerThemeProperty(layer: self.base, key: "CALayer.borderColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.borderColor = new?.provider(style).cgColor
             }
         }
@@ -308,7 +322,7 @@ public extension ThemeWrapper where Base: CALayer {
     var borderWidth: ThemeProvider<CGFloat>? {
         set(new) {
             let baseItem = self.base
-            setupLayerThemeProperty(layer: self.base, key: "CALayer.borderWidth", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupLayerThemeProperty(layer: self.base, key: "CALayer.borderWidth", provider: new) {[weak baseItem] (style) in
                 baseItem?.borderWidth = new?.provider(style) ?? 0
             }
         }
@@ -317,7 +331,7 @@ public extension ThemeWrapper where Base: CALayer {
     var shadowColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupLayerThemeProperty(layer: self.base, key: "CALayer.shadowColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupLayerThemeProperty(layer: self.base, key: "CALayer.shadowColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.shadowColor = new?.provider(style).cgColor
             }
         }
@@ -325,7 +339,7 @@ public extension ThemeWrapper where Base: CALayer {
     }
     var customization: ThemeProvider<Void>? {
         set(new) {
-            setupLayerThemeProperty(layer: self.base, key: "CALayer.customization", provider: new) { (style) in
+            ThemeTool.setupLayerThemeProperty(layer: self.base, key: "CALayer.customization", provider: new) { (style) in
                 new?.provider(style)
             }
         }
@@ -336,7 +350,7 @@ public extension ThemeWrapper where Base: CAShapeLayer {
     var fillColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupLayerThemeProperty(layer: self.base, key: "CAShapeLayer.fillColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupLayerThemeProperty(layer: self.base, key: "CAShapeLayer.fillColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.fillColor = new?.provider(style).cgColor
             }
         }
@@ -345,7 +359,7 @@ public extension ThemeWrapper where Base: CAShapeLayer {
     var strokeColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupLayerThemeProperty(layer: self.base, key: "CAShapeLayer.strokeColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupLayerThemeProperty(layer: self.base, key: "CAShapeLayer.strokeColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.strokeColor = new?.provider(style).cgColor
             }
         }
@@ -356,7 +370,7 @@ public extension ThemeWrapper where Base: UINavigationBar {
     var barStyle: ThemeProvider<UIBarStyle>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UINavigationBar.barStyle", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UINavigationBar.barStyle", provider: new) {[weak baseItem] (style) in
                 baseItem?.barStyle = new?.provider(style) ?? .default
             }
         }
@@ -365,7 +379,7 @@ public extension ThemeWrapper where Base: UINavigationBar {
     var barTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UINavigationBar.barTintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UINavigationBar.barTintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.barTintColor = new?.provider(style)
             }
         }
@@ -374,7 +388,7 @@ public extension ThemeWrapper where Base: UINavigationBar {
     var titleTextAttributes: ThemeProvider<[NSAttributedString.Key : Any]>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UINavigationBar.titleTextAttributes", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UINavigationBar.titleTextAttributes", provider: new) {[weak baseItem] (style) in
                 baseItem?.titleTextAttributes = new?.provider(style)
             }
         }
@@ -384,7 +398,7 @@ public extension ThemeWrapper where Base: UINavigationBar {
     var largeTitleTextAttributes: ThemeProvider<[NSAttributedString.Key : Any]>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UINavigationBar.largeTitleTextAttributes", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UINavigationBar.largeTitleTextAttributes", provider: new) {[weak baseItem] (style) in
                 baseItem?.largeTitleTextAttributes = new?.provider(style)
             }
         }
@@ -395,7 +409,7 @@ public extension ThemeWrapper where Base: UITabBar {
     var barStyle: ThemeProvider<UIBarStyle>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITabBar.barStyle", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITabBar.barStyle", provider: new) {[weak baseItem] (style) in
                 baseItem?.barStyle = new?.provider(style) ?? .default
             }
         }
@@ -404,7 +418,7 @@ public extension ThemeWrapper where Base: UITabBar {
     var barTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITabBar.barTintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITabBar.barTintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.barTintColor = new?.provider(style)
             }
         }
@@ -413,7 +427,7 @@ public extension ThemeWrapper where Base: UITabBar {
     var shadowImage: ThemeProvider<UIImage>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITabBar.shadowImage", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITabBar.shadowImage", provider: new) {[weak baseItem] (style) in
                 baseItem?.shadowImage = new?.provider(style)
             }
         }
@@ -424,7 +438,7 @@ public extension ThemeWrapper where Base: UITabBarItem {
     var selectedImage: ThemeProvider<UIImage>? {
         set(new) {
             let baseItem = self.base
-            setupBarItemThemeProperty(barItem: self.base, key: "UITabBarItem.selectedImage", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupBarItemThemeProperty(barItem: self.base, key: "UITabBarItem.selectedImage", provider: new) {[weak baseItem] (style) in
                 baseItem?.selectedImage = new?.provider(style)
             }
         }
@@ -435,7 +449,7 @@ public extension ThemeWrapper where Base: UISearchBar {
     var barStyle: ThemeProvider<UIBarStyle>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UISearchBar.barStyle", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UISearchBar.barStyle", provider: new) {[weak baseItem] (style) in
                 baseItem?.barStyle = new?.provider(style) ?? .default
             }
         }
@@ -444,7 +458,7 @@ public extension ThemeWrapper where Base: UISearchBar {
     var barTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UISearchBar.barTintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UISearchBar.barTintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.barTintColor = new?.provider(style)
             }
         }
@@ -453,7 +467,7 @@ public extension ThemeWrapper where Base: UISearchBar {
     var keyboardAppearance: ThemeProvider<UIKeyboardAppearance>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UISearchBar.keyboardAppearance", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UISearchBar.keyboardAppearance", provider: new) {[weak baseItem] (style) in
                 baseItem?.keyboardAppearance = new?.provider(style) ?? .default
             }
         }
@@ -464,7 +478,7 @@ public extension ThemeWrapper where Base: UIToolbar {
     var barStyle: ThemeProvider<UIBarStyle>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIToolbar.barStyle", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIToolbar.barStyle", provider: new) {[weak baseItem] (style) in
                 baseItem?.barStyle = new?.provider(style) ?? .default
             }
         }
@@ -473,7 +487,7 @@ public extension ThemeWrapper where Base: UIToolbar {
     var barTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIToolbar.barTintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIToolbar.barTintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.barTintColor = new?.provider(style)
             }
         }
@@ -484,7 +498,7 @@ public extension ThemeWrapper where Base: UISwitch {
     var onTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UISwitch.onTintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UISwitch.onTintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.onTintColor = new?.provider(style)
             }
         }
@@ -493,7 +507,7 @@ public extension ThemeWrapper where Base: UISwitch {
     var thumbTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UISwitch.thumbTintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UISwitch.thumbTintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.thumbTintColor = new?.provider(style)
             }
         }
@@ -504,7 +518,7 @@ public extension ThemeWrapper where Base: UISlider {
     var thumbTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UISlider.thumbTintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UISlider.thumbTintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.thumbTintColor = new?.provider(style)
             }
         }
@@ -513,7 +527,7 @@ public extension ThemeWrapper where Base: UISlider {
     var minimumTrackTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UISlider.minimumTrackTintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UISlider.minimumTrackTintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.minimumTrackTintColor = new?.provider(style)
             }
         }
@@ -522,7 +536,7 @@ public extension ThemeWrapper where Base: UISlider {
     var maximumTrackTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UISlider.maximumTrackTintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UISlider.maximumTrackTintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.maximumTrackTintColor = new?.provider(style)
             }
         }
@@ -531,7 +545,7 @@ public extension ThemeWrapper where Base: UISlider {
     var minimumValueImage: ThemeProvider<UIImage>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UISlider.minimumValueImage", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UISlider.minimumValueImage", provider: new) {[weak baseItem] (style) in
                 baseItem?.minimumValueImage = new?.provider(style)
             }
         }
@@ -540,7 +554,7 @@ public extension ThemeWrapper where Base: UISlider {
     var maximumValueImage: ThemeProvider<UIImage>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UISlider.maximumValueImage", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UISlider.maximumValueImage", provider: new) {[weak baseItem] (style) in
                 baseItem?.maximumValueImage = new?.provider(style)
             }
         }
@@ -551,7 +565,7 @@ public extension ThemeWrapper where Base: UIRefreshControl {
     var attributedTitle: ThemeProvider<NSAttributedString>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIRefreshControl.attributedTitle", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIRefreshControl.attributedTitle", provider: new) {[weak baseItem] (style) in
                 baseItem?.attributedTitle = new?.provider(style)
             }
         }
@@ -562,7 +576,7 @@ public extension ThemeWrapper where Base: UIProgressView {
     var progressTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIProgressView.progressTintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIProgressView.progressTintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.progressTintColor = new?.provider(style)
             }
         }
@@ -571,7 +585,7 @@ public extension ThemeWrapper where Base: UIProgressView {
     var trackTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIProgressView.trackTintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIProgressView.trackTintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.trackTintColor = new?.provider(style)
             }
         }
@@ -580,7 +594,7 @@ public extension ThemeWrapper where Base: UIProgressView {
     var progressImage: ThemeProvider<UIImage>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIProgressView.progressImage", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIProgressView.progressImage", provider: new) {[weak baseItem] (style) in
                 baseItem?.progressImage = new?.provider(style)
             }
         }
@@ -589,7 +603,7 @@ public extension ThemeWrapper where Base: UIProgressView {
     var trackImage: ThemeProvider<UIImage>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIProgressView.trackImage", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIProgressView.trackImage", provider: new) {[weak baseItem] (style) in
                 baseItem?.trackImage = new?.provider(style)
             }
         }
@@ -600,7 +614,7 @@ public extension ThemeWrapper where Base: UIPageControl {
     var pageIndicatorTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIPageControl.pageIndicatorTintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIPageControl.pageIndicatorTintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.pageIndicatorTintColor = new?.provider(style)
             }
         }
@@ -609,7 +623,7 @@ public extension ThemeWrapper where Base: UIPageControl {
     var currentPageIndicatorTintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIProgressView.currentPageIndicatorTintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIProgressView.currentPageIndicatorTintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.currentPageIndicatorTintColor = new?.provider(style)
             }
         }
@@ -629,14 +643,14 @@ public extension ThemeWrapper where Base: UIBarItem {
     }
     func setTitleTextAttributes(_ attributesProvider: ThemeProvider<[NSAttributedString.Key : Any]>?, for state: UIControl.State) {
         let baseItem = self.base
-        setupBarItemThemeProperty(barItem: self.base, key: "UIBarItem.setTitleTextAttributes", provider: attributesProvider) {[weak baseItem] (style) in
+        ThemeTool.setupBarItemThemeProperty(barItem: self.base, key: "UIBarItem.setTitleTextAttributes", provider: attributesProvider) {[weak baseItem] (style) in
             baseItem?.setTitleTextAttributes(attributesProvider?.provider(style), for: state)
         }
     }
     var image: ThemeProvider<UIImage>? {
         set(new) {
             let baseItem = self.base
-            setupBarItemThemeProperty(barItem: self.base, key: "UIBarItem.image", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupBarItemThemeProperty(barItem: self.base, key: "UIBarItem.image", provider: new) {[weak baseItem] (style) in
                 baseItem?.image = new?.provider(style)
             }
         }
@@ -647,7 +661,7 @@ public extension ThemeWrapper where Base: UIBarButtonItem {
     var tintColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupBarItemThemeProperty(barItem: self.base, key: "UIBarButtonItem.tintColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupBarItemThemeProperty(barItem: self.base, key: "UIBarButtonItem.tintColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.tintColor = new?.provider(style)
             }
         }
@@ -658,7 +672,7 @@ public extension ThemeWrapper where Base: UIActivityIndicatorView {
     var style: ThemeProvider<UIActivityIndicatorView.Style>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIActivityIndicatorView.style", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIActivityIndicatorView.style", provider: new) {[weak baseItem] (style) in
                 baseItem?.style = new?.provider(style) ?? UIActivityIndicatorView.Style.gray
             }
         }
@@ -667,7 +681,7 @@ public extension ThemeWrapper where Base: UIActivityIndicatorView {
     var color: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIActivityIndicatorView.color", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIActivityIndicatorView.color", provider: new) {[weak baseItem] (style) in
                 baseItem?.color = new?.provider(style)
             }
         }
@@ -678,7 +692,7 @@ public extension ThemeWrapper where Base: UIScrollView {
     var indicatorStyle: ThemeProvider<UIScrollView.IndicatorStyle>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UIScrollView.indicatorStyle", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UIScrollView.indicatorStyle", provider: new) {[weak baseItem] (style) in
                 baseItem?.indicatorStyle = new?.provider(style) ?? UIScrollView.IndicatorStyle.default
             }
         }
@@ -689,7 +703,7 @@ public extension ThemeWrapper where Base: UITableView {
     var separatorColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITableView.separatorColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITableView.separatorColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.separatorColor = new?.provider(style)
             }
         }
@@ -698,7 +712,7 @@ public extension ThemeWrapper where Base: UITableView {
     var sectionIndexColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITableView.sectionIndexColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITableView.sectionIndexColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.sectionIndexColor = new?.provider(style)
             }
         }
@@ -707,7 +721,7 @@ public extension ThemeWrapper where Base: UITableView {
     var sectionIndexBackgroundColor: ThemeProvider<UIColor>? {
         set(new) {
             let baseItem = self.base
-            setupViewThemeProperty(view: self.base, key: "UITableView.sectionIndexBackgroundColor", provider: new) {[weak baseItem] (style) in
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UITableView.sectionIndexBackgroundColor", provider: new) {[weak baseItem] (style) in
                 baseItem?.sectionIndexBackgroundColor = new?.provider(style)
             }
         }

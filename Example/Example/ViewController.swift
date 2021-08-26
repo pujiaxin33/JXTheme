@@ -9,19 +9,6 @@
 import UIKit
 import JXTheme
 
-extension ThemeProvider {
-    //根据项目支持的ThemeStyle调整
-    init(light: T, dark: T) {
-        self.init { style in
-            switch style {
-            case .light: return light
-            case .dark: return dark
-            default: return light
-            }
-        }
-    }
-}
-
 class ViewController: UITableViewController {
     @IBOutlet weak var themeView: UIView!
     @IBOutlet weak var themeLabel: UILabel!
@@ -40,7 +27,9 @@ class ViewController: UITableViewController {
     @IBOutlet weak var overrideThemeStyleLabel: UILabel!
     @IBOutlet var cellTitleLabels: [UILabel]!
     @IBOutlet var cells: [UITableViewCell]!
-
+    @IBOutlet weak var shadowColorLabel: UILabel!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -53,7 +42,18 @@ class ViewController: UITableViewController {
 //                return .white
 //            }
 //        })
+        //ThemeProvider根据项目的ThemeStyle自定义初始化器
         tableView.theme.backgroundColor = ThemeProvider(light: UIColor.white, dark: UIColor.white)
+        
+        //自定义属性shadowColor
+        shadowColorLabel.shadowOffset = CGSize(width: 0, height: 2)
+        shadowColorLabel.theme.shadowColor = ThemeProvider({ style in
+            if style == .dark {
+                return .red
+            }else {
+                return .green
+            }
+        })
         
         themeView.theme.backgroundColor = ThemeProvider({ (style) in
             if style == .dark {
@@ -410,4 +410,30 @@ func dynamicJSONTextColor(_ level: TextColorLevel) -> ThemeProvider<UIColor> {
     return ThemeProvider({ (style) in
         return DynamicSourceManager.shared.textColor(style: style, level: level)
     })
+}
+
+extension ThemeProvider {
+    //根据项目支持的ThemeStyle调整
+    init(light: T, dark: T) {
+        self.init { style in
+            switch style {
+            case .light: return light
+            case .dark: return dark
+            default: return light
+            }
+        }
+    }
+}
+
+//自定义添加ThemeProperty，目前仅支持UIView、CALayer、UIBarItem及其它们的子类
+extension ThemeWrapper where Base: UILabel {
+    var shadowColor: ThemeProvider<UIColor>? {
+        set(new) {
+            let baseItem = self.base
+            ThemeTool.setupViewThemeProperty(view: self.base, key: "UILabel.shadowColor", provider: new) {[weak baseItem] (style) in
+                baseItem?.shadowColor = new?.provider(style)
+            }
+        }
+        get { return ThemeTool.getThemeProvider(target: self.base, with: "UILabel.shadowColor") as? ThemeProvider<UIColor> }
+    }
 }

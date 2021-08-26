@@ -49,7 +49,7 @@ public struct ThemeStyle: RawRepresentable, Equatable, Hashable, Comparable {
 }
 
 public struct ThemeProvider<T> {
-    var provider: ThemePropertyProvider<T>
+    public var provider: ThemePropertyProvider<T>
     var config: ThemeCustomizationClosure?
     public init(_ provider: @escaping ThemePropertyProvider<T>) {
         self.provider = provider
@@ -68,6 +68,4 @@ public struct ThemeProvider<T> {
 
 public typealias ThemePropertyProvider<T> = (ThemeStyle) -> T
 internal typealias ThemeCustomizationClosure = (ThemeStyle) -> ()
-
-
 
