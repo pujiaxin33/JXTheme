@@ -411,6 +411,17 @@ public extension ThemeWrapper where Base: UITabBar {
         get { return self.base.providers["UITabBar.barTintColor"] as? ThemeProvider<UIColor> }
     }
 }
+public extension ThemeWrapper where Base: UITabBarItem {
+    var selectedImage: ThemeProvider<UIImage>? {
+        set(new) {
+            let baseItem = self.base
+            setupBarItemThemeProperty(barItem: self.base, key: "UITabBarItem.selectedImage", provider: new) {[weak baseItem] (style) in
+                baseItem?.selectedImage = new?.provider(style)
+            }
+        }
+        get { return self.base.providers["UITabBarItem.selectedImage"] as? ThemeProvider<UIImage> }
+    }
+}
 public extension ThemeWrapper where Base: UISearchBar {
     var barStyle: ThemeProvider<UIBarStyle>? {
         set(new) {
@@ -612,6 +623,15 @@ public extension ThemeWrapper where Base: UIBarItem {
         setupBarItemThemeProperty(barItem: self.base, key: "UIBarItem.setTitleTextAttributes", provider: attributesProvider) {[weak baseItem] (style) in
             baseItem?.setTitleTextAttributes(attributesProvider?.provider(style), for: state)
         }
+    }
+    var image: ThemeProvider<UIImage>? {
+        set(new) {
+            let baseItem = self.base
+            setupBarItemThemeProperty(barItem: self.base, key: "UIBarItem.image", provider: new) {[weak baseItem] (style) in
+                baseItem?.image = new?.provider(style)
+            }
+        }
+        get { return self.base.providers["UIBarItem.image"] as? ThemeProvider<UIImage> }
     }
 }
 public extension ThemeWrapper where Base: UIBarButtonItem {
