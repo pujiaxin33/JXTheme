@@ -410,6 +410,15 @@ public extension ThemeWrapper where Base: UITabBar {
         }
         get { return self.base.providers["UITabBar.barTintColor"] as? ThemeProvider<UIColor> }
     }
+    var shadowImage: ThemeProvider<UIImage>? {
+        set(new) {
+            let baseItem = self.base
+            setupViewThemeProperty(view: self.base, key: "UITabBar.shadowImage", provider: new) {[weak baseItem] (style) in
+                baseItem?.shadowImage = new?.provider(style)
+            }
+        }
+        get { return self.base.providers["UITabBar.shadowImage"] as? ThemeProvider<UIImage> }
+    }
 }
 public extension ThemeWrapper where Base: UITabBarItem {
     var selectedImage: ThemeProvider<UIImage>? {
