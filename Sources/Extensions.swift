@@ -757,14 +757,21 @@ internal extension UIBarItem {
 }
 
 //MARK: - Swizzle
+func swizzleMethod(_ aClass: AnyClass, originalSelector: Selector, swizzledSelector: Selector) {
+    if let originalMethod = class_getInstanceMethod(aClass, originalSelector),
+        let swizzledMehod = class_getInstanceMethod(aClass, swizzledSelector) {
+        let didAddMethod: Bool = class_addMethod(aClass, originalSelector, method_getImplementation(swizzledMehod), method_getTypeEncoding(swizzledMehod))
+        if didAddMethod {
+            class_replaceMethod(aClass, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))
+        }else {
+            method_exchangeImplementations(originalMethod, swizzledMehod)
+        }
+    }
+}
+
 extension UIView {
     static let swizzleAddSubview: Void = {
-        let aClass: AnyClass! = object_getClass(UIView())
-        let originalMethod = class_getInstanceMethod(aClass, #selector(addSubview(_:)))
-        let newMehod = class_getInstanceMethod(aClass, #selector(swizzledAddSubview(_:)))
-        if let originalMethod = originalMethod, let newMehod = newMehod {
-            method_exchangeImplementations(originalMethod, newMehod)
-        }
+        swizzleMethod(UIView.self, originalSelector: #selector(addSubview(_:)), swizzledSelector: #selector(swizzledAddSubview(_:)))
     }()
 
     @objc func swizzledAddSubview(_ subview: UIView) {
@@ -777,12 +784,7 @@ extension UIView {
 
 extension CALayer {
     static let swizzleAddSublayer: Void = {
-        let aClass: AnyClass! = object_getClass(CALayer())
-        let originalMethod = class_getInstanceMethod(aClass, #selector(addSublayer(_:)))
-        let newMehod = class_getInstanceMethod(aClass, #selector(swizzledAddSublayer(_:)))
-        if let originalMethod = originalMethod, let newMehod = newMehod {
-            method_exchangeImplementations(originalMethod, newMehod)
-        }
+        swizzleMethod(CALayer.self, originalSelector: #selector(addSublayer(_:)), swizzledSelector: #selector(swizzledAddSublayer(_:)))
     }()
 
     @objc func swizzledAddSublayer(_ sublayer: CALayer) {
