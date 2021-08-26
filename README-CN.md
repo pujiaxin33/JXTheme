@@ -228,6 +228,7 @@ overrideThemeStyleParentView.theme.overrideThemeStyle = .dark
 
 # 实现原理
 
+- [实现原理](https://github.com/pujiaxin33/JXTheme/blob/master/Document/%E5%8E%9F%E7%90%86.md)
 
 
 # 其他说明

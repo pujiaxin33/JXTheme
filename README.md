@@ -227,7 +227,7 @@ overrideThemeStyleParentView.theme.overrideThemeStyle = .dark
 
 # Principle
 
-
+- [Principle](https://github.com/pujiaxin33/JXTheme/blob/master/Document/Principle.md)
 
 # Other tips
 
